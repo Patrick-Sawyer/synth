@@ -21,12 +21,13 @@ interface State {
 }
 
 interface Props {
-  text: string;
+  text?: string;
   min: number;
   max: number;
   resetValue: number;
   onChange: (value: number) => void;
   initValue: number;
+  small?: boolean;
 }
 
 const getAsPercentage = (value: number, min: number, max: number): number => {
@@ -42,6 +43,7 @@ export function Knob({
   onChange,
   resetValue,
   initValue,
+  small = false,
 }: Props) {
   const state = useRef<State>({});
   const [value, setValue] = useState(
@@ -102,13 +104,19 @@ export function Knob({
 
   return (
     <Wrapper>
-      <MiniLabel bottom={11} left={-7}>
-        -
-      </MiniLabel>
-      <MiniLabel bottom={12} left={30}>
-        +
-      </MiniLabel>
+      {!small && (
+        <>
+          <MiniLabel bottom={11} left={-7}>
+            -
+          </MiniLabel>
+          <MiniLabel bottom={12} left={30}>
+            +
+          </MiniLabel>
+        </>
+      )}
+
       <Inner
+        small={small}
         style={{
           transform: `rotate(${value / 120 + 0.58}turn)`,
         }}
@@ -123,7 +131,6 @@ export function Knob({
 }
 
 const Wrapper = styled.div`
-  margin-bottom: 15px;
   width: 30px;
   align-self: center;
   display: flex;
@@ -133,11 +140,13 @@ const Wrapper = styled.div`
   gap: 12px;
 `;
 
-const Inner = styled.div`
-  height: 30px;
-  width: 30px;
+const Inner = styled.div<{
+  small?: boolean;
+}>`
+  height: ${({ small }) => (small ? "20px" : "30px")};
+  width: ${({ small }) => (small ? "20px" : "30px")};
   border-radius: 50%;
-  border: 1px solid white;
+  ${({ small }) => !small && "border: 1px solid white;"}
   background-color: rgba(255, 255, 255, 0.3);
   display: flex;
   justify-content: center;

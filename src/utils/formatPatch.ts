@@ -38,6 +38,8 @@ export const formatOnSave = (units: Array<any>): Patch => {
             detune: unit.oscillator.detune.value,
             pan: unit.pan.pan.value,
             unitKey: unit.unitKey,
+            amAmount: unit.amIn.node.gain.value,
+            fmAmount: unit.fmIn.node.gain.value,
           } as SavedOscillator;
         case AudioUnitTypes.ENVELOPE:
           return {

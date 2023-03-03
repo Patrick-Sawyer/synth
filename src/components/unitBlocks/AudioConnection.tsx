@@ -7,7 +7,6 @@ import {
   useConnectionContext,
   useConnectionUpdateContext,
 } from "../../ConnectionContext";
-import { debounce } from "../../utils/debounce";
 import { Label } from "./Label";
 
 export enum ConnectionTypes {
@@ -22,7 +21,7 @@ interface Props {
   connection: Connection;
   unitKey: string;
   connectionKey: string;
-
+  children?: React.ReactNode;
   darkText?: boolean;
 }
 
@@ -64,6 +63,7 @@ export function AudioConnection({
   darkText,
   unitKey,
   connectionKey,
+  children,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { fromConnection, connections, connectionPositions } =
@@ -150,19 +150,19 @@ export function AudioConnection({
   ]);
 
   return (
-    <Wrapper ref={ref}>
-      <Plug onPointerDown={onPointerDown} onPointerUp={onPointerUp} />
+    <Wrapper>
+      {children}
+      <Plug ref={ref} onPointerDown={onPointerDown} onPointerUp={onPointerUp} />
       <Label darkText={darkText}>{connection.name}</Label>
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
-  gap: 10px;
+  gap: 12px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  margin-bottom: 15px;
   min-width: 35px;
 `;
 

@@ -91,9 +91,9 @@ export function Wires() {
           <Wire
             key={key}
             x2={connection.from.position.x}
-            y2={connection.from.position.y - 11}
+            y2={connection.from.position.y}
             x1={connection.to.position.x}
-            y1={connection.to.position.y - 11}
+            y1={connection.to.position.y}
           />
         );
       })}

@@ -54,13 +54,20 @@ export function OscillatorComponent(
           connection={props.amIn}
           unitKey={props.unitKey}
           connectionKey={"amIn"}
-        />
-        <AudioConnection
-          wrapperRef={props.wrapperRef}
-          connection={props.fmIn}
-          unitKey={props.unitKey}
-          connectionKey={"fmIn"}
-        />
+        >
+          <Knob
+            min={0}
+            max={10}
+            resetValue={0}
+            initValue={
+              props.amIn.node.gain.value === undefined
+                ? 0
+                : props.amIn.node.gain.value
+            }
+            small
+            onChange={props.setAmAmount}
+          />
+        </AudioConnection>
       </UnitColumn>
       <UnitColumn>
         <Knob
@@ -79,6 +86,25 @@ export function OscillatorComponent(
           resetValue={0}
           onChange={props.setPan}
         />
+        <AudioConnection
+          wrapperRef={props.wrapperRef}
+          connection={props.fmIn}
+          unitKey={props.unitKey}
+          connectionKey={"fmIn"}
+        >
+          <Knob
+            min={0}
+            max={10000}
+            resetValue={0}
+            initValue={
+              props.fmIn.node.gain.value === undefined
+                ? 0
+                : props.fmIn.node.gain.value
+            }
+            small
+            onChange={props.setFmAmount}
+          />
+        </AudioConnection>
       </UnitColumn>
       <UnitColumn>
         <MultiSelect

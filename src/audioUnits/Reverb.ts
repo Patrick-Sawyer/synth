@@ -33,6 +33,7 @@ export class Reverb extends BaseUnit {
   addReverb: (convolver: ConvolverNode, type: ReverbTypes) => Promise<void>;
 
   constructor(input?: SavedReverb) {
+    console.log("REVERB INPUT", input);
     super(AudioUnitTypes.REVERB, input?.unitKey);
     this.output.node.gain.value = 1;
     this.input = new Connection("INPUT", ConnectionTypes.INPUT);
@@ -58,7 +59,7 @@ export class Reverb extends BaseUnit {
 
     this.dry = CONTEXT.createGain();
     this.input.node.connect(this.dry);
-    this.dry.gain.value = input?.dry || 1;
+    this.dry.gain.value = input?.dry === undefined ? 1 : input.dry;
     this.dry.connect(this.output.node);
 
     this.setDryVolume = (value: number) => {
@@ -72,7 +73,7 @@ export class Reverb extends BaseUnit {
     this.input.node.connect(this.reverb);
 
     this.reverbVolume = CONTEXT.createGain();
-    this.reverbVolume.gain.value = input?.wet || 1;
+    this.reverbVolume.gain.value = input?.wet === undefined ? 1 : input.wet;
     this.reverb.connect(this.reverbVolume);
     this.reverbVolume.connect(this.output.node);
 

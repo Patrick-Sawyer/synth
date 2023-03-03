@@ -14,6 +14,8 @@ export interface SavedOscillator {
   detune: number;
   pan: number;
   unitKey: string;
+  fmAmount: number;
+  amAmount: number;
 }
 
 export class Oscillator extends BaseUnit {
@@ -31,6 +33,8 @@ export class Oscillator extends BaseUnit {
   amIn: Connection;
   pan: StereoPannerNode;
   setPan: (value: number) => void;
+  setAmAmount: (value: number) => void;
+  setFmAmount: (value: number) => void;
 
   constructor(input?: SavedOscillator) {
     super(AudioUnitTypes.OSCILLATOR, input?.unitKey);
@@ -38,7 +42,12 @@ export class Oscillator extends BaseUnit {
 
     this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN);
     this.fmIn = new Connection("FM IN", ConnectionTypes.INPUT);
+    this.fmIn.node.gain.value =
+      input?.fmAmount === undefined ? 0 : input.fmAmount;
+
     this.amIn = new Connection("AM IN", ConnectionTypes.INPUT);
+    this.amIn.node.gain.value =
+      input?.amAmount === undefined ? 0 : input.amAmount;
 
     this.octave = input?.octave === undefined ? 1 : input.octave / 2;
 
@@ -56,8 +65,11 @@ export class Oscillator extends BaseUnit {
     this.pan.pan.value = input?.pan || 0;
     this.mainVolume.connect(this.pan);
     this.pan.connect(this.output.node);
+    this.amIn.node.connect(this.output.node.gain);
 
     this.offset = 0;
+
+    this.fmIn.node.connect(this.oscillator.frequency);
 
     this.setWaveform = (next: WaveTypes) => {
       this.oscillator.type = next;
@@ -100,6 +112,20 @@ export class Oscillator extends BaseUnit {
 
     this.setPan = (value: number) => {
       this.pan.pan.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE);
+    };
+
+    this.setAmAmount = (value: number) => {
+      this.amIn.node.gain.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE
+      );
+    };
+
+    this.setFmAmount = (value: number) => {
+      this.fmIn.node.gain.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE
+      );
     };
   }
 }

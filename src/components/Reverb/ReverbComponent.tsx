@@ -34,7 +34,9 @@ export function ReverbComponent(
           min={0}
           max={1}
           resetValue={0}
-          initValue={props.dry.gain.value || 1}
+          initValue={
+            props.dry.gain.value === undefined ? 1 : props.dry.gain.value
+          }
           onChange={props.setDryVolume}
         />
       </UnitColumn>
@@ -56,7 +58,11 @@ export function ReverbComponent(
           min={0}
           max={1}
           resetValue={0}
-          initValue={props.reverbVolume.gain.value || 1}
+          initValue={
+            props.reverbVolume.gain.value === undefined
+              ? 1
+              : props.reverbVolume.gain.value
+          }
           onChange={props.setReverbVolume}
         />
       </UnitColumn>
