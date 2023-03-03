@@ -49,7 +49,7 @@ export class Oscillator extends BaseUnit {
     this.amIn.node.gain.value =
       input?.amAmount === undefined ? 0 : input.amAmount;
 
-    this.octave = input?.octave === undefined ? 1 : input.octave / 2;
+    this.octave = input?.octave === undefined ? 4 : input.octave;
 
     this.oscillator = CONTEXT.createOscillator();
     this.oscillator.frequency.value = 220 * this.octave;

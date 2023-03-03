@@ -19,10 +19,10 @@ const calcInitTypeIndex = (type: string) => {
 };
 
 const calcInitOctaveIndex = (oct: number) => {
-  if (oct === 1) return 1;
-  if (oct === 2) return 2;
-  if (oct === 4) return 3;
-  if (oct === 8) return 4;
+  if (oct === 1) return 0;
+  if (oct === 2) return 1;
+  if (oct === 4) return 2;
+  if (oct === 8) return 3;
 
   return 0;
 };
@@ -107,6 +107,14 @@ export function OscillatorComponent(
         </AudioConnection>
       </UnitColumn>
       <UnitColumn>
+        <Knob
+          text={"VOL"}
+          min={0}
+          max={1}
+          initValue={props.mainVolume.gain.value || 0}
+          resetValue={0}
+          onChange={props.setVolume}
+        />
         <MultiSelect
           label={"OCT"}
           options={OCTAVES}
@@ -117,14 +125,6 @@ export function OscillatorComponent(
               props.setOctave(int);
             }
           }}
-        />
-        <Knob
-          text={"VOL"}
-          min={0}
-          max={1}
-          initValue={props.mainVolume.gain.value || 0}
-          resetValue={0}
-          onChange={props.setVolume}
         />
         <AudioConnection
           wrapperRef={props.wrapperRef}
