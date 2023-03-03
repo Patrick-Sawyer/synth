@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled from "styled-components";
+import "./App.css";
+import { Connection } from "./audioUnits/Connection";
+import { Rack } from "./components/Rack/Rack";
+import { ConnectionTypes } from "./ConnectionContext";
+
+export const CONTEXT = new AudioContext();
+
+export const MAIN_OUT = new Connection("MAIN OUT", ConnectionTypes.INPUT);
+MAIN_OUT.node.gain.value = 1;
+const COMPRESSOR = CONTEXT.createDynamicsCompressor();
+MAIN_OUT.node.connect(COMPRESSOR);
+COMPRESSOR.connect(CONTEXT.destination);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+      <Rack />
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  height: 100vh;
+  width: 100%;
+  user-select: none;
+`;
 
 export default App;
