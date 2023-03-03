@@ -18,6 +18,7 @@ export enum ReverbTypes {
   CHURCH = "church",
   SPRING = "spring",
   WAREHOUSE = "warehouse",
+  ROOM = "room",
 }
 
 export class Reverb extends BaseUnit {
@@ -34,7 +35,7 @@ export class Reverb extends BaseUnit {
   constructor(input?: SavedReverb) {
     super(AudioUnitTypes.REVERB, input?.unitKey);
     this.output.node.gain.value = 1;
-    this.input = new Connection("input", ConnectionTypes.INPUT);
+    this.input = new Connection("INPUT", ConnectionTypes.INPUT);
     this.input.node.gain.value = 1;
 
     this.addReverb = async (convolver: ConvolverNode, type: ReverbTypes) => {

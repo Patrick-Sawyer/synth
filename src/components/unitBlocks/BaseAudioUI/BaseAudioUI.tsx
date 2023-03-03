@@ -17,6 +17,7 @@ const Wrapper = styled.div<{
   height: ${UNIT_HEIGHT};
   border-bottom: 1px solid transparent;
   background-color: ${({ color }) => color};
+  border-radius: 2px;
   padding: 20px 20px 0 20px;
   border-right: 1px solid rgba(255, 255, 255, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.3);

@@ -12,6 +12,7 @@ const OPTIONS: Array<ReverbTypes> = [
   ReverbTypes.WAREHOUSE,
   ReverbTypes.CHURCH,
   ReverbTypes.DIRTY,
+  ReverbTypes.ROOM,
 ];
 
 export function ReverbComponent(

@@ -13,11 +13,17 @@ interface Props {
   label: string;
   options: Array<Option>;
   onSelect: (option: any) => void;
+  closeOnClick?: boolean;
 }
 
 export const OPTION_HEIGHT = "26px";
 
-export function UnitSelector({ label, options, onSelect }: Props) {
+export function UnitSelector({
+  label,
+  options,
+  onSelect,
+  closeOnClick = false,
+}: Props) {
   const [active, setActive] = useState<boolean>(false);
   const mouseOver = useRef(false);
 
@@ -32,7 +38,7 @@ export function UnitSelector({ label, options, onSelect }: Props) {
           if (!mouseOver.current) {
             setActive(false);
           }
-        }, 500);
+        }, 400);
       }}
     >
       <Select>
@@ -53,9 +59,10 @@ export function UnitSelector({ label, options, onSelect }: Props) {
               last={index === options.length - 1}
               onPointerDown={() => {
                 onSelect(value);
-                setTimeout(() => {
-                  setActive(false);
-                }, 200);
+                closeOnClick &&
+                  setTimeout(() => {
+                    setActive(false);
+                  }, 200);
               }}
             >
               {text}

@@ -204,6 +204,7 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
           value: patch,
           text: patch,
         }))}
+        closeOnClick
         onSelect={(value) => {
           load(PATCH_PREFIX + value);
         }}
