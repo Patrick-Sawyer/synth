@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, RefObject, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Coordinate } from "../../audioUnits/Connection";
 import { useConnectionContext } from "../../ConnectionContext";
@@ -56,18 +56,22 @@ const WireComponent = ({ x1, x2, y1, y2, colorOverride }: WireProps) => {
 
 const Wire = memo(WireComponent);
 
-export function Wires() {
-  const { connections, fromConnection } = useConnectionContext();
+interface Props {
+  wrapperRef: RefObject<HTMLDivElement>;
+}
 
+export function Wires({ wrapperRef }: Props) {
+  const { connections, fromConnection } = useConnectionContext();
   const [mousePosition, setMousePosition] = useState<Coordinate>();
 
   useEffect(() => {
     const handleMouseMove = debounce((e: MouseEvent) => {
       const { pageX, pageY } = e;
+      const offset = wrapperRef.current?.scrollTop || 0;
 
       setMousePosition({
         x: pageX,
-        y: pageY,
+        y: pageY + offset,
       });
     }, 100);
 
@@ -76,7 +80,7 @@ export function Wires() {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [wrapperRef]);
 
   return (
     <Wrapper>
@@ -116,14 +120,5 @@ const Wrapper = styled.div`
   pointer-events: none;
   top: 0;
   width: 100%;
-  height: 100%;
-`;
-
-const Dot = styled.div`
-  height: 10px;
-  width: 10px;
-  background-color: red;
-  position: absolute;
-  z-index: 200;
-  border-radius: 50%;
+  height: 3000px;
 `;

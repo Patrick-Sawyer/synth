@@ -148,7 +148,7 @@ const Select = styled.div`
   outline: none;
   max-height: 400px;
   overflow-y: scroll;
-
+  z-index: 10000;
   position: absolute;
   top: 0;
 `;

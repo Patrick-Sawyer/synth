@@ -82,7 +82,7 @@ export function Rack() {
             )}
           </AudioUnits>
         </RackWrapper>
-        <Wires />
+        <Wires wrapperRef={ref} />
       </Wrapper>
     </ConnectionContextProvider>
   );

@@ -118,8 +118,10 @@ export function AudioConnection({
 
         const position = {
           x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2,
+          y: rect.top + rect.height / 2 + wrapperRef.current.scrollTop,
         };
+
+        console.log("POSITION", position);
 
         connection.position = position;
         const thisConnectionKey = unitKey + connectionKey;

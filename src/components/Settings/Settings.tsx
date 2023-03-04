@@ -182,38 +182,49 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
 
   return (
     <Wrapper>
-      <UnitSelector
-        options={AudioUnitListOption}
-        onSelect={addUnit}
-        label={`Add unit: `}
-      />
-      <UnitSelector
-        options={audioUnits.map(({ label, unitKey, color }) => ({
-          text: label,
-          value: unitKey,
-          color,
-          key: unitKey,
-        }))}
-        onSelect={removeUnit}
-        label={`Remove unit: `}
-      />
+      <Section>
+        <UnitSelector
+          options={AudioUnitListOption}
+          onSelect={addUnit}
+          label={`Add unit: `}
+        />
+        <UnitSelector
+          options={audioUnits.map(({ label, unitKey, color }) => ({
+            text: label,
+            value: unitKey,
+            color,
+            key: unitKey,
+          }))}
+          onSelect={removeUnit}
+          label={`Remove unit: `}
+        />
+      </Section>
 
-      <UnitSelector
-        options={savedPatches.map((patch) => ({
-          key: patch,
-          value: patch,
-          text: patch,
-        }))}
-        closeOnClick
-        onSelect={(value) => {
-          load(PATCH_PREFIX + value);
-        }}
-        label={`Load patch: `}
-      />
-      <SaveComponent text={text} setText={setText} onClick={saveAs} />
+      <Section>
+        <UnitSelector
+          options={savedPatches.map((patch) => ({
+            key: patch,
+            value: patch,
+            text: patch,
+          }))}
+          closeOnClick
+          onSelect={(value) => {
+            load(PATCH_PREFIX + value);
+          }}
+          label={`Load patch: `}
+        />
+        <SaveComponent text={text} setText={setText} onClick={saveAs} />
+      </Section>
     </Wrapper>
   );
 }
+
+const Section = styled.div`
+  display: flex;
+  flex: 1;
+  gap: 15px;
+  justify-content: space-evenly;
+`;
 
 const Wrapper = styled.div`
   width: 100%;
