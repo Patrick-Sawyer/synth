@@ -72,6 +72,7 @@ export function OscillatorComponent(
             }
             small
             onChange={props.setAmAmount}
+            exponentialAmount={2}
           />
         </AudioConnection>
       </UnitColumn>
@@ -109,6 +110,7 @@ export function OscillatorComponent(
             }
             small
             onChange={props.setFmAmount}
+            exponentialAmount={2}
           />
         </AudioConnection>
       </UnitColumn>

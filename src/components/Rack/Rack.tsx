@@ -6,7 +6,7 @@ import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
 import { ConnectionContextProvider } from "../../ConnectionContext";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
 import { LFOComponent } from "../LFO/LFOComponent";
-import { OscillatorComponent } from "../Oscillator/Oscillator";
+import { OscillatorComponent } from "../Oscillator/OscillatorComponent";
 import { ReverbComponent } from "../Reverb/ReverbComponent";
 import { Sequencer } from "../Sequencer/Sequencer";
 import { Settings } from "../Settings/Settings";

@@ -1,7 +1,10 @@
 import { RefObject } from "react";
 import { INIT_RATE, INIT_VOL, LFO } from "../../audioUnits/LFO";
 import { WaveTypes } from "../../audioUnits/Oscillator";
-import { calcInitTypeIndex, WAVE_TYPES } from "../Oscillator/Oscillator";
+import {
+  calcInitTypeIndex,
+  WAVE_TYPES,
+} from "../Oscillator/OscillatorComponent";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { BaseAudioUI } from "../unitBlocks/BaseAudioUI/BaseAudioUI";
 import { Knob } from "../unitBlocks/Knob";
@@ -48,6 +51,48 @@ export function LFOComponent(
           resetValue={0.3}
           exponentialAmount={2}
         />
+      </UnitColumn>
+      <UnitColumn>
+        <AudioConnection
+          wrapperRef={props.wrapperRef}
+          connection={props.amIn}
+          unitKey={props.unitKey}
+          connectionKey={"amIn"}
+        >
+          <Knob
+            min={0}
+            max={10}
+            resetValue={0}
+            initValue={
+              props.amIn.node.gain.value === undefined
+                ? 0
+                : props.amIn.node.gain.value
+            }
+            small
+            onChange={props.setAmAmount}
+            exponentialAmount={2}
+          />
+        </AudioConnection>
+        <AudioConnection
+          wrapperRef={props.wrapperRef}
+          connection={props.fmIn}
+          unitKey={props.unitKey}
+          connectionKey={"fmIn"}
+        >
+          <Knob
+            min={0}
+            max={10}
+            resetValue={0}
+            initValue={
+              props.amIn.node.gain.value === undefined
+                ? 0
+                : props.amIn.node.gain.value
+            }
+            small
+            onChange={props.setFmAmount}
+            exponentialAmount={2}
+          />
+        </AudioConnection>
         <AudioConnection
           wrapperRef={props.wrapperRef}
           connection={props.output}

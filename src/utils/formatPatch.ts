@@ -65,6 +65,9 @@ export const formatOnSave = (units: Array<any>): Patch => {
           return {
             type: AudioUnitTypes.LFO,
             unitKey: unit.unitKey,
+            waveform: unit.oscillator.type,
+            rate: unit.oscillator.frequency.value,
+            amount: unit.output.node.gain.value,
           } as SavedLFO;
         default:
           return null as unknown as SavedUnit;
