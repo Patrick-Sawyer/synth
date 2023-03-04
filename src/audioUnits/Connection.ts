@@ -12,8 +12,9 @@ export class Connection {
   position: Coordinate;
   name: string;
   type: ConnectionTypes;
+  limit: number;
 
-  constructor(name: string, type: ConnectionTypes) {
+  constructor(name: string, type: ConnectionTypes, limit = Infinity) {
     this.node = CONTEXT.createGain();
     this.type = type;
     this.name = name;
@@ -22,5 +23,6 @@ export class Connection {
       x: 0,
       y: 0,
     };
+    this.limit = limit;
   }
 }

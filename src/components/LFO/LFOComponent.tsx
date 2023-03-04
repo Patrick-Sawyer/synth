@@ -19,7 +19,7 @@ export function LFOComponent(
       <UnitColumn>
         <Knob
           text="RATE"
-          min={1}
+          min={0}
           max={100}
           onChange={props.setLFO}
           initValue={
@@ -41,14 +41,14 @@ export function LFOComponent(
         <Knob
           text="AMOUNT"
           min={0}
-          max={1}
+          max={0.6}
           onChange={props.setAmount}
           initValue={
             props.output.node.gain.value === undefined
               ? INIT_VOL
               : props.output.node.gain.value
           }
-          resetValue={0.3}
+          resetValue={0}
           exponentialAmount={2}
         />
       </UnitColumn>
@@ -84,9 +84,9 @@ export function LFOComponent(
             max={10}
             resetValue={0}
             initValue={
-              props.amIn.node.gain.value === undefined
+              props.fmIn.node.gain.value === undefined
                 ? 0
-                : props.amIn.node.gain.value
+                : props.fmIn.node.gain.value
             }
             small
             onChange={props.setFmAmount}

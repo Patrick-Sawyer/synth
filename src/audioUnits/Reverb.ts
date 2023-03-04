@@ -33,7 +33,6 @@ export class Reverb extends BaseUnit {
   addReverb: (convolver: ConvolverNode, type: ReverbTypes) => Promise<void>;
 
   constructor(input?: SavedReverb) {
-    console.log("REVERB INPUT", input);
     super(AudioUnitTypes.REVERB, input?.unitKey);
     this.output.node.gain.value = 1;
     this.input = new Connection("INPUT", ConnectionTypes.INPUT);

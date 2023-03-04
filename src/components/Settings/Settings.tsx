@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { MAIN_OUT } from "../../App";
 import { Connection } from "../../audioUnits/Connection";
 import { Envelope } from "../../audioUnits/Envelope";
+import { Filter } from "../../audioUnits/Filter";
 import { LFO } from "../../audioUnits/LFO";
 import { Oscillator } from "../../audioUnits/Oscillator";
 import { Reverb } from "../../audioUnits/Reverb";
@@ -49,6 +50,12 @@ const AudioUnitListOption: Array<Option> = [
     key: AudioUnitTypes.LFO,
     color: Colors.lfo,
   },
+  {
+    text: "Filter",
+    value: AudioUnitTypes.FILTER,
+    key: AudioUnitTypes.FILTER,
+    color: Colors.filter,
+  },
 ];
 
 const getUnit = (type: AudioUnitTypes) => {
@@ -59,6 +66,8 @@ const getUnit = (type: AudioUnitTypes) => {
       return new Envelope();
     case AudioUnitTypes.REVERB:
       return new Reverb();
+    case AudioUnitTypes.FILTER:
+      return new Filter();
     case AudioUnitTypes.LFO:
       return new LFO();
   }
@@ -131,8 +140,6 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
         const units = formatOnLoad(parsedJson.patch);
 
         const connectionsToSetup = parsedJson.connections;
-        console.log("UNITS", units);
-        console.log("Connections", connectionsToSetup);
         setConnections && setConnections(connectionsToSetup);
 
         connectionsToSetup.forEach((conn: FullConnection) => {
@@ -160,10 +167,7 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
               );
               const toKey = conn.to.connectionKey as keyof typeof unit;
               toConnection = unit?.[toKey];
-              console.log("FOUND UNIT", unit, "LOOGIN FOR KEY", toKey);
             }
-
-            console.log(fromConnection, toConnection);
 
             if (fromConnection && toConnection) {
               fromConnection.node.connect(toConnection.node);
@@ -208,7 +212,6 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
           label={`Remove unit: `}
         />
       </Section>
-
       <Section>
         <UnitSelector
           options={savedPatches.map((patch) => ({
@@ -233,6 +236,7 @@ const Section = styled.div`
   flex: 1;
   gap: 15px;
   justify-content: space-evenly;
+  position: relative;
 `;
 
 const Wrapper = styled.div`
@@ -246,6 +250,6 @@ const Wrapper = styled.div`
   justify-content: center;
   padding: 10px 20px;
   flex-wrap: wrap;
-  z-index: 1000;
+  z-index: 20000;
   position: relative;
 `;

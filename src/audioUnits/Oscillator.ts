@@ -38,7 +38,7 @@ export class Oscillator extends BaseUnit {
 
   constructor(input?: SavedOscillator) {
     super(AudioUnitTypes.OSCILLATOR, input?.unitKey);
-    this.output.node.gain.value = 0.3;
+    this.output.node.gain.value = 1;
 
     this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN);
     this.fmIn = new Connection("FM IN", ConnectionTypes.INPUT);

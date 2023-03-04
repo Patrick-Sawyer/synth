@@ -16,7 +16,7 @@ export interface SavedLFO {
 }
 
 export const INIT_RATE = 14;
-export const INIT_VOL = 0.25;
+export const INIT_VOL = 0.2;
 
 export class LFO extends BaseUnit {
   oscillator: OscillatorNode;

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../../utils/theme";
 
@@ -25,20 +25,11 @@ export function UnitSelector({
   closeOnClick = false,
 }: Props) {
   const [active, setActive] = useState<boolean>(false);
-  const mouseOver = useRef(false);
 
   return (
     <Wrapper
-      onMouseEnter={() => {
-        mouseOver.current = true;
-      }}
       onMouseLeave={() => {
-        mouseOver.current = false;
-        setTimeout(() => {
-          if (!mouseOver.current) {
-            setActive(false);
-          }
-        }, 400);
+        setActive(false);
       }}
     >
       <Select>
@@ -105,6 +96,7 @@ const OptionComponent = styled.span<{
   overflow: hidden;
   transition: 0.2s;
   cursor: pointer;
+
   user-select: none;
 
   ${({ first }) =>
@@ -148,7 +140,6 @@ const Select = styled.div`
   outline: none;
   max-height: 400px;
   overflow-y: scroll;
-  z-index: 10000;
   position: absolute;
   top: 0;
 `;

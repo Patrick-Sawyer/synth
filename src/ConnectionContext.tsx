@@ -25,6 +25,7 @@ export interface MakeConnection {
     y: number;
   };
   node: GainNode;
+  limit: number;
 }
 
 export interface FullConnection {

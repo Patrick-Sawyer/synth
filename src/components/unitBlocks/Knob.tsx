@@ -41,6 +41,20 @@ const getAsPercentage = (
   const trueValue = value - min;
   const valueAsFraction = trueValue / range;
   const exponential = Math.pow(valueAsFraction, 1 / exponentialAmount);
+
+  if (Number.isNaN(exponential)) {
+    console.log(
+      value,
+      min,
+      max,
+      exponentialAmount,
+      range,
+      trueValue,
+      valueAsFraction,
+      exponential
+    );
+  }
+
   return exponential * 100;
 };
 
@@ -117,8 +131,10 @@ export function Knob({
       const exponential =
         Math.pow(newValue, exponentialAmount) /
         Math.pow(max, exponentialAmount - 1);
-      console.log(exponential);
-      onChange(exponential);
+
+      if (!Number.isNaN(exponential)) {
+        onChange(exponential);
+      }
     }
   }, [exponentialAmount, max, min, onChange, value]);
 

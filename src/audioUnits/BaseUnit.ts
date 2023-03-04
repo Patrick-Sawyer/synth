@@ -29,6 +29,10 @@ const CONFIG: Record<AudioUnitTypes, LabelAndColor> = {
     label: "LFO",
     color: Colors.lfo,
   },
+  [AudioUnitTypes.FILTER]: {
+    label: "Filter",
+    color: Colors.filter,
+  },
 };
 
 export class BaseUnit {

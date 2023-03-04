@@ -78,6 +78,7 @@ export function AudioConnection({
         type: connection.type,
         position: connection.position,
         node: connection.node,
+        limit: connection.limit,
       });
   };
 
@@ -88,27 +89,48 @@ export function AudioConnection({
       type: connection.type,
       position: connection.position,
       node: connection.node,
+      limit: connection.limit,
     };
 
-    if (
-      fromConnection &&
-      setConnections &&
-      fromConnection.unitKey !== unitKey &&
-      typesMatch(fromConnection.type, connection.type) &&
-      connectionDoesNotAlreadyExist(fromConnection, thisConnection, connections)
-    ) {
-      const all = [...connections];
-      all.push({
-        from: fromConnection,
-        to: thisConnection,
-      });
+    const numberOfExistingConnections = connections.filter((conn) => {
+      return (
+        conn.to.connectionKey === thisConnection.connectionKey &&
+        conn.to.unitKey === thisConnection.unitKey
+      );
+    }).length;
 
-      fromConnection.node.connect(thisConnection.node);
-      setConnections(all);
-      setFromValue && setFromValue(null);
-    } else {
-      setFromValue && setFromValue(null);
+    if (!fromConnection || !setConnections) {
+      return;
     }
+
+    const exceedsLimit = numberOfExistingConnections >= thisConnection.limit;
+    const isSameUnit = fromConnection?.unitKey === unitKey;
+    const match = typesMatch(fromConnection.type, connection.type);
+    const connectionExists = !connectionDoesNotAlreadyExist(
+      fromConnection,
+      thisConnection,
+      connections
+    );
+
+    if (exceedsLimit || isSameUnit || connectionExists || !match) {
+      const cursorStyle = document.createElement("style");
+      cursorStyle.innerHTML = "*{cursor: not-allowed!important;}";
+      cursorStyle.id = "cursor-style";
+      document.head.appendChild(cursorStyle);
+      setFromValue && setFromValue(null);
+      return;
+    }
+
+    const all = [...connections];
+    all.push({
+      from: fromConnection,
+      to: thisConnection,
+    });
+
+    fromConnection.node.connect(thisConnection.node);
+
+    setConnections(all);
+    setFromValue && setFromValue(null);
   };
 
   useEffect(() => {
@@ -120,8 +142,6 @@ export function AudioConnection({
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2 + wrapperRef.current.scrollTop,
         };
-
-        console.log("POSITION", position);
 
         connection.position = position;
         const thisConnectionKey = unitKey + connectionKey;
@@ -154,7 +174,14 @@ export function AudioConnection({
   return (
     <Wrapper>
       {children}
-      <Plug ref={ref} onPointerDown={onPointerDown} onPointerUp={onPointerUp} />
+      <Plug
+        onMouseLeave={() => {
+          document.getElementById("cursor-style")?.remove();
+        }}
+        ref={ref}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+      />
       <Label darkText={darkText}>{connection.name}</Label>
     </Wrapper>
   );

@@ -1,4 +1,5 @@
 import { Envelope, SavedEnvelope } from "../audioUnits/Envelope";
+import { Filter, SavedFilter } from "../audioUnits/Filter";
 import { LFO, SavedLFO } from "../audioUnits/LFO";
 import { Oscillator, SavedOscillator } from "../audioUnits/Oscillator";
 import { Reverb, SavedReverb } from "../audioUnits/Reverb";
@@ -21,6 +22,8 @@ export const formatOnLoad = (units: Patch): Array<AudioUnit> => {
           return new Reverb(unit as SavedReverb);
         case AudioUnitTypes.LFO:
           return new LFO(unit as SavedLFO);
+        case AudioUnitTypes.FILTER:
+          return new Filter(unit as SavedFilter);
         default:
           return null;
       }
@@ -71,6 +74,15 @@ export const formatOnSave = (units: Array<any>): Patch => {
             fmAmount: unit.fmIn.node.gain.value,
             amAmount: unit.amIn.node.gain.value,
           } as SavedLFO;
+        case AudioUnitTypes.FILTER:
+          return {
+            type: AudioUnitTypes.FILTER,
+            unitKey: unit.unitKey,
+            waveform: unit.filter.type,
+            fmAmount: unit.fmAmount,
+            resonance: unit.filter.Q.value,
+            frequency: unit.filter.frequency.value,
+          } as SavedFilter;
         default:
           return null as unknown as SavedUnit;
       }
