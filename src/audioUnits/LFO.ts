@@ -11,6 +11,8 @@ export interface SavedLFO {
   rate: number;
   waveform: WaveTypes;
   amount: number;
+  fmAmount: number;
+  amAmount: number;
 }
 
 export const INIT_RATE = 14;
@@ -55,8 +57,12 @@ export class LFO extends BaseUnit {
     };
 
     this.fmIn = new Connection("FM IN", ConnectionTypes.INPUT);
+    this.fmIn.node.gain.value =
+      input?.fmAmount === undefined ? 0 : input.fmAmount;
     this.fmIn.node.connect(this.oscillator.frequency);
     this.amIn = new Connection("AM IN", ConnectionTypes.INPUT);
+    this.amIn.node.gain.value =
+      input?.amAmount === undefined ? 0 : input.amAmount;
     this.amIn.node.connect(this.output.node.gain);
 
     this.setAmAmount = (value: number) => {

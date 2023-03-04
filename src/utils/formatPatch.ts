@@ -68,6 +68,8 @@ export const formatOnSave = (units: Array<any>): Patch => {
             waveform: unit.oscillator.type,
             rate: unit.oscillator.frequency.value,
             amount: unit.output.node.gain.value,
+            fmAmount: unit.fmIn.node.gain.value,
+            amAmount: unit.amIn.node.gain.value,
           } as SavedLFO;
         default:
           return null as unknown as SavedUnit;
