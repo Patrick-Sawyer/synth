@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Label } from "./Label";
 
 interface Props {
-  label: string;
+  label?: string;
   options: Array<string>;
   onPress: (option: string) => void;
   initIndex?: number;
@@ -31,7 +31,7 @@ export function MultiSelect({
 
   return (
     <Wrapper>
-      <Options>
+      <div>
         {options?.map((option, index) => (
           <Option
             key={option}
@@ -43,24 +43,22 @@ export function MultiSelect({
             {option.substring(0, chars)}
           </Option>
         ))}
-      </Options>
-      <Label onPointerDown={handleButton} button>
-        {label}
-      </Label>
+      </div>
+      {!!label && (
+        <Label onPointerDown={handleButton} button>
+          {label}
+        </Label>
+      )}
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
   width: 100%;
-  margin-bottom: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const Options = styled.div`
-  margin-bottom: 15px;
+  gap: 10px;
 `;
 
 const Option = styled.div`

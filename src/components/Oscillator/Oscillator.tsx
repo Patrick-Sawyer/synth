@@ -6,10 +6,16 @@ import { Knob } from "../unitBlocks/Knob";
 import { MultiSelect } from "../unitBlocks/MultiSelect";
 import { UnitColumn } from "../unitBlocks/UnitColumn";
 
-const WAVE_TYPES: WaveTypes[] = ["sine", "sawtooth", "triangle", "square"];
+export const WAVE_TYPES: WaveTypes[] = [
+  "sine",
+  "sawtooth",
+  "triangle",
+  "square",
+];
+
 const OCTAVES = ["1", "2", "4", "8"];
 
-const calcInitTypeIndex = (type: string) => {
+export const calcInitTypeIndex = (type: string) => {
   if (type === "sine") return 0;
   if (type === "sawtooth") return 1;
   if (type === "triangle") return 2;
@@ -41,7 +47,7 @@ export function OscillatorComponent(
         />
 
         <MultiSelect
-          label={"TYPE"}
+          label={"WAVE"}
           options={WAVE_TYPES}
           initIndex={calcInitTypeIndex(props.oscillator.type)}
           onPress={(option: any) => {

@@ -5,6 +5,7 @@ import { Oscillator } from "../../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
 import { ConnectionContextProvider } from "../../ConnectionContext";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
+import { LFOComponent } from "../LFO/LFOComponent";
 import { OscillatorComponent } from "../Oscillator/Oscillator";
 import { ReverbComponent } from "../Reverb/ReverbComponent";
 import { Sequencer } from "../Sequencer/Sequencer";
@@ -38,6 +39,13 @@ export function Rack() {
         return (
           <ReverbComponent
             {...(unit as unknown as ComponentProps<typeof ReverbComponent>)}
+          />
+        );
+
+      case AudioUnitTypes.LFO:
+        return (
+          <LFOComponent
+            {...(unit as unknown as ComponentProps<typeof LFOComponent>)}
           />
         );
 

@@ -5,4 +5,5 @@ export const Colors = {
   oscillator: "#0b1159",
   envelope: "#9e2087",
   reverb: "#3e5e44",
+  lfo: "#b3532d",
 };

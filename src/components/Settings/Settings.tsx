@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { MAIN_OUT } from "../../App";
 import { Connection } from "../../audioUnits/Connection";
 import { Envelope } from "../../audioUnits/Envelope";
+import { LFO } from "../../audioUnits/LFO";
 import { Oscillator } from "../../audioUnits/Oscillator";
 import { Reverb } from "../../audioUnits/Reverb";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
@@ -42,6 +43,12 @@ const AudioUnitListOption: Array<Option> = [
     key: AudioUnitTypes.REVERB,
     color: Colors.reverb,
   },
+  {
+    text: "LFO",
+    value: AudioUnitTypes.LFO,
+    key: AudioUnitTypes.LFO,
+    color: Colors.lfo,
+  },
 ];
 
 const getUnit = (type: AudioUnitTypes) => {
@@ -52,6 +59,8 @@ const getUnit = (type: AudioUnitTypes) => {
       return new Envelope();
     case AudioUnitTypes.REVERB:
       return new Reverb();
+    case AudioUnitTypes.LFO:
+      return new LFO();
   }
 };
 

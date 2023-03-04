@@ -28,12 +28,20 @@ interface Props {
   onChange: (value: number) => void;
   initValue: number;
   small?: boolean;
+  exponentialAmount?: number;
 }
 
-const getAsPercentage = (value: number, min: number, max: number): number => {
-  const newValue = value - min;
+const getAsPercentage = (
+  value: number,
+  min: number,
+  max: number,
+  exponentialAmount: number
+): number => {
   const range = max - min;
-  return (100 * newValue + min) / range;
+  const trueValue = value - min;
+  const valueAsFraction = trueValue / range;
+  const exponential = Math.pow(valueAsFraction, 1 / exponentialAmount);
+  return exponential * 100;
 };
 
 export function Knob({
@@ -44,10 +52,13 @@ export function Knob({
   resetValue,
   initValue,
   small = false,
+  exponentialAmount = 1,
 }: Props) {
   const state = useRef<State>({});
   const [value, setValue] = useState(
-    initValue !== undefined ? getAsPercentage(initValue, min, max) : 0
+    initValue !== undefined
+      ? getAsPercentage(initValue, min, max, exponentialAmount)
+      : 0
   );
 
   const onPointerDown: PointerEventHandler<HTMLDivElement> = useCallback(
@@ -79,7 +90,12 @@ export function Knob({
   }, 25);
 
   const reset = () => {
-    const newPercentage = getAsPercentage(resetValue, min, max);
+    const newPercentage = getAsPercentage(
+      resetValue,
+      min,
+      max,
+      exponentialAmount
+    );
     setValue(newPercentage);
   };
 
@@ -97,10 +113,14 @@ export function Knob({
     if (onChange) {
       const fraction = value / 100;
       const range = max - min;
-      const newValue = fraction * range + min;
-      onChange(newValue);
+      let newValue = fraction * range + min;
+      const exponential =
+        Math.pow(newValue, exponentialAmount) /
+        Math.pow(max, exponentialAmount - 1);
+      console.log(exponential);
+      onChange(exponential);
     }
-  }, [max, min, onChange, value]);
+  }, [exponentialAmount, max, min, onChange, value]);
 
   return (
     <Wrapper>
