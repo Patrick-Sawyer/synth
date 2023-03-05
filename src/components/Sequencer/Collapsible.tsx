@@ -33,8 +33,8 @@ export function Collapsible({ children, title }: Props) {
 }
 
 const Outer = styled.div`
-  height: 45px;
-  max-height: 45px;
+  height: 40px;
+  max-height: 40px;
   position: relative;
   z-index: 50000;
   flex: 1;
@@ -65,7 +65,7 @@ const Title = styled.span`
   opacity: 0.8;
   color: white;
   display: flex;
-  height: 45px;
+  height: 40px;
   line-height: 0;
   align-items: center;
   justify-content: center;
@@ -77,8 +77,8 @@ const ChevronContainer = styled.div<{
   collapsed: boolean;
 }>`
   position: absolute;
-  height: 45px;
-  width: 45px;
+  height: 40px;
+  width: 40px;
   left: 4px;
   top: 0;
   display: flex;
@@ -91,7 +91,7 @@ const ChevronContainer = styled.div<{
 const Wrapper = styled.div<{
   collapsed: boolean;
 }>`
-  height: ${({ collapsed }) => (collapsed ? "45px" : "585px")};
+  height: ${({ collapsed }) => (collapsed ? "40px" : "585px")};
   background-color: ${Colors.background};
   border-radius: 3px;
   display: flex;
@@ -106,7 +106,7 @@ const Wrapper = styled.div<{
 `;
 
 const Top = styled.div`
-  height: 45px;
+  height: 40px;
 
   justify-content: center;
   display: flex;

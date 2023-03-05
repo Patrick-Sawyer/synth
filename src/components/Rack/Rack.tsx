@@ -195,6 +195,7 @@ const Title = styled.div`
   width: calc(100% - 15px);
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 `;
 
 const MainOut = styled.div`
