@@ -25,12 +25,12 @@ export function Collapsible({ children, title, name, wrapperRef }: Props) {
           setCollapsed(!collapsed);
         }}
       >
-        <Title>
+        <ChevronWrapper>
           <ChevronContainer collapsed={collapsed}>
             <Chevron height={"14px"} color={"white"} />
           </ChevronContainer>
-          {title}
-        </Title>
+        </ChevronWrapper>
+        <Title>{title}</Title>
         <ConnWrapper>
           <AudioConnection
             connection={connection}
@@ -45,6 +45,10 @@ export function Collapsible({ children, title, name, wrapperRef }: Props) {
     </Wrapper>
   );
 }
+
+const ChevronWrapper = styled.div`
+  width: 80px;
+`;
 
 const ConnWrapper = styled.div`
   margin-right: 15px;
@@ -106,6 +110,7 @@ const Wrapper = styled.div<{
   width: 100%;
   flex-direction: column;
   transition-property: all;
+  position: relative;
   transition-duration: 0.3s;
   transition-timing-function: cubic-bezier(1, 1, 1, 1);
   overflow: hidden;

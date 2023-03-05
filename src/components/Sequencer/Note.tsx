@@ -53,14 +53,14 @@ const Wrapper = styled.div<GridNote & { isBeingCreated?: boolean }>`
   position: absolute;
   height: 10px;
   width: ${({ length }) => CELL_WIDTH * length - 1}px;
-  background-color: #331286;
+  background-color: #59d121;
   bottom: ${({ note }) => CELL_HEIGHT * note}px;
   left: ${({ start }) => start * CELL_WIDTH + 1}px;
   border-radius: 2px;
   border: 1px solid
-    ${({ isBeingCreated }) =>
-      isBeingCreated ? "white" : " rgba(255, 255, 255, 0.5)"};
+    ${({ isBeingCreated }) => (isBeingCreated ? "white" : "#008a15")};
   box-sizing: border-box;
+  transition: 0.15s;
 
   &:hover {
     border: 1px solid white;
