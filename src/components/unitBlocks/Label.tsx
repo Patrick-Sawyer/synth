@@ -6,6 +6,7 @@ export const Label = styled.span<{ button?: boolean; darkText?: boolean }>`
   text-align: center;
   color: ${({ darkText }) => (darkText ? "black" : "white")};
   opacity: 0.7;
+  min-width: 40px;
 
   ${({ button }) =>
     !!button &&

@@ -7,4 +7,5 @@ export const Colors = {
   reverb: "#3e5e44",
   lfo: "#b3532d",
   filter: "#252aba",
+  delay: "#695e53",
 };

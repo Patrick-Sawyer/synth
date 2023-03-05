@@ -1,3 +1,4 @@
+import { Delay, SavedDelay } from "../audioUnits/Delay";
 import { Envelope, SavedEnvelope } from "../audioUnits/Envelope";
 import { Filter, SavedFilter } from "../audioUnits/Filter";
 import { LFO, SavedLFO } from "../audioUnits/LFO";
@@ -24,6 +25,8 @@ export const formatOnLoad = (units: Patch): Array<AudioUnit> => {
           return new LFO(unit as SavedLFO);
         case AudioUnitTypes.FILTER:
           return new Filter(unit as SavedFilter);
+        case AudioUnitTypes.DELAY:
+          return new Delay(unit as SavedDelay);
         default:
           return null;
       }
@@ -83,6 +86,10 @@ export const formatOnSave = (units: Array<any>): Patch => {
             resonance: unit.filter.Q.value,
             frequency: unit.filter.frequency.value,
           } as SavedFilter;
+        case AudioUnitTypes.DELAY:
+          return {
+            type: AudioUnitTypes.DELAY,
+          } as SavedDelay;
         default:
           return null as unknown as SavedUnit;
       }

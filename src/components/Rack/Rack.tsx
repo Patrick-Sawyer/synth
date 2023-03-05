@@ -4,6 +4,7 @@ import { Envelope } from "../../audioUnits/Envelope";
 import { Oscillator } from "../../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
 import { ConnectionContextProvider } from "../../ConnectionContext";
+import { DelayComponent } from "../Delay/DelayComponent";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
 import { FilterComponent } from "../Filter/FilterComponent";
 import { LFOComponent } from "../LFO/LFOComponent";
@@ -54,6 +55,13 @@ export function Rack() {
         return (
           <FilterComponent
             {...(unit as unknown as ComponentProps<typeof FilterComponent>)}
+          />
+        );
+
+      case AudioUnitTypes.DELAY:
+        return (
+          <DelayComponent
+            {...(unit as unknown as ComponentProps<typeof DelayComponent>)}
           />
         );
 
@@ -111,6 +119,7 @@ const RackWrapper = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
+  overflow-x: hidden;
   overflow-y: scroll;
   position: relative;
 `;

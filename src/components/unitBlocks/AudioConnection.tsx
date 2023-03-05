@@ -23,6 +23,7 @@ interface Props {
   connectionKey: string;
   children?: React.ReactNode;
   darkText?: boolean;
+  horizontal?: boolean;
 }
 
 const typesMatch = (from: ConnectionTypes, to: ConnectionTypes): boolean => {
@@ -57,6 +58,17 @@ const connectionDoesNotAlreadyExist = (
   return value;
 };
 
+const cursorNotAllowed = () => {
+  const cursorStyle = document.createElement("style");
+  cursorStyle.innerHTML = "*{cursor: not-allowed!important;}";
+  cursorStyle.id = "cursor-style";
+  document.head.appendChild(cursorStyle);
+};
+
+const normalCursor = () => {
+  document.getElementById("cursor-style")?.remove();
+};
+
 export function AudioConnection({
   wrapperRef,
   connection,
@@ -64,6 +76,7 @@ export function AudioConnection({
   unitKey,
   connectionKey,
   children,
+  horizontal,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { fromConnection, connections, connectionPositions } =
@@ -100,6 +113,7 @@ export function AudioConnection({
     }).length;
 
     if (!fromConnection || !setConnections) {
+      setFromValue && setFromValue(null);
       return;
     }
 
@@ -113,10 +127,9 @@ export function AudioConnection({
     );
 
     if (exceedsLimit || isSameUnit || connectionExists || !match) {
-      const cursorStyle = document.createElement("style");
-      cursorStyle.innerHTML = "*{cursor: not-allowed!important;}";
-      cursorStyle.id = "cursor-style";
-      document.head.appendChild(cursorStyle);
+      if (!isSameUnit) {
+        cursorNotAllowed();
+      }
       setFromValue && setFromValue(null);
       return;
     }
@@ -172,27 +185,38 @@ export function AudioConnection({
   ]);
 
   return (
-    <Wrapper>
-      {children}
-      <Plug
-        onMouseLeave={() => {
-          document.getElementById("cursor-style")?.remove();
-        }}
-        ref={ref}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-      />
+    <Wrapper horizontal={!!horizontal}>
+      <Blah>
+        {children}
+        <Plug
+          onMouseLeave={() => {
+            normalCursor();
+          }}
+          onDoubleClick={() => {
+            normalCursor();
+          }}
+          ref={ref}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+        />
+      </Blah>
       <Label darkText={darkText}>{connection.name}</Label>
     </Wrapper>
   );
 }
 
-const Wrapper = styled.div`
+const Blah = styled.div`
+  display: flex;
+  gap: 5px;
+`;
+
+const Wrapper = styled.div<{
+  horizontal: boolean;
+}>`
   gap: 12px;
   display: flex;
+  flex-direction: ${({ horizontal }) => (horizontal ? "row" : "column")};
   align-items: center;
-  flex-direction: column;
-  min-width: 35px;
 `;
 
 const Plug = styled.div`
@@ -201,6 +225,7 @@ const Plug = styled.div`
   border-radius: 50%;
   background-color: black;
   border: 4px solid white;
+
   cursor: pointer;
   box-shadow: 7px 6px 20px -7px rgba(0, 0, 0, 0.75);
 `;

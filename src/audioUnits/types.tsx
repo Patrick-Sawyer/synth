@@ -1,3 +1,4 @@
+import { Delay, SavedDelay } from "./Delay";
 import { Envelope, SavedEnvelope } from "./Envelope";
 import { Filter, SavedFilter } from "./Filter";
 import { LFO, SavedLFO } from "./LFO";
@@ -10,13 +11,16 @@ export enum AudioUnitTypes {
   REVERB = "Reverb",
   LFO = "LFO",
   FILTER = "filter",
+  DELAY = "delay",
 }
 
-export type AudioUnit = Oscillator | Envelope | Reverb | LFO | Filter;
+export type AudioUnit = Oscillator | Envelope | Reverb | LFO | Filter | Delay;
 export type SavedUnit =
   | SavedOscillator
   | SavedEnvelope
   | SavedReverb
   | SavedLFO
-  | SavedFilter;
+  | SavedFilter
+  | SavedDelay;
+
 export type Patch = Array<SavedUnit>;

@@ -1,15 +1,19 @@
 import { RefObject } from "react";
 import { INIT_RATE, INIT_VOL, LFO } from "../../audioUnits/LFO";
 import { WaveTypes } from "../../audioUnits/Oscillator";
-import {
-  calcInitTypeIndex,
-  WAVE_TYPES,
-} from "../Oscillator/OscillatorComponent";
+import { calcInitTypeIndex } from "../Oscillator/OscillatorComponent";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { BaseAudioUI } from "../unitBlocks/BaseAudioUI/BaseAudioUI";
 import { Knob } from "../unitBlocks/Knob";
 import { MultiSelect } from "../unitBlocks/MultiSelect";
 import { UnitColumn } from "../unitBlocks/UnitColumn";
+
+const WAVE_TYPES: Array<WaveTypes | "pulse"> = [
+  "sine",
+  "sawtooth",
+  "triangle",
+  "square",
+];
 
 export function LFOComponent(
   props: LFO & { wrapperRef: RefObject<HTMLDivElement> }

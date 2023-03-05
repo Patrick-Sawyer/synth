@@ -1,4 +1,4 @@
-import { CONTEXT } from "../App";
+import { CONTEXT, PulseNode } from "../App";
 import { ConnectionTypes } from "../ConnectionContext";
 import { BaseUnit, FADE, ZERO } from "./BaseUnit";
 import { Connection } from "./Connection";
@@ -8,7 +8,7 @@ export type WaveTypes = "sine" | "sawtooth" | "square" | "triangle";
 
 export interface SavedOscillator {
   mainVolume: number;
-  waveform: WaveTypes;
+  waveform: WaveTypes | "pulse";
   octave: number;
   type: AudioUnitTypes.OSCILLATOR;
   detune: number;
@@ -16,6 +16,8 @@ export interface SavedOscillator {
   unitKey: string;
   fmAmount: number;
   amAmount: number;
+  pulseWidth: number;
+  pulseWidthModulation: number;
 }
 
 export class Oscillator extends BaseUnit {
@@ -35,10 +37,18 @@ export class Oscillator extends BaseUnit {
   setPan: (value: number) => void;
   setAmAmount: (value: number) => void;
   setFmAmount: (value: number) => void;
+  pulse: PulseNode;
+  pulseGain: GainNode;
+  allOtherOscillatorsGain: GainNode;
+  pwm: Connection;
+  setPwm: (value: number) => void;
+  setPulseWidth: (value: number) => void;
 
   constructor(input?: SavedOscillator) {
     super(AudioUnitTypes.OSCILLATOR, input?.unitKey);
     this.output.node.gain.value = 1;
+    // @ts-ignore
+    this.pulse = CONTEXT.createPulseOscillator();
 
     this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN);
     this.fmIn = new Connection("FM IN", ConnectionTypes.INPUT);
@@ -54,13 +64,27 @@ export class Oscillator extends BaseUnit {
     this.oscillator = CONTEXT.createOscillator();
     this.oscillator.frequency.value = 220 * this.octave;
     this.oscillator.start();
-    this.oscillator.type = input?.waveform || "sine";
+    this.oscillator.type =
+      input?.waveform === undefined || input?.waveform === "pulse"
+        ? "sine"
+        : input.waveform;
 
     this.oscillator.detune.value = input?.detune || 0;
 
     this.mainVolume = CONTEXT.createGain();
     this.mainVolume.gain.value = input?.mainVolume || 0.3;
-    this.oscillator.connect(this.mainVolume);
+
+    this.pulseGain = CONTEXT.createGain();
+    this.pulseGain.gain.value = input?.waveform === "pulse" ? 1 : ZERO;
+    this.allOtherOscillatorsGain = CONTEXT.createGain();
+    this.allOtherOscillatorsGain.gain.value =
+      input?.waveform === "pulse" ? ZERO : 1;
+    this.oscillator.connect(this.allOtherOscillatorsGain);
+    this.pulse.start();
+    this.pulse.frequency.value = 220 * this.octave;
+    this.pulse.connect(this.pulseGain);
+    this.pulseGain.connect(this.mainVolume);
+    this.allOtherOscillatorsGain.connect(this.mainVolume);
     this.pan = CONTEXT.createStereoPanner();
     this.pan.pan.value = input?.pan || 0;
     this.mainVolume.connect(this.pan);
@@ -70,9 +94,29 @@ export class Oscillator extends BaseUnit {
     this.offset = 0;
 
     this.fmIn.node.connect(this.oscillator.frequency);
+    this.fmIn.node.connect(this.pulse.frequency);
 
-    this.setWaveform = (next: WaveTypes) => {
-      this.oscillator.type = next;
+    this.setWaveform = (next: WaveTypes | "pulse") => {
+      if (next === "pulse") {
+        this.allOtherOscillatorsGain.gain.linearRampToValueAtTime(
+          ZERO,
+          CONTEXT.currentTime + FADE
+        );
+        this.pulseGain.gain.linearRampToValueAtTime(
+          1,
+          CONTEXT.currentTime + FADE
+        );
+      } else {
+        this.oscillator.type = next;
+        this.allOtherOscillatorsGain.gain.linearRampToValueAtTime(
+          1,
+          CONTEXT.currentTime + FADE
+        );
+        this.pulseGain.gain.linearRampToValueAtTime(
+          ZERO,
+          CONTEXT.currentTime + FADE
+        );
+      }
     };
 
     this.setVolume = (next: number) => {
@@ -81,7 +125,9 @@ export class Oscillator extends BaseUnit {
 
     this.setOctave = (next: number) => {
       const diff = next / this.octave;
-      this.oscillator.frequency.value = this.oscillator.frequency.value * diff;
+      const nextOctave = this.oscillator.frequency.value * diff;
+      this.oscillator.frequency.value = nextOctave;
+      this.pulse.frequency.value = nextOctave;
       this.octave = next;
     };
 
@@ -91,6 +137,7 @@ export class Oscillator extends BaseUnit {
 
         setTimeout(() => {
           this.oscillator.frequency.value = frequency * this.octave;
+          this.pulse.frequency.value = frequency * this.octave;
           this.output.node.gain.exponentialRampToValueAtTime(0.3, FADE);
         }, 10);
       }
@@ -98,6 +145,10 @@ export class Oscillator extends BaseUnit {
 
     this.setOffset = (value) => {
       this.oscillator.detune.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE
+      );
+      this.pulse.detune.linearRampToValueAtTime(
         value,
         CONTEXT.currentTime + FADE
       );
@@ -123,6 +174,32 @@ export class Oscillator extends BaseUnit {
 
     this.setFmAmount = (value: number) => {
       this.fmIn.node.gain.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE
+      );
+    };
+
+    this.pwm = new Connection("PWM", ConnectionTypes.INPUT);
+    this.pwm.node.gain.value =
+      input?.pulseWidthModulation === undefined
+        ? ZERO
+        : input.pulseWidthModulation;
+
+    if (this.pulse.width !== undefined) {
+      this.pulse.width.value =
+        input?.pulseWidth === undefined ? 0 : input.pulseWidth;
+      this.pwm.node.connect(this.pulse.width);
+    }
+
+    this.setPwm = (value: number) => {
+      this.pwm.node.gain.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE
+      );
+    };
+
+    this.setPulseWidth = (value: number) => {
+      this.pulse.width?.linearRampToValueAtTime(
         value,
         CONTEXT.currentTime + FADE
       );

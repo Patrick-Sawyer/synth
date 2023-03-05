@@ -179,8 +179,8 @@ const Wrapper = styled.div`
 const Inner = styled.div<{
   small?: boolean;
 }>`
-  height: ${({ small }) => (small ? "20px" : "30px")};
-  width: ${({ small }) => (small ? "20px" : "30px")};
+  height: ${({ small }) => (small ? "18px" : "30px")};
+  width: ${({ small }) => (small ? "18px" : "30px")};
   border-radius: 50%;
   ${({ small }) => !small && "border: 1px solid white;"}
   background-color: rgba(255, 255, 255, 0.3);

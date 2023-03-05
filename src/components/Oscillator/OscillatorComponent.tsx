@@ -1,4 +1,5 @@
 import { RefObject } from "react";
+import { ZERO } from "../../audioUnits/BaseUnit";
 import { Oscillator, WaveTypes } from "../../audioUnits/Oscillator";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { BaseAudioUI } from "../unitBlocks/BaseAudioUI/BaseAudioUI";
@@ -6,11 +7,11 @@ import { Knob } from "../unitBlocks/Knob";
 import { MultiSelect } from "../unitBlocks/MultiSelect";
 import { UnitColumn } from "../unitBlocks/UnitColumn";
 
-export const WAVE_TYPES: WaveTypes[] = [
+export const WAVE_TYPES: Array<WaveTypes | "pulse"> = [
   "sine",
   "sawtooth",
   "triangle",
-  "square",
+  "pulse",
 ];
 
 const OCTAVES = ["1", "2", "4", "8"];
@@ -45,16 +46,34 @@ export function OscillatorComponent(
           unitKey={props.unitKey}
           connectionKey={"cvIn"}
         />
-
         <MultiSelect
-          label={"WAVE"}
+          label="WAVE"
           options={WAVE_TYPES}
           initIndex={calcInitTypeIndex(props.oscillator.type)}
           onPress={(option: any) => {
             props.setWaveform(option as WaveTypes);
           }}
         />
-
+        <AudioConnection
+          wrapperRef={props.wrapperRef}
+          connection={props.pwm}
+          unitKey={props.unitKey}
+          connectionKey={"pwm"}
+        >
+          <Knob
+            min={0}
+            max={1.5}
+            resetValue={ZERO}
+            initValue={
+              props.pulseGain.gain.value !== undefined
+                ? props.pulseGain.gain.value
+                : ZERO
+            }
+            small
+            onChange={props.setPwm}
+            exponentialAmount={3}
+          />
+        </AudioConnection>
         <AudioConnection
           wrapperRef={props.wrapperRef}
           connection={props.amIn}
@@ -92,6 +111,19 @@ export function OscillatorComponent(
           initValue={props.pan.pan.value || 0}
           resetValue={0}
           onChange={props.setPan}
+          small
+        />
+        <Knob
+          text="PW"
+          min={0}
+          max={0.7}
+          initValue={
+            props.pulse.width?.value === undefined ? 0 : props.pulse.width.value
+          }
+          resetValue={0}
+          onChange={props.setPulseWidth}
+          exponentialAmount={2}
+          small
         />
         <AudioConnection
           wrapperRef={props.wrapperRef}

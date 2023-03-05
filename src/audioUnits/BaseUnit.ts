@@ -33,6 +33,10 @@ const CONFIG: Record<AudioUnitTypes, LabelAndColor> = {
     label: "Filter",
     color: Colors.filter,
   },
+  [AudioUnitTypes.DELAY]: {
+    label: "Filter",
+    color: Colors.delay,
+  },
 };
 
 export class BaseUnit {

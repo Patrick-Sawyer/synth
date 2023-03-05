@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { MAIN_OUT } from "../../App";
 import { Connection } from "../../audioUnits/Connection";
+import { Delay } from "../../audioUnits/Delay";
 import { Envelope } from "../../audioUnits/Envelope";
 import { Filter } from "../../audioUnits/Filter";
 import { LFO } from "../../audioUnits/LFO";
@@ -56,6 +57,12 @@ const AudioUnitListOption: Array<Option> = [
     key: AudioUnitTypes.FILTER,
     color: Colors.filter,
   },
+  {
+    text: "Delay",
+    value: AudioUnitTypes.DELAY,
+    key: AudioUnitTypes.DELAY,
+    color: Colors.delay,
+  },
 ];
 
 const getUnit = (type: AudioUnitTypes) => {
@@ -70,6 +77,8 @@ const getUnit = (type: AudioUnitTypes) => {
       return new Filter();
     case AudioUnitTypes.LFO:
       return new LFO();
+    case AudioUnitTypes.DELAY:
+      return new Delay();
   }
 };
 
