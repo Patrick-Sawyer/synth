@@ -12,6 +12,19 @@ const COMPRESSOR = CONTEXT.createDynamicsCompressor();
 MAIN_OUT.node.connect(COMPRESSOR);
 COMPRESSOR.connect(CONTEXT.destination);
 
+export const SEQ_ONE_CV_OUT = new Connection(
+  "SEQ ONE CV OUT",
+  ConnectionTypes.CV_OUT
+);
+export const SEQ_TWO_CV_OUT = new Connection(
+  "SEQ TWO CV OUT",
+  ConnectionTypes.CV_OUT
+);
+export const SEQ_THREE_CV_OUT = new Connection(
+  "SEQ THREE CV OUT",
+  ConnectionTypes.CV_OUT
+);
+
 const pulseCurve = new Float32Array(256);
 for (let i = 0; i < 128; i++) {
   pulseCurve[i] = -1;

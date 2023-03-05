@@ -1,61 +1,51 @@
-import { RefObject, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import { Connection } from "../../audioUnits/Connection";
-import { ConnectionTypes } from "../../ConnectionContext";
 import { Colors } from "../../utils/theme";
 import Chevron from "../Chevron";
-import { AudioConnection } from "../unitBlocks/AudioConnection";
 
 interface Props {
   children?: React.ReactNode;
   title?: string;
-  name: string;
-  wrapperRef: RefObject<HTMLDivElement>;
 }
 
-export function Collapsible({ children, title, name, wrapperRef }: Props) {
+export function Collapsible({ children, title }: Props) {
   const [collapsed, setCollapsed] = useState(true);
 
-  const connection = new Connection("CV OUT", ConnectionTypes.CV_OUT);
-
   return (
-    <Wrapper collapsed={collapsed}>
-      <Top
-        onClick={() => {
-          setCollapsed(!collapsed);
-        }}
-      >
-        <ChevronWrapper>
-          <ChevronContainer collapsed={collapsed}>
-            <Chevron height={"14px"} color={"white"} />
-          </ChevronContainer>
-        </ChevronWrapper>
-        <Title>{title}</Title>
-        <ConnWrapper>
-          <AudioConnection
-            connection={connection}
-            unitKey={name}
-            connectionKey={name}
-            wrapperRef={wrapperRef}
-            horizontal
-          />
-        </ConnWrapper>
-      </Top>
-      <Content collapsed={collapsed}>{children}</Content>
-    </Wrapper>
+    <Outer>
+      <Wrapper collapsed={collapsed}>
+        <Top
+          onClick={() => {
+            setCollapsed(!collapsed);
+          }}
+        >
+          <ChevronWrapper>
+            <ChevronContainer collapsed={collapsed}>
+              <Chevron height={"11px"} color={"white"} />
+            </ChevronContainer>
+          </ChevronWrapper>
+          <Title>{title}</Title>
+        </Top>
+        <Content collapsed={collapsed}>{children}</Content>
+      </Wrapper>
+    </Outer>
   );
 }
 
-const ChevronWrapper = styled.div`
-  width: 80px;
+const Outer = styled.div`
+  height: 45px;
+  max-height: 45px;
+  position: relative;
+  z-index: 50000;
+  flex: 1;
+  width: 100%;
 `;
 
-const ConnWrapper = styled.div`
-  margin-right: 15px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const ChevronWrapper = styled.div`
+  width: 20px;
+  position: absolute;
+  left: -4px;
+  opacity: 0.5;
 `;
 
 const Content = styled.div<{
@@ -70,27 +60,25 @@ const Content = styled.div<{
 `;
 
 const Title = styled.span`
-  font-size: 20px;
+  font-size: 22px;
   position: relative;
   opacity: 0.8;
-  font-weight: bold;
   color: white;
-  opacity: 0.7;
-  flex: 1;
   display: flex;
-  height: 40px;
+  height: 45px;
   line-height: 0;
   align-items: center;
   justify-content: center;
   font-family: Graf;
+  text-align: center;
 `;
 
 const ChevronContainer = styled.div<{
   collapsed: boolean;
 }>`
   position: absolute;
-  height: 40px;
-  width: 40px;
+  height: 45px;
+  width: 45px;
   left: 4px;
   top: 0;
   display: flex;
@@ -103,23 +91,24 @@ const ChevronContainer = styled.div<{
 const Wrapper = styled.div<{
   collapsed: boolean;
 }>`
-  height: ${({ collapsed }) => (collapsed ? "40px" : "540px")};
-  border: 1px solid ${Colors.darkBorder};
+  height: ${({ collapsed }) => (collapsed ? "45px" : "585px")};
   background-color: ${Colors.background};
   border-radius: 3px;
   display: flex;
   width: 100%;
   flex-direction: column;
-  transition-property: all;
+  transition: 0.3s;
   position: relative;
-  transition-duration: 0.3s;
-  transition-timing-function: cubic-bezier(1, 1, 1, 1);
   overflow: hidden;
+  -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
 `;
 
 const Top = styled.div`
-  height: 40px;
-  width: 100%;
+  height: 45px;
+
+  justify-content: center;
   display: flex;
 
   cursor: pointer;

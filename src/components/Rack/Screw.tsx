@@ -10,4 +10,5 @@ const Wrapper = styled.div`
   width: 6px;
   border-radius: 50%;
   background-color: ${Colors.darkBorder};
+  opacity: 0.3;
 `;

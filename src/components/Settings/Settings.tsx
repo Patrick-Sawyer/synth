@@ -204,61 +204,49 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
 
   return (
     <Wrapper>
-      <Section>
-        <UnitSelector
-          options={AudioUnitListOption}
-          onSelect={addUnit}
-          label={`Add unit: `}
-        />
-        <UnitSelector
-          options={audioUnits.map(({ label, unitKey, color }) => ({
-            text: label,
-            value: unitKey,
-            color,
-            key: unitKey,
-          }))}
-          onSelect={removeUnit}
-          label={`Remove unit: `}
-        />
-      </Section>
-      <Section>
-        <UnitSelector
-          options={savedPatches.map((patch) => ({
-            key: patch,
-            value: patch,
-            text: patch,
-          }))}
-          closeOnClick
-          onSelect={(value) => {
-            load(PATCH_PREFIX + value);
-          }}
-          label={`Load patch: `}
-        />
-        <SaveComponent text={text} setText={setText} onClick={saveAs} />
-      </Section>
+      <UnitSelector
+        options={AudioUnitListOption}
+        onSelect={addUnit}
+        label={`Add unit: `}
+      />
+      <UnitSelector
+        options={audioUnits.map(({ label, unitKey, color }) => ({
+          text: label,
+          value: unitKey,
+          color,
+          key: unitKey,
+        }))}
+        onSelect={removeUnit}
+        label={`Remove unit: `}
+      />
+
+      <UnitSelector
+        options={savedPatches.map((patch) => ({
+          key: patch,
+          value: patch,
+          text: patch,
+        }))}
+        closeOnClick
+        onSelect={(value) => {
+          load(PATCH_PREFIX + value);
+        }}
+        label={`Load patch: `}
+      />
+      <SaveComponent text={text} setText={setText} onClick={saveAs} />
     </Wrapper>
   );
 }
 
-const Section = styled.div`
-  display: flex;
-  flex: 1;
-  gap: 15px;
-  justify-content: space-evenly;
-  position: relative;
-`;
-
 const Wrapper = styled.div`
   width: 100%;
-  gap: 10px;
+  gap: 5px;
   background-color: ${Colors.screwBackground};
-  border-bottom: 1px solid ${Colors.darkBorder};
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
+  justify-content: space-around;
+  padding: 5px;
   flex-wrap: wrap;
-  z-index: 20000;
   position: relative;
+  margin-bottom: 5px;
 `;

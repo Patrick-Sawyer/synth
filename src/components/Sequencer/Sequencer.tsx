@@ -1,86 +1,117 @@
-import { RefObject } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import { MAIN_OUT } from "../../App";
 import { Colors } from "../../utils/theme";
-import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { Collapsible } from "./Collapsible";
 import { Grid } from "./Grid";
+import { GridNote } from "./Note";
 
 interface Props {
-  onClick: (freq?: number) => void;
-  wrapperRef: RefObject<HTMLDivElement>;
+  playNote: (freq?: number) => void;
 }
 
-export function Sequencer({ onClick, wrapperRef }: Props) {
-  return (
-    <Wrapper>
-      {/* <button
-        onClick={() => {
-          onClick(Math.random() * 400);
-        }}
-      >
-        PLAY
-      </button>
-      <button
-        onClick={() => {
-          onClick(undefined);
-        }}
-      >
-        STOP
-      </button> */}
+export function Sequencer({ playNote }: Props) {
+  const [seqOneGridNotes, setSeqOneGridNotes] = useState<Array<GridNote>>([]);
+  const [seqTwoGridNotes, setSeqTwoGridNotes] = useState<Array<GridNote>>([]);
+  const [seqThreeGridNotes, setSeqThreeGridNotes] = useState<Array<GridNote>>(
+    []
+  );
+  const [seqOneLoop, setSeqOneLoop] = useState<number>(2);
+  const [seqTwoLoop, setSeqTwoLoop] = useState<number>(2);
+  const [seqThreeLoop, setSeqThreeLoop] = useState<number>(2);
 
-      <SequencerWrapper>
-        <Collapsible wrapperRef={wrapperRef} title={"SEQ ONE"} name={"SEQ_ONE"}>
-          <Grid />
-        </Collapsible>
-        <Collapsible wrapperRef={wrapperRef} title={"SEQ TWO"} name={"SEQ_ONE"}>
-          <Grid />
-        </Collapsible>
-        <Collapsible
-          wrapperRef={wrapperRef}
-          title={"SEQ THREE"}
-          name={"SEQ_ONE"}
-        >
-          <Grid />
-        </Collapsible>
-      </SequencerWrapper>
-      <MainOut>
-        <AudioConnection
-          darkText
-          wrapperRef={wrapperRef}
-          connection={MAIN_OUT}
-          unitKey="MAIN_OUT"
-          connectionKey="MAIN_OUT"
-        />
-      </MainOut>
-    </Wrapper>
+  const [activeSeq, setActiveSeq] = useState(0);
+
+  return (
+    <SequencerWrapper>
+      <Collapsible title={"SEQUENZERS"}>
+        <Selector>
+          <Option
+            onClick={() => {
+              setActiveSeq(0);
+            }}
+            active={activeSeq === 0}
+          >
+            {"Sequencer One"}
+          </Option>
+          <Option
+            onClick={() => {
+              setActiveSeq(1);
+            }}
+            active={activeSeq === 1}
+          >
+            {"Sequencer Two"}
+          </Option>
+          <Option
+            onClick={() => {
+              setActiveSeq(2);
+            }}
+            active={activeSeq === 2}
+          >
+            {"Sequencer Three"}
+          </Option>
+        </Selector>
+        {activeSeq === 0 && (
+          <Grid
+            gridNotes={seqOneGridNotes}
+            setGridNotes={setSeqOneGridNotes}
+            loop={seqOneLoop}
+            setLoop={setSeqOneLoop}
+            color={Colors.sequencerOneColor}
+          />
+        )}
+        {activeSeq === 1 && (
+          <Grid
+            gridNotes={seqTwoGridNotes}
+            setGridNotes={setSeqTwoGridNotes}
+            loop={seqTwoLoop}
+            setLoop={setSeqTwoLoop}
+            color={Colors.sequencerTwoColor}
+          />
+        )}
+        {activeSeq === 2 && (
+          <Grid
+            gridNotes={seqThreeGridNotes}
+            setGridNotes={setSeqThreeGridNotes}
+            loop={seqThreeLoop}
+            setLoop={setSeqThreeLoop}
+            color={Colors.sequencerThreeColor}
+          />
+        )}
+      </Collapsible>
+    </SequencerWrapper>
   );
 }
 
+const Option = styled.span<{ active: boolean }>`
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  color: white;
+  opacity: ${({ active }) => (active ? 1 : 0.5)};
+
+  text-decoration: ${({ active }) => (active ? "underline" : "none")};
+
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:active {
+    opacity: 0.5;
+  }
+`;
+
+const Selector = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 20px;
+  margin-right: 20px;
+`;
+
 const SequencerWrapper = styled.div`
-  width: calc(100% - 150px);
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding: 15px;
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid ${Colors.darkBorder};
-  position: relative;
-  gap: 15px;
-`;
-
-const MainOut = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 70px;
-  position: absolute;
-  right: 30px;
-  bottom: 50px;
+  flex-direction: column-reverse;
+  gap: 5px;
+  padding: 0 5px 10px 5px;
 `;

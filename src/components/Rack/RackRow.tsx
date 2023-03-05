@@ -18,5 +18,5 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: ${Colors.background};
+  background-color: #202020;
 `;

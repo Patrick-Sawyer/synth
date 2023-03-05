@@ -49,9 +49,10 @@ const createNote = (from: Coord | null, to: Coord | null): GridNote | null => {
 interface Props {
   gridNotes: Array<GridNote>;
   setGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
+  color: string;
 }
 
-export function Notes({ gridNotes, setGridNotes }: Props) {
+export function Notes({ gridNotes, setGridNotes, color }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mouseDownCoord = useRef<Coord | null>(null);
   const [creatingNote, setCreatingNote] = useState<GridNote | null>();
@@ -68,9 +69,7 @@ export function Notes({ gridNotes, setGridNotes }: Props) {
   };
 
   const handlePointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
-    if (!mouseDownCoord.current) {
-      mouseDownCoord.current = getCoord(e);
-    }
+    mouseDownCoord.current = getCoord(e);
   };
 
   const handlePointerUp: PointerEventHandler<HTMLDivElement> = (e) => {
@@ -110,11 +109,17 @@ export function Notes({ gridNotes, setGridNotes }: Props) {
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}
     >
-      {gridNotes.map((note, index) => (
-        <Note key={note.noteKey} {...note} setGridNotes={setGridNotes} />
+      {gridNotes.map((note) => (
+        <Note
+          color={color}
+          key={note.noteKey}
+          {...note}
+          setGridNotes={setGridNotes}
+        />
       ))}
       {creatingNote && (
         <Note
+          color={color}
           key={creatingNote.noteKey}
           {...creatingNote}
           setGridNotes={() => null}

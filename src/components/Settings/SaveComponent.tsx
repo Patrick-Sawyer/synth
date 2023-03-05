@@ -26,7 +26,7 @@ export function SaveComponent({ onClick, text, setText }: Props) {
           }
         }}
       >
-        Save
+        SAVE
       </SaveButton>
     </Wrapper>
   );
@@ -35,13 +35,13 @@ export function SaveComponent({ onClick, text, setText }: Props) {
 const Wrapper = styled.div`
   display: flex;
   height: ${OPTION_HEIGHT};
-  width: 192px;
+  flex: 1;
+  min-width: 200px;
   color: black;
   font-size: 16px;
   background: white;
   overflow: hidden;
   border-radius: 3px;
-  padding-left: 8px;
   gap: 5px;
 `;
 
@@ -53,6 +53,7 @@ const Input = styled.input`
   flex: 1;
   color: black;
   font-size: 16px;
+  padding-left: 8px;
 `;
 
 const SaveButton = styled.div`
@@ -64,13 +65,16 @@ const SaveButton = styled.div`
   align-items: center;
   position: relative;
   line-height: 0;
-  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
 
+  cursor: pointer;
   &:hover {
-    background-color: ${Colors.background};
+    background-color: #0800ff;
   }
 
   &:active {
-    background-color: ${Colors.darkBorder};
+    background-color: black;
   }
 `;

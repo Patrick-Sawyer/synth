@@ -8,4 +8,7 @@ export const Colors = {
   lfo: "#b3532d",
   filter: "#252aba",
   delay: "#695e53",
+  sequencerOneColor: "#59d121",
+  sequencerTwoColor: "#ff40fc",
+  sequencerThreeColor: "#ff5500",
 };

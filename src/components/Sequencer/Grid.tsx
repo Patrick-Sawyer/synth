@@ -1,27 +1,41 @@
-import { memo, useState } from "react";
+import { Dispatch, memo, SetStateAction } from "react";
 import styled from "styled-components";
 import { Colors } from "../../utils/theme";
-import { GridNote } from "./Note";
+import { CELL_WIDTH, GridNote } from "./Note";
 import { NOTES } from "./notes";
 import { Notes } from "./NotesComponent";
 
 export const ROW_HEIGHT = 10;
 
-export function Grid() {
-  const [gridNotes, setGridNotes] = useState<Array<GridNote>>([]);
+interface Props {
+  loop: number;
+  setLoop: Dispatch<SetStateAction<number>>;
+  gridNotes: Array<GridNote>;
+  setGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
+  color: string;
+}
 
+export function Grid({ loop, setLoop, gridNotes, setGridNotes, color }: Props) {
   const deleteNotes = () => {
     setGridNotes([]);
   };
 
+  const handleLoopClick = () => {
+    setLoop(loop === 8 ? 1 : loop + 1);
+  };
+
   return (
-    <OuterWrapper>
-      <Wrapper>
+    <GridOuterWrapper>
+      <GridWrapper>
         <img
           src="images/piano.png"
           alt="Piano"
           width="50px"
           height={ROW_HEIGHT * 43 + "px"}
+          style={{
+            position: "relative",
+            top: "10px",
+          }}
         />
         <NoteNames>
           {NOTES.map((note) => {
@@ -33,20 +47,62 @@ export function Grid() {
             {NOTES.map((note, index) => (
               <Row {...note} key={index} />
             ))}
+            <LoopMarker backgroundColor={color} loop={loop} />
             <Columns />
-            <Notes gridNotes={gridNotes} setGridNotes={setGridNotes} />
+            <Notes
+              color={color}
+              gridNotes={gridNotes}
+              setGridNotes={setGridNotes}
+            />
           </Main>
         </Scroll>
-      </Wrapper>
-
+      </GridWrapper>
       <Bottom>
+        <LoopText
+          textColor={color}
+          onClick={handleLoopClick}
+        >{`LOOP: ${loop} bars`}</LoopText>
         <Button onClick={deleteNotes} id={"here"}>
           {"Delete all notes"}
         </Button>
       </Bottom>
-    </OuterWrapper>
+    </GridOuterWrapper>
   );
 }
+
+const LoopText = styled.span<{
+  textColor: string;
+}>`
+  color: ${({ textColor }) => textColor};
+  font-size: 14px;
+  position: relative;
+  top: 5px;
+
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    color: white;
+  }
+
+  &:active {
+    color: white;
+    opacity: 0.5;
+  }
+`;
+
+const LoopMarker = styled.div<{
+  loop: number;
+  backgroundColor: string;
+}>`
+  width: ${({ loop }) => loop * 16 * CELL_WIDTH}px;
+  height: 5px;
+  background-color: ${({ backgroundColor }) => backgroundColor};
+  border-radius: 1.5px;
+  position: absolute;
+  top: -10px;
+  left: 0px;
+`;
 
 const NoteNames = styled.div`
   display: flex;
@@ -54,14 +110,18 @@ const NoteNames = styled.div`
   height: 430px;
   width: 25px;
   padding-left: 5px;
+  position: relative;
+  top: 10px;
 `;
 
 const Scroll = styled.div`
+  padding-top: 10px;
   overflow-x: scroll;
   overflow-y: hidden;
+  flex: 1;
 `;
 
-const OuterWrapper = styled.div`
+const GridOuterWrapper = styled.div`
   height: 470px;
   position: relative;
   width: 100%;
@@ -72,6 +132,9 @@ const Button = styled.span`
   font-size: 14px;
   color: white;
   opacity: 0.5;
+  position: relative;
+  top: 5px;
+
   cursor: pointer;
 
   &:hover {
@@ -85,27 +148,26 @@ const Button = styled.span`
 
 const Bottom = styled.div`
   position: absolute;
+  width: calc(100% - 30px);
   bottom: 4px;
-  left: calc(50% - 70px);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 `;
 
-const Wrapper = styled.div`
+const GridWrapper = styled.div`
   display: flex;
-  overflow-y: scroll;
-  height: 430px;
+  overflow: hidden;
+  height: 440px;
   position: relative;
   flex: 1;
   border-radius: 2px;
-  width: 1991px;
 `;
 
 const Main = styled.div`
   height: ${ROW_HEIGHT * 43 + "px"};
   margin-left: 10px;
-  width: 2600px;
+  flex: 1;
   position: relative;
   margin-right: 30px;
   display: flex;
@@ -116,6 +178,7 @@ const Main = styled.div`
 const RowComponent = styled.div`
   flex: 1;
   display: flex;
+  width: 1850px;
 `;
 
 interface RowProps {

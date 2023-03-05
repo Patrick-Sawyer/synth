@@ -89,6 +89,11 @@ export const formatOnSave = (units: Array<any>): Patch => {
         case AudioUnitTypes.DELAY:
           return {
             type: AudioUnitTypes.DELAY,
+            unitKey: unit.unitKey,
+            time: unit.delay.delayTime.value,
+            feedback: unit.feedback.gain.value,
+            dry: unit.dry.gain.value,
+            wet: unit.wet.gain.value,
           } as SavedDelay;
         default:
           return null as unknown as SavedUnit;

@@ -6,6 +6,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-x: none;
 }
 
 code {
@@ -16,4 +17,8 @@ code {
 @font-face {
   font-family: "Graf";
   src: local("Graf"), url("./assets/TheBattleCont.ttf") format("truetype");
+}
+
+body {
+  overscroll-behavior-x: none;
 }

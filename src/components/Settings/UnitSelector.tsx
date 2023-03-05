@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../../utils/theme";
+import Chevron from "../Chevron";
 
 export interface Option {
   value: any;
@@ -32,7 +33,7 @@ export function UnitSelector({
         setActive(false);
       }}
     >
-      <Select>
+      <Select active={active}>
         <OptionComponent
           first
           key={"top"}
@@ -43,38 +44,45 @@ export function UnitSelector({
         >
           {label}
         </OptionComponent>
-        {active &&
-          options.map(({ value, text, key, color }, index) => (
-            <OptionComponent
-              key={key}
-              last={index === options.length - 1}
-              onPointerDown={() => {
-                onSelect(value);
-                closeOnClick &&
-                  setTimeout(() => {
-                    setActive(false);
-                  }, 200);
-              }}
-            >
-              {text}
-              {!!color && <Block background={color} />}
-            </OptionComponent>
-          ))}
-        {active && !options.length && <OptionComponent>{"-"}</OptionComponent>}
+        {options.map(({ value, text, key, color }, index) => (
+          <OptionComponent
+            key={key}
+            last={index === options.length - 1}
+            onPointerDown={() => {
+              onSelect(value);
+              closeOnClick &&
+                setTimeout(() => {
+                  setActive(false);
+                }, 200);
+            }}
+          >
+            {text}
+          </OptionComponent>
+        ))}
+        {!options.length && <OptionComponent>{"-"}</OptionComponent>}
       </Select>
+      <ChevronContainer active={active}>
+        <Chevron height={"11px"} color={"black"} />
+      </ChevronContainer>
     </Wrapper>
   );
 }
 
-const Block = styled.div<{
-  background: string;
+const ChevronContainer = styled.div<{
+  active: boolean;
 }>`
-  height: 15px;
-  width: 15px;
-  border-radius: 4.5px;
-  background-color: ${({ background }) => background};
-  transition: 0.2s;
-  border: 1.5px solid transparent;
+  height: ${OPTION_HEIGHT};
+  width: ${OPTION_HEIGHT};
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.35;
+  transition: 0.3s;
+  transform: rotate(${({ active }) => (active ? "270deg" : "90deg")});
+  pointer-events: none;
 `;
 
 const OptionComponent = styled.span<{
@@ -82,8 +90,9 @@ const OptionComponent = styled.span<{
   last?: boolean;
 }>`
   height: ${OPTION_HEIGHT};
-  width: 180px;
+  width: 100%;
   color: black;
+  position: relative;
   font-size: 16px;
   background: white;
   padding: 0 10px;
@@ -93,7 +102,6 @@ const OptionComponent = styled.span<{
   justify-content: space-between;
   display: block;
 
-  overflow: hidden;
   transition: 0.2s;
   cursor: pointer;
 
@@ -108,38 +116,41 @@ const OptionComponent = styled.span<{
     > div {
         border: 1.5px solid rgba(255, 255, 255, 0.4);
     }
-  }
-
-  `}
-
-  ${({ first }) =>
-    !!first &&
-    `
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-  `}
-
-  ${({ last }) =>
-    !!last &&
-    `
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
-  `}
+  }`}
 `;
 
 const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  width: 200px;
+  flex: 1;
   height: ${OPTION_HEIGHT};
+  z-index: 51000;
+  min-width: 200px;
   position: relative;
 `;
 
-const Select = styled.div`
-  width: 200px;
+const Select = styled.div<{
+  active: boolean;
+}>`
+  width: 100%;
   outline: none;
-  max-height: 400px;
+
+  max-height: ${({ active }) => (active ? "400px" : OPTION_HEIGHT)};
   overflow-y: scroll;
-  position: absolute;
-  top: 0;
+
+  transition: 0.3s;
+
+  border-radius: 3px !important;
+
+  > span:not(:first-child) {
+    opacity: ${({ active }) => (active ? 1 : 0)};
+  }
+
+  > span:last-child {
+    border-bottom-left-radius: 3px !important;
+    border-bottom-right-radius: 3px !important;
+  }
+
+  > span:first-child {
+    border-top-left-radius: 3px !important;
+    border-top-right-radius: 3px !important;
+  }
 `;
