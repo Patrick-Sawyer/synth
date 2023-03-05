@@ -30,23 +30,15 @@ export function Sequencer({ onClick, wrapperRef }: Props) {
       </button> */}
 
       <SequencerWrapper>
-        <Collapsible
-          wrapperRef={wrapperRef}
-          title={"Sequencer 1"}
-          name={"SEQ_ONE"}
-        >
+        <Collapsible wrapperRef={wrapperRef} title={"SEQ ONE"} name={"SEQ_ONE"}>
+          <Grid />
+        </Collapsible>
+        <Collapsible wrapperRef={wrapperRef} title={"SEQ TWO"} name={"SEQ_ONE"}>
           <Grid />
         </Collapsible>
         <Collapsible
           wrapperRef={wrapperRef}
-          title={"Sequencer 1"}
-          name={"SEQ_ONE"}
-        >
-          <Grid />
-        </Collapsible>
-        <Collapsible
-          wrapperRef={wrapperRef}
-          title={"Sequencer 1"}
+          title={"SEQ THREE"}
           name={"SEQ_ONE"}
         >
           <Grid />

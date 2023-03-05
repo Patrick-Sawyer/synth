@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef } from "react";
+import { PointerEventHandler, RefObject, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Connection } from "../../audioUnits/Connection";
 import {
@@ -83,7 +83,8 @@ export function AudioConnection({
     useConnectionContext();
   const { setFromValue, setConnections } = useConnectionUpdateContext();
 
-  const onPointerDown = () => {
+  const onPointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
     setFromValue &&
       setFromValue({
         unitKey,
@@ -95,7 +96,12 @@ export function AudioConnection({
       });
   };
 
-  const onPointerUp = () => {
+  const onClick: PointerEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+  };
+
+  const onPointerUp: PointerEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
     const thisConnection: MakeConnection = {
       unitKey,
       connectionKey,
@@ -198,6 +204,7 @@ export function AudioConnection({
           ref={ref}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
+          onClick={onClick}
         />
       </Blah>
       <Label darkText={darkText}>{connection.name}</Label>
