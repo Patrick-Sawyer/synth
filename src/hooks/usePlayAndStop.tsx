@@ -10,6 +10,9 @@ interface Args {
   gridThree: Array<GridNote>;
   tempo: number;
   connections: Array<FullConnection>;
+  seqOneLoop: number;
+  seqTwoLoop: number;
+  seqThreeLoop: number;
 }
 
 interface ScheduledNotes {
@@ -29,11 +32,16 @@ export const usePlayAndStop = ({
   gridThree,
   tempo,
   connections,
+  seqOneLoop,
+  seqTwoLoop,
+  seqThreeLoop,
 }: Args) => {
   const nextScheduledNotes = useRef<ScheduledNotes>();
-  const nextScheduledIndex = useRef(0);
-  const timeout = useRef<NodeJS.Timeout>();
+  const nextScheduledIndexSequencerOne = useRef(0);
+  const nextScheduledIndexSequencerTwo = useRef(0);
+  const nextScheduledIndexSequencerThree = useRef(0);
 
+  const timeout = useRef<NodeJS.Timeout>();
   const { gridOneUnits, gridTwoUnits, gridThreeUnits } = findUnits({
     audioUnits,
     connections,
@@ -43,24 +51,39 @@ export const usePlayAndStop = ({
     const nextNotes = {
       grid1: getNoteAtIndex({
         grid: gridOne,
-        index: nextScheduledIndex.current,
+        index: nextScheduledIndexSequencerOne.current,
       }),
       grid2: getNoteAtIndex({
         grid: gridTwo,
-        index: nextScheduledIndex.current,
+        index: nextScheduledIndexSequencerTwo.current,
       }),
       grid3: getNoteAtIndex({
         grid: gridThree,
-        index: nextScheduledIndex.current,
+        index: nextScheduledIndexSequencerThree.current,
       }),
     };
     nextScheduledNotes.current = nextNotes;
   };
 
+  const calculateNextIndex = () => {
+    nextScheduledIndexSequencerOne.current =
+      nextScheduledIndexSequencerOne.current + 1 >= seqOneLoop * 16
+        ? 0
+        : nextScheduledIndexSequencerOne.current + 1;
+    nextScheduledIndexSequencerTwo.current =
+      nextScheduledIndexSequencerTwo.current + 1 >= seqTwoLoop * 16
+        ? 0
+        : nextScheduledIndexSequencerTwo.current + 1;
+    nextScheduledIndexSequencerThree.current =
+      nextScheduledIndexSequencerThree.current + 1 >= seqThreeLoop * 16
+        ? 0
+        : nextScheduledIndexSequencerThree.current + 1;
+  };
+
   const play = () => {
     const ms = bpmToMS(tempo * 4);
     scheduleNextNotes();
-    nextScheduledIndex.current++;
+    calculateNextIndex();
     timeout.current = setTimeout(() => {
       playNote(gridOneUnits, nextScheduledNotes.current?.grid1);
       playNote(gridTwoUnits, nextScheduledNotes.current?.grid2);
@@ -82,7 +105,9 @@ export const usePlayAndStop = ({
       clearTimeout(timeout.current);
     }
     nextScheduledNotes.current = undefined;
-    nextScheduledIndex.current = 0;
+    nextScheduledIndexSequencerOne.current = 0;
+    nextScheduledIndexSequencerTwo.current = 0;
+    nextScheduledIndexSequencerThree.current = 0;
   };
 
   return { playModular, stopModular };
@@ -92,7 +117,6 @@ const playNote = (units?: Array<AudioUnit | undefined>, note?: GridNote) => {
   if (!note) return;
   units?.forEach((unit: any) => {
     if (!unit) return;
-
     switch (unit.type) {
       case AudioUnitTypes.OSCILLATOR:
         unit.play(note.note * 8);
@@ -117,6 +141,8 @@ interface PlayAtIndexArgs {
 }
 
 const getNoteAtIndex = ({ grid, index }: PlayAtIndexArgs) => {
+  // WORK OUT HOW TO CALCULATE WHICH NOTE TO PLAY
+
   const noteToPlay = grid.find((note) => note.start === index);
   if (noteToPlay) return noteToPlay;
 

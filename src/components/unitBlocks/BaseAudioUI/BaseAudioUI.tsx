@@ -18,10 +18,10 @@ const Wrapper = styled.div<{
   border-bottom: 1px solid transparent;
   background-color: ${({ color }) => color};
   border-radius: 2px;
-  padding: 20px;
+  padding: 15px;
   border-right: 1px solid rgba(255, 255, 255, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.3);
   box-sizing: border-box;
   display: flex;
-  gap: 30px;
+  gap: 15px;
 `;

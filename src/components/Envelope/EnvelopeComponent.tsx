@@ -21,6 +21,14 @@ export function EnvelopeComponent(
           onChange={props.setAttack}
         />
         <Knob
+          text={"DECAY"}
+          min={0}
+          max={3}
+          initValue={props.decay}
+          resetValue={3}
+          onChange={props.setDecay}
+        />
+        <Knob
           text={"SUSTAIN"}
           min={0}
           max={1}
@@ -28,6 +36,16 @@ export function EnvelopeComponent(
           resetValue={1}
           onChange={props.setSustain}
         />
+        <Knob
+          text={"RELEASE"}
+          min={0}
+          max={3}
+          initValue={props.release}
+          resetValue={0}
+          onChange={props.setRelease}
+        />
+      </UnitColumn>
+      <UnitColumn>
         <AudioConnection
           wrapperRef={props.wrapperRef}
           connection={props.input}
@@ -40,23 +58,11 @@ export function EnvelopeComponent(
           unitKey={props.unitKey}
           connectionKey={"cvIn"}
         />
-      </UnitColumn>
-      <UnitColumn>
-        <Knob
-          text={"DECAY"}
-          min={0}
-          max={3}
-          initValue={props.decay}
-          resetValue={3}
-          onChange={props.setDecay}
-        />
-        <Knob
-          text={"RELEASE"}
-          min={0}
-          max={3}
-          initValue={props.release}
-          resetValue={0}
-          onChange={props.setRelease}
+        <AudioConnection
+          wrapperRef={props.wrapperRef}
+          connection={props.envOut}
+          unitKey={props.unitKey}
+          connectionKey={"cvOut"}
         />
         <AudioConnection
           wrapperRef={props.wrapperRef}

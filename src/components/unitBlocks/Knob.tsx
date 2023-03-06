@@ -129,10 +129,10 @@ export function Knob({
     <Wrapper>
       {!small && (
         <>
-          <MiniLabel bottom={11} left={-7}>
+          <MiniLabel bottom={11} left={0}>
             -
           </MiniLabel>
-          <MiniLabel bottom={12} left={30}>
+          <MiniLabel bottom={12} left={35}>
             +
           </MiniLabel>
         </>
@@ -154,7 +154,6 @@ export function Knob({
 }
 
 const Wrapper = styled.div`
-  width: 30px;
   align-self: center;
   display: flex;
   flex-direction: column;

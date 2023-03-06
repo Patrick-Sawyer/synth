@@ -214,13 +214,13 @@ export function AudioConnection({
 
 const Blah = styled.div`
   display: flex;
-  gap: 5px;
+  gap: 6px;
 `;
 
 const Wrapper = styled.div<{
   horizontal: boolean;
 }>`
-  gap: 12px;
+  gap: 8px;
   display: flex;
   flex-direction: ${({ horizontal }) => (horizontal ? "row" : "column")};
   align-items: center;

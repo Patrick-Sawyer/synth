@@ -13,6 +13,12 @@ interface Props {
   setSeqOneGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
   setSeqTwoGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
   setSeqThreeGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
+  seqOneLoop: number;
+  seqTwoLoop: number;
+  seqThreeLoop: number;
+  setSeqOneLoop: Dispatch<SetStateAction<number>>;
+  setSeqTwoLoop: Dispatch<SetStateAction<number>>;
+  setSeqThreeLoop: Dispatch<SetStateAction<number>>;
 }
 
 const COLORS = [
@@ -28,13 +34,14 @@ export function Sequencer({
   setSeqOneGridNotes,
   setSeqTwoGridNotes,
   setSeqThreeGridNotes,
+  seqOneLoop,
+  seqTwoLoop,
+  seqThreeLoop,
+  setSeqOneLoop,
+  setSeqTwoLoop,
+  setSeqThreeLoop,
 }: Props) {
-  const [seqOneLoop, setSeqOneLoop] = useState<number>(2);
-  const [seqTwoLoop, setSeqTwoLoop] = useState<number>(2);
-  const [seqThreeLoop, setSeqThreeLoop] = useState<number>(2);
-
   const [activeSeq, setActiveSeq] = useState(0);
-
   const color = COLORS[activeSeq];
   const loops = [seqOneLoop, seqTwoLoop, seqThreeLoop];
   const loop = loops[activeSeq];

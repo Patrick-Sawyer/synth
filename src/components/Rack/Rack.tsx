@@ -30,6 +30,9 @@ export function Rack() {
   const [audioUnits, setAudioUnits] = useState<Array<AudioUnit>>([]);
   const { connections } = useConnectionContext();
   const [tempo, setTempo] = useState(128);
+  const [seqOneLoop, setSeqOneLoop] = useState<number>(2);
+  const [seqTwoLoop, setSeqTwoLoop] = useState<number>(2);
+  const [seqThreeLoop, setSeqThreeLoop] = useState<number>(2);
   const [seqOneGridNotes, setSeqOneGridNotes] = useState<Array<GridNote>>([]);
   const [seqTwoGridNotes, setSeqTwoGridNotes] = useState<Array<GridNote>>([]);
   const [seqThreeGridNotes, setSeqThreeGridNotes] = useState<Array<GridNote>>(
@@ -43,6 +46,9 @@ export function Rack() {
     gridThree: seqThreeGridNotes,
     connections,
     tempo,
+    seqOneLoop,
+    seqTwoLoop,
+    seqThreeLoop,
   });
 
   return (
@@ -63,6 +69,12 @@ export function Rack() {
         setSeqOneGridNotes={setSeqOneGridNotes}
         setSeqTwoGridNotes={setSeqTwoGridNotes}
         setSeqThreeGridNotes={setSeqThreeGridNotes}
+        seqOneLoop={seqOneLoop}
+        seqTwoLoop={seqTwoLoop}
+        seqThreeLoop={seqThreeLoop}
+        setSeqOneLoop={setSeqOneLoop}
+        setSeqTwoLoop={setSeqTwoLoop}
+        setSeqThreeLoop={setSeqThreeLoop}
       />
       <MainOut>
         <AudioConnection
@@ -98,7 +110,6 @@ export function Rack() {
           horizontal
         />
       </MainOut>
-
       <RackWrapper>
         <RackRow key={1} />
         <RackRow key={2} />
@@ -110,7 +121,6 @@ export function Rack() {
         <RackRow key={8} />
         <RackRow key={9} />
         <RackRow key={10} />
-
         <AudioUnits>
           {audioUnits.map((audioUnit) =>
             getUnit({ ...audioUnit, wrapperRef: ref })

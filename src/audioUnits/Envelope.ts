@@ -13,6 +13,8 @@ export interface SavedEnvelope {
   unitKey: string;
 }
 
+const OSCILLATOR_MAX = 20000;
+
 export class Envelope extends BaseUnit {
   input: Connection;
   cvIn: Connection;
@@ -31,12 +33,16 @@ export class Envelope extends BaseUnit {
   setRelease: (value: number) => void;
   timeout: NodeJS.Timeout | null;
   sustaining: boolean;
+  envOut: Connection;
 
   constructor(input?: SavedEnvelope) {
     super(AudioUnitTypes.ENVELOPE, input?.unitKey);
     this.output.node.gain.value = ZERO;
     this.input = new Connection("INPUT", ConnectionTypes.INPUT);
     this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN, 1);
+    this.envOut = new Connection("ENV OUT", ConnectionTypes.OUTPUT);
+    this.envOut.node.gain.value = 1;
+
     this.cvIn.node.gain.value = ZERO;
     this.input.node.gain.value = 1;
     this.input.node.connect(this.output.node);
@@ -87,7 +93,7 @@ export class Envelope extends BaseUnit {
       //ATTACK
 
       this.timeout = setTimeout(() => {
-        this.output.node.gain.linearRampToValueAtTime(
+        this.output.node.gain.exponentialRampToValueAtTime(
           1,
           CONTEXT.currentTime + this.attack + FADE
         );
@@ -95,10 +101,11 @@ export class Envelope extends BaseUnit {
         // DECAY TO SUSTAIN
 
         this.timeout = setTimeout(() => {
-          this.output.node.gain.linearRampToValueAtTime(
+          this.output.node.gain.exponentialRampToValueAtTime(
             this.sustain,
             CONTEXT.currentTime + this.attack + this.decay
           );
+
           this.timeout = setTimeout(() => {
             this.sustaining = true;
           }, (this.decay + FADE) * 1000);
@@ -110,6 +117,7 @@ export class Envelope extends BaseUnit {
       if (this.timeout) clearTimeout(this.timeout);
       this.output.node.gain.cancelScheduledValues(0);
       this.output.node.gain.cancelAndHoldAtTime(0);
+
       this.sustaining = false;
       this.output.node.gain.linearRampToValueAtTime(
         ZERO,
