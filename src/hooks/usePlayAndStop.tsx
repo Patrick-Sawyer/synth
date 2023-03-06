@@ -117,7 +117,10 @@ interface PlayAtIndexArgs {
 }
 
 const getNoteAtIndex = ({ grid, index }: PlayAtIndexArgs) => {
-  return grid.find((note) => note.start === index);
+  const noteToPlay = grid.find((note) => note.start === index);
+  if (noteToPlay) return noteToPlay;
+
+  // NOTE TO STOP GOES HERE
 };
 
 interface FindUnitsArgs {
