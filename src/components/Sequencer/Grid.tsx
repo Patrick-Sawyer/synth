@@ -7,6 +7,16 @@ import { Notes } from "./NotesComponent";
 
 export const ROW_HEIGHT = 10;
 
+const BarsComponent = memo(() => {
+  return (
+    <Bars>
+      {new Array(8).fill(null).map((_, index) => (
+        <Bar key={index}>{index + 1}</Bar>
+      ))}
+    </Bars>
+  );
+});
+
 interface Props {
   loop: number;
   gridNotes: Array<GridNote>;
@@ -17,6 +27,7 @@ interface Props {
 export function Grid({ loop, gridNotes, setGridNotes, color }: Props) {
   return (
     <Scroll>
+      <BarsComponent />
       <Main>
         {NOTES.map((note, index) => (
           <Row {...note} key={index} />
@@ -124,4 +135,20 @@ const Column = styled.div`
   height: 100%;
   flex: 1;
   border-right: 1px solid ${Colors.background};
+`;
+
+const Bar = styled.div`
+  width: ${CELL_WIDTH * 16}px;
+`;
+
+const Bars = styled.div`
+  width: ${CELL_WIDTH * 128}px;
+  display: flex;
+  font-size: 10px;
+  opacity: 0.7;
+  color: white;
+  margin-bottom: 5px;
+  position: relative;
+  left: 8px;
+  bottom: 8px;
 `;

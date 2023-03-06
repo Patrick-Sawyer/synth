@@ -86,7 +86,7 @@ function App() {
 const Wrapper = styled.div`
   height: 100vh;
   width: 100%;
-  min-width: 400px;
+  min-width: 360px;
   user-select: none;
 `;
 

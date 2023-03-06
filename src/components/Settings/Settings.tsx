@@ -249,5 +249,5 @@ const Wrapper = styled.div`
   padding: 5px;
   flex-wrap: wrap;
   position: relative;
-  margin-bottom: 5px;
+  margin-bottom: 7px;
 `;

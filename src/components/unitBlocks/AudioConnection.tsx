@@ -234,5 +234,7 @@ const Plug = styled.div`
   border: 4px solid white;
 
   cursor: pointer;
-  box-shadow: 7px 6px 20px -7px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
 `;

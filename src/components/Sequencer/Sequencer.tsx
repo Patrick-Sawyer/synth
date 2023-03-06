@@ -55,9 +55,11 @@ export function Sequencer({ playNote }: Props) {
 
   return (
     <SequencerWrapper>
-      <Collapsible title={"SEQUENZERS"}>
+      <Collapsible title={"SEQUENcERS"}>
+        <Line />
         <Selector>
           <Option
+            color={Colors.sequencerOneColor}
             onClick={() => {
               setActiveSeq(0);
             }}
@@ -66,6 +68,7 @@ export function Sequencer({ playNote }: Props) {
             {"Sequencer One"}
           </Option>
           <Option
+            color={Colors.sequencerTwoColor}
             onClick={() => {
               setActiveSeq(1);
             }}
@@ -74,6 +77,7 @@ export function Sequencer({ playNote }: Props) {
             {"Sequencer Two"}
           </Option>
           <Option
+            color={Colors.sequencerThreeColor}
             onClick={() => {
               setActiveSeq(2);
             }}
@@ -82,6 +86,7 @@ export function Sequencer({ playNote }: Props) {
             {"Sequencer Three"}
           </Option>
         </Selector>
+        <Line />
         <GridOuterWrapper>
           <GridWrapper>
             <img
@@ -139,32 +144,52 @@ export function Sequencer({ playNote }: Props) {
   );
 }
 
-const Option = styled.span<{ active: boolean }>`
+const Line = styled.div`
+  width: calc(100% - 30px);
+  margin-bottom: 20px;
+  border-top: 1px solid white;
+  opacity: 0.15;
+`;
+
+const Option = styled.span<{ active: boolean; color: string }>`
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  color: white;
-  opacity: ${({ active }) => (active ? 1 : 0.5)};
+  font-size: 15px;
+  color: ${({ color, active }) => (active ? color : "grey")};
+  border: 1px solid ${({ color, active }) => (active ? color : "grey")};
+  opacity: ${({ active }) => (active ? 1 : 0.4)};
+  border-radius: 15px;
+  padding: 5px 15px;
   text-align: center;
-
-  text-decoration: ${({ active }) => (active ? "underline" : "none")};
-
+  transition: 0.2s;
   cursor: pointer;
+
+  ${({ active }) =>
+    active &&
+    `
+      -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+      -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+      box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  `}
 
   &:hover {
     opacity: 1;
-  }
-
-  &:active {
-    opacity: 0.5;
+    -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
   }
 `;
 
 const Selector = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
   margin-bottom: 20px;
-  margin-right: 20px;
+  margin-right: 30px;
   gap: 10px;
+
+  @media screen and (min-width: 500px) {
+    flex-direction: row;
+  }
 `;
 
 const SequencerWrapper = styled.div`

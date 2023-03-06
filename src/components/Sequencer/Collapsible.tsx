@@ -21,7 +21,7 @@ export function Collapsible({ children, title }: Props) {
         >
           <ChevronWrapper>
             <ChevronContainer collapsed={collapsed}>
-              <Chevron height={"11px"} color={"white"} />
+              <Chevron height={"13px"} color={"white"} />
             </ChevronContainer>
           </ChevronWrapper>
           <Title>{title}</Title>
@@ -33,8 +33,8 @@ export function Collapsible({ children, title }: Props) {
 }
 
 const Outer = styled.div`
-  height: 40px;
-  max-height: 40px;
+  height: 60px;
+  max-height: 60px;
   position: relative;
   z-index: 50000;
   flex: 1;
@@ -53,7 +53,7 @@ const Content = styled.div<{
 }>`
   opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
   width: 100%;
-  padding: 15px;
+  padding: 0 15px 15px 15px;
   transition: 0.3s;
   position: relative;
   overflow: scroll;
@@ -65,7 +65,7 @@ const Title = styled.span`
   opacity: 0.8;
   color: white;
   display: flex;
-  height: 40px;
+  height: 60px;
   line-height: 0;
   align-items: center;
   justify-content: center;
@@ -77,8 +77,8 @@ const ChevronContainer = styled.div<{
   collapsed: boolean;
 }>`
   position: absolute;
-  height: 40px;
-  width: 40px;
+  height: 60px;
+  width: 60px;
   left: 4px;
   top: 0;
   display: flex;
@@ -91,7 +91,7 @@ const ChevronContainer = styled.div<{
 const Wrapper = styled.div<{
   collapsed: boolean;
 }>`
-  height: ${({ collapsed }) => (collapsed ? "40px" : "585px")};
+  height: ${({ collapsed }) => (collapsed ? "60px" : "717px")};
   background-color: ${Colors.background};
   border-radius: 3px;
   display: flex;
@@ -103,10 +103,14 @@ const Wrapper = styled.div<{
   -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+
+  @media screen and (min-width: 500px) {
+    height: ${({ collapsed }) => (collapsed ? "60px" : "638px")};
+  }
 `;
 
 const Top = styled.div`
-  height: 40px;
+  height: 60px;
 
   justify-content: center;
   display: flex;

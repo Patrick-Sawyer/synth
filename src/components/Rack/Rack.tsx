@@ -176,6 +176,9 @@ const Button = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
 
   &:hover {
     background-color: ${Colors.hoverColor};
