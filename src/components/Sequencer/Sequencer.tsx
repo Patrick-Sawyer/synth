@@ -231,7 +231,7 @@ const LoopText = styled.span<{
   color: ${({ textColor }) => textColor};
   font-size: 14px;
   position: relative;
-  top: 5px;
+  top: 7px;
 
   font-weight: 500;
   cursor: pointer;
@@ -272,57 +272,6 @@ const GridWrapper = styled.div`
   position: relative;
   flex: 1;
   border-radius: 2px;
-`;
-
-const LoopMarker = styled.div<{
-  loop: number;
-  backgroundColor: string;
-}>`
-  width: ${({ loop }) => loop * 16 * CELL_WIDTH}px;
-  height: 5px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  border-radius: 1.5px;
-  position: absolute;
-  top: -10px;
-  left: 0px;
-`;
-
-const Scroll = styled.div`
-  padding-top: 10px;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  flex: 1;
-`;
-
-const Main = styled.div`
-  height: ${ROW_HEIGHT * 43 + "px"};
-  margin-left: 10px;
-  flex: 1;
-  position: relative;
-  margin-right: 30px;
-  display: flex;
-  gap: 1px;
-  flex-direction: column;
-`;
-
-const RowComponent = styled.div`
-  flex: 1;
-  display: flex;
-  width: 1850px;
-`;
-
-const Row = memo(() => {
-  return (
-    <RowComponent>
-      <GridRow />
-    </RowComponent>
-  );
-});
-
-const GridRow = styled.div`
-  background-color: rgba(0, 0, 0, 0.3);
-  width: 1792px;
-  flex: 1;
 `;
 
 const NoteName = styled.span`
