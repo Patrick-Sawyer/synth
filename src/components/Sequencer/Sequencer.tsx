@@ -161,9 +161,9 @@ const Line = styled.div`
 const Option = styled.div<{ active: boolean; color: string }>`
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
-  color: ${({ color, active }) => (active ? color : "grey")};
-  border: 1px solid ${({ color, active }) => (active ? color : "grey")};
-  opacity: ${({ active }) => (active ? 1 : 0.4)};
+  color: ${({ color, active }) =>
+    active ? color : "rgba(255, 255, 255, 0.2)"};
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 5px 15px;
   line-height: 0;
@@ -188,6 +188,7 @@ const Option = styled.div<{ active: boolean; color: string }>`
     -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
   }
 `;
 

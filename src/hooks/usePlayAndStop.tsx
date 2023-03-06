@@ -18,6 +18,10 @@ interface ScheduledNotes {
   grid3?: GridNote;
 }
 
+// TODO: Schedule the end of notes
+// Work out priority e.g. higher notes, newer notes overwrite old notes
+// Get multiple sequencer working
+
 export const usePlayAndStop = ({
   audioUnits,
   gridOne,
@@ -50,12 +54,10 @@ export const usePlayAndStop = ({
         index: nextScheduledIndex.current,
       }),
     };
-    console.log("SCHEDULING NOTES", nextNotes);
     nextScheduledNotes.current = nextNotes;
   };
 
   const play = () => {
-    console.log("PLAYING");
     const ms = bpmToMS(tempo * 4);
     scheduleNextNotes();
     nextScheduledIndex.current++;
@@ -87,7 +89,6 @@ export const usePlayAndStop = ({
 };
 
 const playNote = (units?: Array<AudioUnit | undefined>, note?: GridNote) => {
-  console.log("PLAYING NOTE", note);
   if (!note) return;
   units?.forEach((unit: any) => {
     if (!unit) return;
@@ -116,7 +117,6 @@ interface PlayAtIndexArgs {
 }
 
 const getNoteAtIndex = ({ grid, index }: PlayAtIndexArgs) => {
-  console.log("grid", grid, "index", index);
   return grid.find((note) => note.start === index);
 };
 

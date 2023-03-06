@@ -42,19 +42,6 @@ const getAsPercentage = (
   const valueAsFraction = trueValue / range;
   const exponential = Math.pow(valueAsFraction, 1 / exponentialAmount);
 
-  if (Number.isNaN(exponential)) {
-    console.log(
-      value,
-      min,
-      max,
-      exponentialAmount,
-      range,
-      trueValue,
-      valueAsFraction,
-      exponential
-    );
-  }
-
   return exponential * 100;
 };
 

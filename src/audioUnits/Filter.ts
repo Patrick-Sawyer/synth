@@ -49,7 +49,6 @@ export class Filter extends BaseUnit {
       input?.frequency === undefined ? INIT_RATE : input.frequency,
       input?.fmAmount === undefined ? INIT_FILTER_FM_VALUE : input.fmAmount
     );
-    console.log("FILTER INPUT", input);
     this.filter = CONTEXT.createBiquadFilter();
     this.filter.frequency.value =
       input?.frequency === undefined ? FILTER_INIT_FREQ : input.frequency;
