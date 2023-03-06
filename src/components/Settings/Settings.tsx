@@ -246,7 +246,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 5px;
+  padding: 5px 10px;
   flex-wrap: wrap;
   position: relative;
   margin-bottom: 7px;

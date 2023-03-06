@@ -6,7 +6,6 @@ import {
   SEQ_THREE_CV_OUT,
   SEQ_TWO_CV_OUT,
 } from "../../App";
-import { Envelope } from "../../audioUnits/Envelope";
 import { Oscillator } from "../../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
 import { ConnectionContextProvider } from "../../ConnectionContext";
@@ -91,7 +90,7 @@ export function Rack() {
     <ConnectionContextProvider>
       <Wrapper ref={ref}>
         <Title>
-          {"TURNTABLISM MODULAR"}
+          <TitleText>{"TURNTABLISM MODULAR"}</TitleText>
           <Buttons>
             <Button>PLAY</Button>
             <Button>STOP</Button>
@@ -161,12 +160,27 @@ export function Rack() {
 const Buttons = styled.div`
   display: flex;
   gap: 5px;
+  width: 100%;
+
+  @media screen and (min-width: 571px) {
+    max-width: 300px;
+  }
 `;
+
+const TitleText = styled.div`
+  width: 300px;
+  max-width: 300px;
+  min-width: 300px;
+  padding: 0 10px;
+`;
+
 const Button = styled.div`
   padding: 5px 10px;
+  flex: 1;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: bold;
+  height: 37px;
   background-color: black;
   line-height: 0;
   color: white;
@@ -191,14 +205,22 @@ const Button = styled.div`
 
 const Title = styled.div`
   font-family: Graf;
-  font-size: 23px;
+  font-size: 34px;
+  font-weight: bold;
   color: black;
   padding: 10px 10px 5px 10px;
   display: flex;
-  width: calc(100% - 15px);
+  width: calc(100% - 20px);
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  height: 50px;
+  align-items: center;
+
+  @media screen and (max-width: 570px) {
+    flex-direction: column;
+    height: 100px;
+  }
 `;
 
 const MainOut = styled.div`
