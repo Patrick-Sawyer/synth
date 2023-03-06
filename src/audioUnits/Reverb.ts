@@ -1,6 +1,6 @@
 import { CONTEXT } from "../App";
 import { ConnectionTypes } from "../ConnectionContext";
-import { BaseUnit, FADE } from "./BaseUnit";
+import { BaseUnit, FADE, ZERO } from "./BaseUnit";
 import { Connection } from "./Connection";
 import { AudioUnitTypes } from "./types";
 
@@ -81,6 +81,15 @@ export class Reverb extends BaseUnit {
         value,
         CONTEXT.currentTime + FADE
       );
+    };
+
+    this.shutdown = () => {
+      this.output.node.gain.value = ZERO;
+      this.output.node.disconnect();
+      this.reverb.disconnect();
+      this.input.node.disconnect();
+      this.dry.disconnect();
+      this.reverbVolume.disconnect();
     };
   }
 }

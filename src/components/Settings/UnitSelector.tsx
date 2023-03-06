@@ -33,7 +33,7 @@ export function UnitSelector({
         setActive(false);
       }}
     >
-      <Select active={active}>
+      <Inner>
         <OptionComponent
           first
           key={"top"}
@@ -42,31 +42,53 @@ export function UnitSelector({
             setActive(!active);
           }}
         >
-          {label}
+          <Text>{label}</Text>
         </OptionComponent>
-        {options.map(({ value, text, key, color }, index) => (
-          <OptionComponent
-            key={key}
-            last={index === options.length - 1}
-            onPointerDown={() => {
-              onSelect(value);
-              closeOnClick &&
-                setTimeout(() => {
-                  setActive(false);
-                }, 200);
-            }}
-          >
-            {text}
-          </OptionComponent>
-        ))}
-        {!options.length && <OptionComponent>{"-"}</OptionComponent>}
-      </Select>
+        <Scroll active={active}>
+          {options.map(({ value, text, key }, index) => (
+            <OptionComponent
+              key={key}
+              last={index === options.length - 1}
+              onPointerDown={() => {
+                onSelect(value);
+                closeOnClick &&
+                  setTimeout(() => {
+                    setActive(false);
+                  }, 200);
+              }}
+            >
+              <Text>{text}</Text>
+            </OptionComponent>
+          ))}
+          {!options.length && (
+            <OptionComponent>
+              <Text>{"-"}</Text>
+            </OptionComponent>
+          )}
+        </Scroll>
+      </Inner>
       <ChevronContainer active={active}>
         <Chevron height={"11px"} color={"black"} />
       </ChevronContainer>
     </Wrapper>
   );
 }
+
+const Inner = styled.div`
+  background-color: white;
+  border-radius: 3px !important;
+  -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+`;
+
+const Text = styled.span`
+  padding: 0 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100;
+`;
 
 const ChevronContainer = styled.div<{
   active: boolean;
@@ -85,7 +107,7 @@ const ChevronContainer = styled.div<{
   pointer-events: none;
 `;
 
-const OptionComponent = styled.span<{
+const OptionComponent = styled.div<{
   first?: boolean;
   last?: boolean;
 }>`
@@ -94,8 +116,7 @@ const OptionComponent = styled.span<{
   color: black;
   position: relative;
   font-size: 16px;
-  background: white;
-  padding: 0 10px;
+
   display: flex;
   align-items: center;
   line-height: ${OPTION_HEIGHT};
@@ -111,8 +132,9 @@ const OptionComponent = styled.span<{
     !first &&
     `
       &:hover {
-    background-color: ${Colors.background};
+    background-color: ${Colors.hoverColor};
     color: white;
+
     > div {
         border: 1.5px solid rgba(255, 255, 255, 0.4);
     }
@@ -123,34 +145,16 @@ const Wrapper = styled.div`
   flex: 1;
   height: ${OPTION_HEIGHT};
   z-index: 51000;
-  min-width: 200px;
   position: relative;
 `;
 
-const Select = styled.div<{
+const Scroll = styled.div<{
   active: boolean;
 }>`
   width: 100%;
   outline: none;
-
-  max-height: ${({ active }) => (active ? "400px" : OPTION_HEIGHT)};
+  max-height: ${({ active }) => (active ? "400px" : 0)};
   overflow-y: scroll;
-
   transition: 0.3s;
-
-  border-radius: 3px !important;
-
-  > span:not(:first-child) {
-    opacity: ${({ active }) => (active ? 1 : 0)};
-  }
-
-  > span:last-child {
-    border-bottom-left-radius: 3px !important;
-    border-bottom-right-radius: 3px !important;
-  }
-
-  > span:first-child {
-    border-top-left-radius: 3px !important;
-    border-top-right-radius: 3px !important;
-  }
+  opacity: ${({ active }) => (active ? 1 : 0)};
 `;

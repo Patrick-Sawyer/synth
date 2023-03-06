@@ -130,6 +130,7 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
           connections,
         });
         window.localStorage.setItem(saveName, patchAsString);
+        alert("PATCH SAVED FOOL!");
       } catch {
         alert("SOMETHING WENT WRONG FOOL");
       }

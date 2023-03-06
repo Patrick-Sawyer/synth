@@ -42,13 +42,15 @@ export const formatOnSave = (units: Array<any>): Patch => {
           return {
             type: AudioUnitTypes.OSCILLATOR,
             mainVolume: unit.mainVolume.gain.value,
-            waveform: unit.oscillator.type,
+            waveform: unit.currentWaveform,
             octave: unit.octave,
             detune: unit.oscillator.detune.value,
             pan: unit.pan.pan.value,
             unitKey: unit.unitKey,
             amAmount: unit.amIn.node.gain.value,
             fmAmount: unit.fmIn.node.gain.value,
+            pulseWidth: unit.pulse.width.value,
+            pulseWidthModulation: unit.pwm.node.gain.value,
           } as SavedOscillator;
         case AudioUnitTypes.ENVELOPE:
           return {
@@ -74,7 +76,7 @@ export const formatOnSave = (units: Array<any>): Patch => {
             waveform: unit.oscillator.type,
             rate: unit.oscillator.frequency.value,
             amount: unit.output.node.gain.value,
-            fmAmount: unit.fmIn.node.gain.value,
+            fmAmount: unit.fmAmount,
             amAmount: unit.amIn.node.gain.value,
           } as SavedLFO;
         case AudioUnitTypes.FILTER:

@@ -11,4 +11,5 @@ export const Colors = {
   sequencerOneColor: "#59d121",
   sequencerTwoColor: "#ff40fc",
   sequencerThreeColor: "#ff5500",
+  hoverColor: "#0800ff",
 };

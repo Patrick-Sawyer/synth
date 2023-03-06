@@ -178,7 +178,7 @@ const Button = styled.div`
   cursor: pointer;
 
   &:hover {
-    background-color: #0800ff;
+    background-color: ${Colors.hoverColor};
   }
 
   &:active {

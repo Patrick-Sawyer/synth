@@ -4,7 +4,7 @@ import { BaseUnit, FADE, ZERO } from "./BaseUnit";
 import { Connection } from "./Connection";
 import { AudioUnitTypes } from "./types";
 
-export type WaveTypes = "sine" | "sawtooth" | "square" | "triangle";
+export type WaveTypes = "sine" | "sawtooth" | "triangle" | "square";
 
 export interface SavedOscillator {
   mainVolume: number;
@@ -43,6 +43,7 @@ export class Oscillator extends BaseUnit {
   pwm: Connection;
   setPwm: (value: number) => void;
   setPulseWidth: (value: number) => void;
+  currentWaveform: WaveTypes | "pulse";
 
   constructor(input?: SavedOscillator) {
     super(AudioUnitTypes.OSCILLATOR, input?.unitKey);
@@ -90,6 +91,7 @@ export class Oscillator extends BaseUnit {
     this.mainVolume.connect(this.pan);
     this.pan.connect(this.output.node);
     this.amIn.node.connect(this.output.node.gain);
+    this.currentWaveform = input?.waveform || "sine";
 
     this.offset = 0;
 
@@ -97,6 +99,8 @@ export class Oscillator extends BaseUnit {
     this.fmIn.node.connect(this.pulse.frequency);
 
     this.setWaveform = (next: WaveTypes | "pulse") => {
+      this.currentWaveform = next;
+
       if (next === "pulse") {
         this.allOtherOscillatorsGain.gain.linearRampToValueAtTime(
           ZERO,
@@ -154,13 +158,6 @@ export class Oscillator extends BaseUnit {
       );
     };
 
-    this.shutdown = () => {
-      this.output.node.gain.value = ZERO;
-      this.oscillator.disconnect();
-      this.output.node.disconnect();
-      this.mainVolume.disconnect();
-    };
-
     this.setPan = (value: number) => {
       this.pan.pan.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE);
     };
@@ -203,6 +200,20 @@ export class Oscillator extends BaseUnit {
         value,
         CONTEXT.currentTime + FADE
       );
+    };
+
+    this.shutdown = () => {
+      this.output.node.gain.value = ZERO;
+      this.oscillator.disconnect();
+      this.output.node.disconnect();
+      this.mainVolume.disconnect();
+      this.pulse.disconnect();
+      this.fmIn.node.disconnect();
+      this.amIn.node.disconnect();
+      this.pan.disconnect();
+      this.pulseGain.disconnect();
+      this.allOtherOscillatorsGain.disconnect();
+      this.cvIn.node.disconnect();
     };
   }
 }

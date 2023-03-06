@@ -124,5 +124,16 @@ export class Envelope extends BaseUnit {
         this.stop();
       }
     };
+
+    this.shutdown = () => {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+
+      this.output.node.gain.value = ZERO;
+      this.output.node.disconnect();
+      this.input.node.disconnect();
+      this.cvIn.node.disconnect();
+    };
   }
 }

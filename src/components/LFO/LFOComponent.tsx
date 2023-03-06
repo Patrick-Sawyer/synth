@@ -87,11 +87,7 @@ export function LFOComponent(
             min={0}
             max={10}
             resetValue={0}
-            initValue={
-              props.fmIn.node.gain.value === undefined
-                ? 0
-                : props.fmIn.node.gain.value
-            }
+            initValue={props.fmAmount || 0}
             small
             onChange={props.setFmAmount}
             exponentialAmount={2}

@@ -15,6 +15,26 @@ const OPTIONS: Array<ReverbTypes> = [
   ReverbTypes.ROOM,
 ];
 
+const calculateInitTypeIndex = (type: ReverbTypes) => {
+  switch (type) {
+    case ReverbTypes.HALL:
+      return 0;
+    case ReverbTypes.SPRING:
+      return 1;
+    case ReverbTypes.WAREHOUSE:
+      return 2;
+    case ReverbTypes.CHURCH:
+      return 3;
+    case ReverbTypes.DIRTY:
+      return 4;
+    case ReverbTypes.ROOM:
+      return 5;
+
+    default:
+      return 0;
+  }
+};
+
 export function ReverbComponent(
   props: Reverb & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
@@ -24,6 +44,7 @@ export function ReverbComponent(
         <MultiSelect
           label="TYPE"
           options={OPTIONS}
+          initIndex={calculateInitTypeIndex(props.reverbType)}
           onPress={(value) => {
             props.setType(value as ReverbTypes);
           }}

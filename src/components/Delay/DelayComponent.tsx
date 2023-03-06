@@ -6,6 +6,7 @@ import {
   INIT_DRY_VALUE,
   INIT_WET_VALUE,
 } from "../../audioUnits/Delay";
+import { debounce } from "../../utils/debounce";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { BaseAudioUI } from "../unitBlocks/BaseAudioUI/BaseAudioUI";
 import { Knob } from "../unitBlocks/Knob";
@@ -25,10 +26,9 @@ export function DelayComponent(
               : props.delay.delayTime.value
           }
           resetValue={INIT_DELAY_TIME}
-          onChange={props.setDelayTime}
-          min={0.1}
-          max={10}
-          exponentialAmount={3}
+          onChange={debounce(props.setDelayTime, 300)}
+          min={0}
+          max={1}
         />
         <Knob
           text="DRY"

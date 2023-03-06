@@ -1,6 +1,6 @@
 import { CONTEXT } from "../App";
 import { ConnectionTypes } from "../ConnectionContext";
-import { BaseUnit, FADE } from "./BaseUnit";
+import { BaseUnit, FADE, ZERO } from "./BaseUnit";
 import { Connection } from "./Connection";
 import { INIT_RATE } from "./LFO";
 import { AudioUnitTypes } from "./types";
@@ -23,7 +23,6 @@ export interface SavedFilter {
 const calculateFmAmount = (frequency: number, fmAmount: number) => {
   const diff = Math.max(frequency - 50, 0);
   const asFraction = diff / 20000;
-  console.log("CALCULATED FM AMOUNT", asFraction * fmAmount);
   return asFraction * fmAmount;
 };
 
@@ -43,16 +42,14 @@ export class Filter extends BaseUnit {
   fmAmount: number;
 
   constructor(input?: SavedFilter) {
-    console.log("FILTER INPUT", input);
     super(AudioUnitTypes.FILTER, input?.unitKey);
     this.output.node.gain.value = 1;
     this.fmIn = new Connection("FM IN", ConnectionTypes.INPUT, 1);
-    console.log("INP");
     this.fmIn.node.gain.value = calculateFmAmount(
       input?.frequency === undefined ? INIT_RATE : input.frequency,
       input?.fmAmount === undefined ? INIT_FILTER_FM_VALUE : input.fmAmount
     );
-
+    console.log("FILTER INPUT", input);
     this.filter = CONTEXT.createBiquadFilter();
     this.filter.frequency.value =
       input?.frequency === undefined ? FILTER_INIT_FREQ : input.frequency;
@@ -100,6 +97,12 @@ export class Filter extends BaseUnit {
 
     this.setResonance = (value: number) => {
       this.filter.Q.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE);
+    };
+    this.shutdown = () => {
+      this.output.node.gain.value = ZERO;
+      this.output.node.disconnect();
+      this.fmIn.node.disconnect();
+      this.input.node.disconnect();
     };
   }
 }

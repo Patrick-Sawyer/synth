@@ -1,6 +1,6 @@
 import { CONTEXT } from "../App";
 import { ConnectionTypes } from "../ConnectionContext";
-import { BaseUnit, FADE } from "./BaseUnit";
+import { BaseUnit, FADE, ZERO } from "./BaseUnit";
 import { Connection } from "./Connection";
 import { AudioUnitTypes } from "./types";
 
@@ -13,7 +13,7 @@ export interface SavedDelay {
   time: number;
 }
 
-export const INIT_DELAY_TIME = 500;
+export const INIT_DELAY_TIME = 0.5;
 export const INIT_DELAY_FEEDBACK = 0.5;
 export const INIT_DRY_VALUE = 1;
 export const INIT_WET_VALUE = 1;
@@ -72,7 +72,22 @@ export class Delay extends BaseUnit {
     };
 
     this.setDelayTime = (value: number) => {
-      this.delay.delayTime.value = value;
+      this.delay.delayTime.cancelAndHoldAtTime(0);
+      this.delay.delayTime.cancelScheduledValues(0);
+      this.delay.delayTime.exponentialRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + 0.2
+      );
+    };
+
+    this.shutdown = () => {
+      this.output.node.gain.value = ZERO;
+      this.output.node.disconnect();
+      this.input.node.disconnect();
+      this.delay.disconnect();
+      this.feedback.disconnect();
+      this.dry.disconnect();
+      this.wet.disconnect();
     };
   }
 }

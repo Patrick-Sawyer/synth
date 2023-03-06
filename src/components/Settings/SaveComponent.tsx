@@ -23,6 +23,8 @@ export function SaveComponent({ onClick, text, setText }: Props) {
         onClick={() => {
           if (text.length) {
             onClick(text);
+          } else {
+            alert("ENTER SOME TEXT FOOL!");
           }
         }}
       >
@@ -43,6 +45,9 @@ const Wrapper = styled.div`
   overflow: hidden;
   border-radius: 3px;
   gap: 5px;
+  -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
 `;
 
 const Input = styled.input`
@@ -71,7 +76,7 @@ const SaveButton = styled.div`
 
   cursor: pointer;
   &:hover {
-    background-color: #0800ff;
+    background-color: ${Colors.hoverColor};
   }
 
   &:active {

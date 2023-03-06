@@ -20,7 +20,7 @@ export const calcInitTypeIndex = (type: string) => {
   if (type === "sine") return 0;
   if (type === "sawtooth") return 1;
   if (type === "triangle") return 2;
-  if (type === "square") return 3;
+  if (type === "pulse" || "square") return 3;
 
   return 0;
 };
@@ -49,7 +49,7 @@ export function OscillatorComponent(
         <MultiSelect
           label="WAVE"
           options={WAVE_TYPES}
-          initIndex={calcInitTypeIndex(props.oscillator.type)}
+          initIndex={calcInitTypeIndex(props.currentWaveform)}
           onPress={(option: any) => {
             props.setWaveform(option as WaveTypes);
           }}

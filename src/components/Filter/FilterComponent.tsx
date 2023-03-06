@@ -13,6 +13,14 @@ import { UnitColumn } from "../unitBlocks/UnitColumn";
 
 const FILTER_TYPES = ["low", "high", "band"];
 
+export const calcInitTypeIndex = (type?: string) => {
+  if (type === "lowpass") return 0;
+  if (type === "highpass") return 1;
+  if (type === "bandpass") return 2;
+
+  return 0;
+};
+
 export function FilterComponent(
   props: Filter & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
@@ -36,6 +44,7 @@ export function FilterComponent(
           label="TYPE"
           options={FILTER_TYPES}
           chars={10}
+          initIndex={calcInitTypeIndex(props.filter.type)}
           onPress={(value) => {
             props.setType((value + "pass") as FilterTypes);
           }}
