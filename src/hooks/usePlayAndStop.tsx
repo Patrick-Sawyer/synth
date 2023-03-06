@@ -131,7 +131,7 @@ interface FindUnitsArgs {
 const findUnits = ({ audioUnits, connections }: FindUnitsArgs) => {
   const gridOneConnections = getConnections(connections, "SEQ_ONE");
   const gridTwoConnections = getConnections(connections, "SEQ_TWO");
-  const gridThreeConnections = getConnections(connections, "SEQ_ONE");
+  const gridThreeConnections = getConnections(connections, "SEQ_THREE");
   const gridOneUnits = getUnits(gridOneConnections, audioUnits);
   const gridTwoUnits = getUnits(gridTwoConnections, audioUnits);
   const gridThreeUnits = getUnits(gridThreeConnections, audioUnits);

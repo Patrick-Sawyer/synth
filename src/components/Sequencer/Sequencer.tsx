@@ -210,7 +210,7 @@ const SequencerWrapper = styled.div`
   display: flex;
   flex-direction: column-reverse;
   gap: 5px;
-  padding: 0 10px 10px 10px;
+  padding: 5px 10px 10px 10px;
 `;
 
 const GridOuterWrapper = styled.div`

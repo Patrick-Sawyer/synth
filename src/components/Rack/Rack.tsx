@@ -45,15 +45,6 @@ export function Rack() {
     tempo,
   });
 
-  const playNote = (freq?: number) => {
-    audioUnits.forEach((unit) => {
-      if (unit.type === AudioUnitTypes.OSCILLATOR) {
-        const blah = unit as Oscillator;
-        blah.play(freq);
-      }
-    });
-  };
-
   return (
     <Wrapper ref={ref}>
       <Title>
