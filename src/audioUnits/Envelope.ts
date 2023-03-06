@@ -36,7 +36,7 @@ export class Envelope extends BaseUnit {
     super(AudioUnitTypes.ENVELOPE, input?.unitKey);
     this.output.node.gain.value = ZERO;
     this.input = new Connection("INPUT", ConnectionTypes.INPUT);
-    this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN);
+    this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN, 1);
     this.cvIn.node.gain.value = ZERO;
     this.input.node.gain.value = 1;
     this.input.node.connect(this.output.node);

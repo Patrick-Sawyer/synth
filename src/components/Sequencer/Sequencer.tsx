@@ -1,13 +1,18 @@
-import { Dispatch, memo, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../../utils/theme";
 import { Collapsible } from "./Collapsible";
 import { Grid, ROW_HEIGHT } from "./Grid";
-import { CELL_WIDTH, GridNote } from "./Note";
+import { GridNote } from "./Note";
 import { NOTES } from "./notes";
 
 interface Props {
-  playNote: (freq?: number) => void;
+  seqOneGridNotes: Array<GridNote>;
+  seqTwoGridNotes: Array<GridNote>;
+  seqThreeGridNotes: Array<GridNote>;
+  setSeqOneGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
+  setSeqTwoGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
+  setSeqThreeGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
 }
 
 const COLORS = [
@@ -16,12 +21,14 @@ const COLORS = [
   Colors.sequencerThreeColor,
 ];
 
-export function Sequencer({ playNote }: Props) {
-  const [seqOneGridNotes, setSeqOneGridNotes] = useState<Array<GridNote>>([]);
-  const [seqTwoGridNotes, setSeqTwoGridNotes] = useState<Array<GridNote>>([]);
-  const [seqThreeGridNotes, setSeqThreeGridNotes] = useState<Array<GridNote>>(
-    []
-  );
+export function Sequencer({
+  seqOneGridNotes,
+  seqTwoGridNotes,
+  seqThreeGridNotes,
+  setSeqOneGridNotes,
+  setSeqTwoGridNotes,
+  setSeqThreeGridNotes,
+}: Props) {
   const [seqOneLoop, setSeqOneLoop] = useState<number>(2);
   const [seqTwoLoop, setSeqTwoLoop] = useState<number>(2);
   const [seqThreeLoop, setSeqThreeLoop] = useState<number>(2);
@@ -148,10 +155,10 @@ const Line = styled.div`
   width: calc(100% - 30px);
   margin-bottom: 20px;
   border-top: 1px solid white;
-  opacity: 0.15;
+  opacity: 0.1;
 `;
 
-const Option = styled.span<{ active: boolean; color: string }>`
+const Option = styled.div<{ active: boolean; color: string }>`
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
   color: ${({ color, active }) => (active ? color : "grey")};
@@ -159,8 +166,13 @@ const Option = styled.span<{ active: boolean; color: string }>`
   opacity: ${({ active }) => (active ? 1 : 0.4)};
   border-radius: 15px;
   padding: 5px 15px;
+  line-height: 0;
+  min-height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  transition: 0.2s;
+
   cursor: pointer;
 
   ${({ active }) =>
@@ -201,7 +213,7 @@ const SequencerWrapper = styled.div`
 `;
 
 const GridOuterWrapper = styled.div`
-  height: 470px;
+  height: 485px;
   position: relative;
   width: 100%;
   overflow: hidden;
@@ -210,9 +222,8 @@ const GridOuterWrapper = styled.div`
 const Button = styled.span`
   font-size: 14px;
   color: white;
+  text-align: center;
   opacity: 0.5;
-  position: relative;
-  top: 5px;
 
   cursor: pointer;
 
@@ -230,9 +241,7 @@ const LoopText = styled.span<{
 }>`
   color: ${({ textColor }) => textColor};
   font-size: 14px;
-  position: relative;
-  top: 7px;
-
+  text-align: center;
   font-weight: 500;
   cursor: pointer;
 
@@ -257,9 +266,9 @@ const NoteNames = styled.div`
 `;
 
 const Bottom = styled.div`
-  position: absolute;
+  height: 45px;
+  gap: 20px;
   width: calc(100% - 30px);
-  bottom: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;

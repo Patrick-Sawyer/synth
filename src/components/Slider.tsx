@@ -1,95 +1,78 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { debounce } from "../utils/debounce";
 
-export function Slider() {
-  return <Input type="range" />;
+interface Props {
+  onChange: (value: number) => void;
 }
 
-const Input = styled.input`
-  -webkit-appearance: none;
-  margin: 10px 0;
-  width: 100%;
-  background-color: transparent;
+export function Slider({ onChange }: Props) {
+  const [value, setValue] = useState(128);
 
-  :focus {
-    outline: none;
+  const handleChange = debounce(onChange, 500);
+
+  useEffect(() => {
+    handleChange(value);
+  }, [handleChange, value]);
+
+  return (
+    <Wrapper>
+      <Text>{"BPM"}</Text>
+      <Input
+        type="range"
+        name="Tempo"
+        value={value}
+        min="30"
+        max="180"
+        onChange={(e) => setValue(Number(e.currentTarget.value))}
+      />
+    </Wrapper>
+  );
+}
+
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  width: 100%;
+
+  @media screen and (min-width: 541px) {
+    max-width: 500px;
   }
-  ::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 6px;
-    cursor: pointer;
-    animate: 0.2s;
-    box-shadow: 1px 1px 4px #000000;
-    background: #2b2b2b;
-    border-radius: 11px;
-    border: 1px solid #e5e5e5;
-  }
+`;
+
+const Text = styled.div`
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  color: black;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  height: 7px;
+  -webkit-appearance: none;
+  outline: none;
+  background: black;
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
+
   ::-webkit-slider-thumb {
-    box-shadow: 0px 0px 1px #000000;
-    border: 1px solid #e5e5e5;
-    height: 50px;
-    width: 18px;
-    border-radius: 5px;
-    background: #303030;
-    cursor: pointer;
     -webkit-appearance: none;
-    margin-top: -23px;
-  }
-  :focus::-webkit-slider-runnable-track {
-    background: #2b2b2b;
-  }
-  ::-moz-range-track {
-    width: 100%;
-    height: 6px;
+    width: 60px;
+    height: 24px;
+    border-radius: 3px;
+    background: #eaeaea;
+    border: 2px solid white;
     cursor: pointer;
-    animate: 0.2s;
-    box-shadow: 1px 1px 4px #000000;
-    background: #2b2b2b;
-    border-radius: 11px;
-    border: 1px solid #e5e5e5;
-  }
-  ::-moz-range-thumb {
-    box-shadow: 0px 0px 1px #000000;
-    border: 1px solid #e5e5e5;
-    height: 50px;
-    width: 18px;
-    border-radius: 5px;
-    background: #303030;
-    cursor: pointer;
-  }
-  ::-ms-track {
-    width: 100%;
-    height: 6px;
-    cursor: pointer;
-    animate: 0.2s;
-    background: transparent;
-    border-color: transparent;
-    color: transparent;
-  }
-  ::-ms-fill-lower {
-    background: #2b2b2b;
-    border: 1px solid #e5e5e5;
-    border-radius: 22px;
-    box-shadow: 1px 1px 4px #000000;
-  }
-  ::-ms-fill-upper {
-    background: #2b2b2b;
-    border: 1px solid #e5e5e5;
-    border-radius: 22px;
-    box-shadow: 1px 1px 4px #000000;
-  }
-  ::-ms-thumb {
-    box-shadow: 0px 0px 1px #000000;
-    border: 1px solid #e5e5e5;
-    height: 50px;
-    width: 18px;
-    border-radius: 5px;
-    background: #303030;
-    cursor: pointer;
-  }
-  :focus::-ms-fill-lower {
-    background: #2b2b2b;
-  }
-  :focus::-ms-fill-upper {
-    background: #2b2b2b;
+    -webkit-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
   }
 `;

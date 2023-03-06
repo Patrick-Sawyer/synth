@@ -2,7 +2,10 @@ import styled from "styled-components";
 import "./App.css";
 import { Connection } from "./audioUnits/Connection";
 import { Rack } from "./components/Rack/Rack";
-import { ConnectionTypes } from "./ConnectionContext";
+import {
+  ConnectionContextProvider,
+  ConnectionTypes,
+} from "./ConnectionContext";
 
 export const CONTEXT = new AudioContext();
 
@@ -78,7 +81,9 @@ CONTEXT.createPulseOscillator = function (): PulseNode {
 function App() {
   return (
     <Wrapper>
-      <Rack />
+      <ConnectionContextProvider>
+        <Rack />
+      </ConnectionContextProvider>
     </Wrapper>
   );
 }

@@ -14,7 +14,7 @@ import {
   useConnectionContext,
   useConnectionUpdateContext,
 } from "../../ConnectionContext";
-import { formatOnLoad, formatOnSave } from "../../utils/formatPatch";
+import { formatOnLoad, formatOnSave } from "../../utils/formatOnLoadAndSave";
 import { Colors } from "../../utils/theme";
 import { SaveComponent } from "./SaveComponent";
 import { Option, UnitSelector } from "./UnitSelector";

@@ -51,7 +51,7 @@ export class Oscillator extends BaseUnit {
     // @ts-ignore
     this.pulse = CONTEXT.createPulseOscillator();
 
-    this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN);
+    this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN, 1);
     this.fmIn = new Connection("FM IN", ConnectionTypes.INPUT);
     this.fmIn.node.gain.value =
       input?.fmAmount === undefined ? 0 : input.fmAmount;
@@ -137,13 +137,8 @@ export class Oscillator extends BaseUnit {
 
     this.play = (frequency?: number) => {
       if (frequency) {
-        this.output.node.gain.exponentialRampToValueAtTime(ZERO, 10);
-
-        setTimeout(() => {
-          this.oscillator.frequency.value = frequency * this.octave;
-          this.pulse.frequency.value = frequency * this.octave;
-          this.output.node.gain.exponentialRampToValueAtTime(0.3, FADE);
-        }, 10);
+        this.oscillator.frequency.value = frequency * this.octave;
+        this.pulse.frequency.value = frequency * this.octave;
       }
     };
 

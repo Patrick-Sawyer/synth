@@ -53,10 +53,12 @@ const Content = styled.div<{
 }>`
   opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
   width: 100%;
-  padding: 0 15px 15px 15px;
+  padding: 0 15px 0 15px;
+
   transition: 0.3s;
   position: relative;
-  overflow: scroll;
+
+  overflow-x: scroll;
 `;
 
 const Title = styled.span`

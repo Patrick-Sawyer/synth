@@ -8,7 +8,8 @@ import {
 } from "../../App";
 import { Oscillator } from "../../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
-import { ConnectionContextProvider } from "../../ConnectionContext";
+import { useConnectionContext } from "../../ConnectionContext";
+import { usePlayAndStop } from "../../hooks/usePlayAndStop";
 import { Colors } from "../../utils/theme";
 import { DelayComponent } from "../Delay/DelayComponent";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
@@ -16,8 +17,10 @@ import { FilterComponent } from "../Filter/FilterComponent";
 import { LFOComponent } from "../LFO/LFOComponent";
 import { OscillatorComponent } from "../Oscillator/OscillatorComponent";
 import { ReverbComponent } from "../Reverb/ReverbComponent";
+import { GridNote } from "../Sequencer/Note";
 import { Sequencer } from "../Sequencer/Sequencer";
 import { Settings } from "../Settings/Settings";
+import { Slider } from "../Slider";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { Wires } from "../Wires/Wires";
 import { RackRow } from "./RackRow";
@@ -25,57 +28,22 @@ import { RackRow } from "./RackRow";
 export function Rack() {
   const ref = useRef<HTMLDivElement>(null);
   const [audioUnits, setAudioUnits] = useState<Array<AudioUnit>>([]);
+  const { connections } = useConnectionContext();
+  const [tempo, setTempo] = useState(128);
+  const [seqOneGridNotes, setSeqOneGridNotes] = useState<Array<GridNote>>([]);
+  const [seqTwoGridNotes, setSeqTwoGridNotes] = useState<Array<GridNote>>([]);
+  const [seqThreeGridNotes, setSeqThreeGridNotes] = useState<Array<GridNote>>(
+    []
+  );
 
-  const getUnit = (
-    unit: AudioUnit & { wrapperRef: RefObject<HTMLDivElement> }
-  ): React.ReactElement | null => {
-    switch (unit.type) {
-      case AudioUnitTypes.OSCILLATOR:
-        return (
-          <OscillatorComponent
-            {...(unit as unknown as ComponentProps<typeof OscillatorComponent>)}
-          />
-        );
-
-      case AudioUnitTypes.ENVELOPE:
-        return (
-          <EnvelopeComponent
-            {...(unit as unknown as ComponentProps<typeof EnvelopeComponent>)}
-          />
-        );
-
-      case AudioUnitTypes.REVERB:
-        return (
-          <ReverbComponent
-            {...(unit as unknown as ComponentProps<typeof ReverbComponent>)}
-          />
-        );
-
-      case AudioUnitTypes.LFO:
-        return (
-          <LFOComponent
-            {...(unit as unknown as ComponentProps<typeof LFOComponent>)}
-          />
-        );
-
-      case AudioUnitTypes.FILTER:
-        return (
-          <FilterComponent
-            {...(unit as unknown as ComponentProps<typeof FilterComponent>)}
-          />
-        );
-
-      case AudioUnitTypes.DELAY:
-        return (
-          <DelayComponent
-            {...(unit as unknown as ComponentProps<typeof DelayComponent>)}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
+  const { playModular, stopModular } = usePlayAndStop({
+    audioUnits,
+    gridOne: seqOneGridNotes,
+    gridTwo: seqTwoGridNotes,
+    gridThree: seqThreeGridNotes,
+    connections,
+    tempo,
+  });
 
   const playNote = (freq?: number) => {
     audioUnits.forEach((unit) => {
@@ -87,91 +55,98 @@ export function Rack() {
   };
 
   return (
-    <ConnectionContextProvider>
-      <Wrapper ref={ref}>
-        <Title>
-          <TitleText>{"TURNTABLISM MODULAR"}</TitleText>
-          <Buttons>
-            <Button>PLAY</Button>
-            <Button>STOP</Button>
-          </Buttons>
-        </Title>
-        <Settings audioUnits={audioUnits} setAudioUnits={setAudioUnits} />
-        <Sequencer playNote={playNote} />
-        <MainOut>
-          <AudioConnection
-            darkText
-            wrapperRef={ref}
-            connection={MAIN_OUT}
-            unitKey="MAIN_OUT"
-            connectionKey="MAIN_OUT"
-            horizontal
-          />
-          <AudioConnection
-            darkText
-            wrapperRef={ref}
-            connection={SEQ_ONE_CV_OUT}
-            unitKey="SEQ_ONE"
-            connectionKey="SEQ_ONE"
-            horizontal
-          />
-          <AudioConnection
-            darkText
-            wrapperRef={ref}
-            connection={SEQ_TWO_CV_OUT}
-            unitKey="SEQ_TWO"
-            connectionKey="SEQ_TWO"
-            horizontal
-          />
-          <AudioConnection
-            darkText
-            wrapperRef={ref}
-            connection={SEQ_THREE_CV_OUT}
-            unitKey="SEQ_THREE"
-            connectionKey="SEQ_THREE"
-            horizontal
-          />
-        </MainOut>
+    <Wrapper ref={ref}>
+      <Title>
+        <TitleText>{"TURNTABLISM MODULAR"}</TitleText>
+        <Slider onChange={setTempo} />
+        <Buttons>
+          <Button onClick={playModular}>PLAY</Button>
+          <Button onClick={stopModular}>STOP</Button>
+        </Buttons>
+      </Title>
+      <Settings audioUnits={audioUnits} setAudioUnits={setAudioUnits} />
+      <Sequencer
+        seqOneGridNotes={seqOneGridNotes}
+        seqTwoGridNotes={seqTwoGridNotes}
+        seqThreeGridNotes={seqThreeGridNotes}
+        setSeqOneGridNotes={setSeqOneGridNotes}
+        setSeqTwoGridNotes={setSeqTwoGridNotes}
+        setSeqThreeGridNotes={setSeqThreeGridNotes}
+      />
+      <MainOut>
+        <AudioConnection
+          darkText
+          wrapperRef={ref}
+          connection={MAIN_OUT}
+          unitKey="MAIN_OUT"
+          connectionKey="MAIN_OUT"
+          horizontal
+        />
+        <AudioConnection
+          darkText
+          wrapperRef={ref}
+          connection={SEQ_ONE_CV_OUT}
+          unitKey="SEQ_ONE"
+          connectionKey="SEQ_ONE"
+          horizontal
+        />
+        <AudioConnection
+          darkText
+          wrapperRef={ref}
+          connection={SEQ_TWO_CV_OUT}
+          unitKey="SEQ_TWO"
+          connectionKey="SEQ_TWO"
+          horizontal
+        />
+        <AudioConnection
+          darkText
+          wrapperRef={ref}
+          connection={SEQ_THREE_CV_OUT}
+          unitKey="SEQ_THREE"
+          connectionKey="SEQ_THREE"
+          horizontal
+        />
+      </MainOut>
 
-        <RackWrapper>
-          <RackRow key={1} />
-          <RackRow key={2} />
-          <RackRow key={3} />
-          <RackRow key={4} />
-          <RackRow key={5} />
-          <RackRow key={6} />
-          <RackRow key={7} />
-          <RackRow key={8} />
-          <RackRow key={9} />
-          <RackRow key={10} />
+      <RackWrapper>
+        <RackRow key={1} />
+        <RackRow key={2} />
+        <RackRow key={3} />
+        <RackRow key={4} />
+        <RackRow key={5} />
+        <RackRow key={6} />
+        <RackRow key={7} />
+        <RackRow key={8} />
+        <RackRow key={9} />
+        <RackRow key={10} />
 
-          <AudioUnits>
-            {audioUnits.map((audioUnit) =>
-              getUnit({ ...audioUnit, wrapperRef: ref })
-            )}
-          </AudioUnits>
-        </RackWrapper>
-        <Wires wrapperRef={ref} />
-      </Wrapper>
-    </ConnectionContextProvider>
+        <AudioUnits>
+          {audioUnits.map((audioUnit) =>
+            getUnit({ ...audioUnit, wrapperRef: ref })
+          )}
+        </AudioUnits>
+      </RackWrapper>
+      <Wires wrapperRef={ref} />
+    </Wrapper>
   );
 }
 
 const Buttons = styled.div`
   display: flex;
-  gap: 5px;
+  gap: 15px;
   width: 100%;
-
-  @media screen and (min-width: 571px) {
-    max-width: 300px;
-  }
+  flex: 1;
 `;
 
 const TitleText = styled.div`
   width: 300px;
   max-width: 300px;
   min-width: 300px;
-  padding: 0 10px;
+  padding-left: 10px;
+
+  @media screen and (max-width: 870px) {
+    display: none;
+  }
 `;
 
 const Button = styled.div`
@@ -180,7 +155,7 @@ const Button = styled.div`
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: bold;
-  height: 37px;
+  height: 25px;
   background-color: black;
   line-height: 0;
   color: white;
@@ -213,13 +188,14 @@ const Title = styled.div`
   width: calc(100% - 20px);
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 25px;
   height: 50px;
   align-items: center;
 
-  @media screen and (max-width: 570px) {
+  @media screen and (max-width: 540px) {
     flex-direction: column;
-    height: 100px;
+    height: 75px;
+    gap: 10px;
   }
 `;
 
@@ -256,3 +232,54 @@ const AudioUnits = styled.div`
   overflow: hidden;
   top: 0;
 `;
+
+const getUnit = (
+  unit: AudioUnit & { wrapperRef: RefObject<HTMLDivElement> }
+): React.ReactElement | null => {
+  switch (unit.type) {
+    case AudioUnitTypes.OSCILLATOR:
+      return (
+        <OscillatorComponent
+          {...(unit as unknown as ComponentProps<typeof OscillatorComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.ENVELOPE:
+      return (
+        <EnvelopeComponent
+          {...(unit as unknown as ComponentProps<typeof EnvelopeComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.REVERB:
+      return (
+        <ReverbComponent
+          {...(unit as unknown as ComponentProps<typeof ReverbComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.LFO:
+      return (
+        <LFOComponent
+          {...(unit as unknown as ComponentProps<typeof LFOComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.FILTER:
+      return (
+        <FilterComponent
+          {...(unit as unknown as ComponentProps<typeof FilterComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.DELAY:
+      return (
+        <DelayComponent
+          {...(unit as unknown as ComponentProps<typeof DelayComponent>)}
+        />
+      );
+
+    default:
+      return null;
+  }
+};
