@@ -10,7 +10,7 @@ export function EnvelopeComponent(
   props: Envelope & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color}>
+    <BaseAudioUI color={props.color} title={"ADSR envelope"} letterSpacing={12}>
       <UnitColumn>
         <Knob
           text={"ATTACK"}

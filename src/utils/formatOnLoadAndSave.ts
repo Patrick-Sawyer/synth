@@ -66,8 +66,7 @@ export const formatOnSave = (units: Array<any>): Patch => {
             type: AudioUnitTypes.REVERB,
             unitKey: unit.unitKey,
             reverbType: unit.reverbType,
-            dry: unit.dry.gain.value,
-            wet: unit.reverbVolume.gain.value,
+            wet: unit.dryWetValue,
           } as SavedReverb;
         case AudioUnitTypes.LFO:
           return {
@@ -77,7 +76,6 @@ export const formatOnSave = (units: Array<any>): Patch => {
             rate: unit.oscillator.frequency.value,
             amount: unit.output.node.gain.value,
             fmAmount: unit.fmAmount,
-            amAmount: unit.amIn.node.gain.value,
           } as SavedLFO;
         case AudioUnitTypes.FILTER:
           return {
@@ -94,7 +92,6 @@ export const formatOnSave = (units: Array<any>): Patch => {
             unitKey: unit.unitKey,
             time: unit.delay.delayTime.value,
             feedback: unit.feedback.gain.value,
-            dry: unit.dry.gain.value,
             wet: unit.wet.gain.value,
           } as SavedDelay;
         default:

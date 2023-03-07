@@ -62,7 +62,7 @@ const Content = styled.div<{
 `;
 
 const Title = styled.span`
-  font-size: 22px;
+  font-size: 28px;
   position: relative;
   opacity: 0.8;
   color: white;

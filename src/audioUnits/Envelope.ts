@@ -102,7 +102,7 @@ export class Envelope extends BaseUnit {
 
         this.timeout = setTimeout(() => {
           this.output.node.gain.exponentialRampToValueAtTime(
-            this.sustain,
+            Math.max(this.sustain, ZERO),
             CONTEXT.currentTime + this.attack + this.decay
           );
 

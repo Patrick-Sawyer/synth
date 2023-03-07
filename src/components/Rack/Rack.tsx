@@ -1,4 +1,4 @@
-import { ComponentProps, RefObject, useRef, useState } from "react";
+import { ComponentProps, RefObject, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MAIN_OUT,
@@ -50,6 +50,10 @@ export function Rack() {
     seqTwoLoop,
     seqThreeLoop,
   });
+
+  useEffect(() => {
+    console.log(tempo);
+  }, [tempo]);
 
   return (
     <Wrapper ref={ref}>

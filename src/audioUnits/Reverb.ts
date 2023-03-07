@@ -7,7 +7,6 @@ import { AudioUnitTypes } from "./types";
 export interface SavedReverb {
   unitKey: string;
   type: AudioUnitTypes.REVERB;
-  dry: number;
   wet: number;
   reverbType: ReverbTypes;
 }
@@ -27,10 +26,10 @@ export class Reverb extends BaseUnit {
   dry: GainNode;
   reverbVolume: GainNode;
   setReverbVolume: (value: number) => void;
-  setDryVolume: (value: number) => void;
   reverbType: ReverbTypes;
   setType: (type: ReverbTypes) => void;
   addReverb: (convolver: ConvolverNode, type: ReverbTypes) => Promise<void>;
+  dryWetValue: number;
 
   constructor(input?: SavedReverb) {
     super(AudioUnitTypes.REVERB, input?.unitKey);
@@ -58,12 +57,12 @@ export class Reverb extends BaseUnit {
 
     this.dry = CONTEXT.createGain();
     this.input.node.connect(this.dry);
-    this.dry.gain.value = input?.dry === undefined ? 1 : input.dry;
+    this.dry.gain.value = input?.wet === undefined ? 0 : 1 - input.wet;
     this.dry.connect(this.output.node);
 
-    this.setDryVolume = (value: number) => {
-      this.dry.gain.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE);
-    };
+    // this.setDryVolume = (value: number) => {
+    //   this.dry.gain.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE);
+    // };
 
     // REVERB
 
@@ -75,12 +74,17 @@ export class Reverb extends BaseUnit {
     this.reverbVolume.gain.value = input?.wet === undefined ? 1 : input.wet;
     this.reverb.connect(this.reverbVolume);
     this.reverbVolume.connect(this.output.node);
+    this.dryWetValue = input?.wet === undefined ? 1 : 0;
 
     this.setReverbVolume = (value: number) => {
+      this.dryWetValue = value;
+      const newWet = Math.pow(value, 0.5);
+      const newDry = Math.pow(1 - value, 0.5);
       this.reverbVolume.gain.linearRampToValueAtTime(
-        value,
+        newWet,
         CONTEXT.currentTime + FADE
       );
+      this.dry.gain.linearRampToValueAtTime(newDry, CONTEXT.currentTime + FADE);
     };
 
     this.shutdown = () => {

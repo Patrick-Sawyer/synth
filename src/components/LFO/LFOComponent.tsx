@@ -19,7 +19,7 @@ export function LFOComponent(
   props: LFO & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color}>
+    <BaseAudioUI color={props.color} title={"Low Frequency Osc"}>
       <UnitColumn>
         <Knob
           text="RATE"
@@ -42,41 +42,6 @@ export function LFOComponent(
             props.setWaveform(option as WaveTypes);
           }}
         />
-        <Knob
-          text="AMOUNT"
-          min={0}
-          max={0.6}
-          onChange={props.setAmount}
-          initValue={
-            props.output.node.gain.value === undefined
-              ? INIT_VOL
-              : props.output.node.gain.value
-          }
-          resetValue={0}
-          exponentialAmount={2}
-        />
-      </UnitColumn>
-      <UnitColumn>
-        <AudioConnection
-          wrapperRef={props.wrapperRef}
-          connection={props.amIn}
-          unitKey={props.unitKey}
-          connectionKey={"amIn"}
-        >
-          <Knob
-            min={0}
-            max={10}
-            resetValue={0}
-            initValue={
-              props.amIn.node.gain.value === undefined
-                ? 0
-                : props.amIn.node.gain.value
-            }
-            small
-            onChange={props.setAmAmount}
-            exponentialAmount={2}
-          />
-        </AudioConnection>
         <AudioConnection
           wrapperRef={props.wrapperRef}
           connection={props.fmIn}

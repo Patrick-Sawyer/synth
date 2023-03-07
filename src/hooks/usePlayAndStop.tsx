@@ -20,7 +20,7 @@ interface ScheduledNotes {
   grid2?: GridNote;
   grid3?: GridNote;
 }
-
+// GET IT TO WORK WITH UPDATING ARGUMENTS
 // TODO: Schedule the end of notes
 // Work out priority e.g. higher notes, newer notes overwrite old notes
 // Get multiple sequencer working
