@@ -73,6 +73,7 @@ const Title = styled.span`
   justify-content: center;
   font-family: Graf;
   text-align: center;
+  text-shadow: 2px 2px 4px #000000;
 `;
 
 const ChevronContainer = styled.div<{

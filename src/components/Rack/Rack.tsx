@@ -143,6 +143,7 @@ const TitleText = styled.div`
   max-width: 300px;
   min-width: 300px;
   padding-left: 10px;
+  text-shadow: 2px 2px 4px #656565;
 
   @media screen and (max-width: 870px) {
     display: none;
