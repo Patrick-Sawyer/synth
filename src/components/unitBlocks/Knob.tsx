@@ -127,12 +127,6 @@ export function Knob({
 
   return (
     <Wrapper>
-      {!small && (
-        <LabelWrapper>
-          <MiniLabel>-</MiniLabel>
-          <MiniLabel>+</MiniLabel>
-        </LabelWrapper>
-      )}
       <Shadow small={small}>
         <InnerShadow small={small}>
           <Inner
@@ -198,21 +192,4 @@ const Marker = styled.div`
   border-radius: 50%;
   background-color: white;
   margin-top: 5px;
-`;
-
-const MiniLabel = styled.span`
-  font-size: 15px;
-  font-weight: bold;
-  font-family: "Courier New", Courier, monospace;
-  text-align: center;
-  color: white;
-  opacity: 0.3;
-`;
-
-const LabelWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  top: 27px;
-  width: 47px;
 `;
