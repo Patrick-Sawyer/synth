@@ -1,4 +1,4 @@
-import { ComponentProps, RefObject, useEffect, useRef, useState } from "react";
+import { ComponentProps, RefObject, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MAIN_OUT,
@@ -6,7 +6,6 @@ import {
   SEQ_THREE_CV_OUT,
   SEQ_TWO_CV_OUT,
 } from "../../App";
-import { Oscillator } from "../../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
 import { useConnectionContext } from "../../ConnectionContext";
 import { usePlayAndStop } from "../../hooks/usePlayAndStop";
@@ -50,10 +49,6 @@ export function Rack() {
     seqTwoLoop,
     seqThreeLoop,
   });
-
-  useEffect(() => {
-    console.log(tempo);
-  }, [tempo]);
 
   return (
     <Wrapper ref={ref}>

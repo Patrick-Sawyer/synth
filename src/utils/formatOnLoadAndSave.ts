@@ -84,7 +84,7 @@ export const formatOnSave = (units: Array<any>): Patch => {
             waveform: unit.filter.type,
             fmAmount: unit.fmAmount,
             resonance: unit.filter.Q.value,
-            frequency: unit.filter.frequency.value,
+            frequency: unit.frequency,
           } as SavedFilter;
         case AudioUnitTypes.DELAY:
           return {

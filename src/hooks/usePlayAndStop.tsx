@@ -1,4 +1,6 @@
 import { useRef } from "react";
+import { Filter } from "../audioUnits/Filter";
+import { Oscillator } from "../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../audioUnits/types";
 import { GridNote } from "../components/Sequencer/Note";
 import { FullConnection } from "../ConnectionContext";
@@ -16,14 +18,18 @@ interface Args {
 }
 
 interface ScheduledNotes {
-  grid1?: GridNote;
-  grid2?: GridNote;
-  grid3?: GridNote;
+  grid1?: GridNote | "stop";
+  grid2?: GridNote | "stop";
+  grid3?: GridNote | "stop";
 }
 // GET IT TO WORK WITH UPDATING ARGUMENTS
 // TODO: Schedule the end of notes
 // Work out priority e.g. higher notes, newer notes overwrite old notes
 // Get multiple sequencer working
+
+type AudioUnitWithEnvConnections = AudioUnit & {
+  connectedUnits?: Array<AudioUnit>;
+};
 
 export const usePlayAndStop = ({
   audioUnits,
@@ -36,6 +42,29 @@ export const usePlayAndStop = ({
   seqTwoLoop,
   seqThreeLoop,
 }: Args) => {
+  const unitsWithEnvelopeConnections = audioUnits.map((unit) => {
+    const unitToReturn: AudioUnitWithEnvConnections = {
+      ...unit,
+    };
+
+    if (unit.type === AudioUnitTypes.ENVELOPE) {
+      const conns = connections
+        .filter((conn) => {
+          return (
+            conn.from.unitKey === unit.unitKey &&
+            conn.from.connectionKey === "envOut"
+          );
+        })
+        .map((conn) => conn.to.unitKey);
+
+      unitToReturn.connectedUnits = audioUnits.filter((unit) => {
+        return conns.includes(unit.unitKey);
+      });
+    }
+
+    return unitToReturn;
+  });
+
   const nextScheduledNotes = useRef<ScheduledNotes>();
   const nextScheduledIndexSequencerOne = useRef(0);
   const nextScheduledIndexSequencerTwo = useRef(0);
@@ -43,7 +72,7 @@ export const usePlayAndStop = ({
 
   const timeout = useRef<NodeJS.Timeout>();
   const { gridOneUnits, gridTwoUnits, gridThreeUnits } = findUnits({
-    audioUnits,
+    audioUnits: unitsWithEnvelopeConnections,
     connections,
   });
 
@@ -52,14 +81,17 @@ export const usePlayAndStop = ({
       grid1: getNoteAtIndex({
         grid: gridOne,
         index: nextScheduledIndexSequencerOne.current,
+        loop: seqOneLoop,
       }),
       grid2: getNoteAtIndex({
         grid: gridTwo,
         index: nextScheduledIndexSequencerTwo.current,
+        loop: seqTwoLoop,
       }),
       grid3: getNoteAtIndex({
         grid: gridThree,
         index: nextScheduledIndexSequencerThree.current,
+        loop: seqThreeLoop,
       }),
     };
     nextScheduledNotes.current = nextNotes;
@@ -113,20 +145,40 @@ export const usePlayAndStop = ({
   return { playModular, stopModular };
 };
 
-const playNote = (units?: Array<AudioUnit | undefined>, note?: GridNote) => {
+const playNote = (
+  units?: Array<AudioUnit | undefined>,
+  note?: GridNote | "stop"
+) => {
   if (!note) return;
+
   units?.forEach((unit: any) => {
     if (!unit) return;
     switch (unit.type) {
       case AudioUnitTypes.OSCILLATOR:
-        unit.play(note.note * 8);
+        if (note && note !== "stop") {
+          unit.play(note.note * 8);
+        }
         break;
       case AudioUnitTypes.ENVELOPE:
-        unit.trigger(note.note);
-        break;
+        unit.trigger(note === "stop" ? "stop" : "start");
 
+        unit.connectedUnits?.forEach((connectedUnit: Filter | Oscillator) => {
+          if (note !== "stop") {
+            connectedUnit.triggerEnvelope &&
+              connectedUnit.triggerEnvelope(
+                unit.attack,
+                unit.decay,
+                unit.sustain
+              );
+          } else {
+            connectedUnit.triggerRelease &&
+              connectedUnit.triggerRelease(unit.release);
+          }
+        });
+
+        break;
       default:
-        return;
+        break;
     }
   });
 };
@@ -138,19 +190,29 @@ const bpmToMS = (bpm: number): number => {
 interface PlayAtIndexArgs {
   index: number;
   grid: Array<GridNote>;
+  loop: number;
 }
 
-const getNoteAtIndex = ({ grid, index }: PlayAtIndexArgs) => {
+const getNoteAtIndex = ({
+  grid,
+  index,
+  loop,
+}: PlayAtIndexArgs): GridNote | undefined | "stop" => {
   // WORK OUT HOW TO CALCULATE WHICH NOTE TO PLAY
 
   const noteToPlay = grid.find((note) => note.start === index);
   if (noteToPlay) return noteToPlay;
 
-  // NOTE TO STOP GOES HERE
+  const stop = grid.find((note) => {
+    const end = (note.start + note.length) % loop;
+    return end === index;
+  });
+
+  if (stop) return "stop";
 };
 
 interface FindUnitsArgs {
-  audioUnits: Array<AudioUnit>;
+  audioUnits: Array<AudioUnitWithEnvConnections>;
   connections: Array<FullConnection>;
 }
 

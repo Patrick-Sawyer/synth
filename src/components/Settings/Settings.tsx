@@ -220,7 +220,6 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
         onSelect={removeUnit}
         label={`Remove unit: `}
       />
-
       <UnitSelector
         options={savedPatches.map((patch) => ({
           key: patch,

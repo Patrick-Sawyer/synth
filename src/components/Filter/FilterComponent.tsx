@@ -29,7 +29,7 @@ export function FilterComponent(
       <UnitColumn>
         <Knob
           text="FREQ"
-          min={20}
+          min={50}
           max={20000}
           exponentialAmount={3}
           resetValue={20000}

@@ -40,6 +40,11 @@ export class Filter extends BaseUnit {
   setFmAmount: (value: number) => void;
   setResonance: (value: number) => void;
   fmAmount: number;
+  triggerEnvelope: (attack: number, decay: number, sustain: number) => void;
+  frequency: number;
+  timeout: null | NodeJS.Timeout;
+  sustaining: boolean;
+  triggerRelease: (release: number) => void;
 
   constructor(input?: SavedFilter) {
     super(AudioUnitTypes.FILTER, input?.unitKey);
@@ -64,8 +69,12 @@ export class Filter extends BaseUnit {
     this.input.node.gain.value = 1;
     this.input.node.connect(this.filter);
     this.filter.connect(this.output.node);
+    this.frequency =
+      input?.frequency === undefined ? FILTER_INIT_FREQ : input.frequency;
 
     this.setFreq = (value: number) => {
+      this.frequency = value;
+      if (!this.sustaining) return;
       this.filter.frequency.linearRampToValueAtTime(
         value,
         CONTEXT.currentTime + FADE
@@ -85,6 +94,8 @@ export class Filter extends BaseUnit {
       this.filter.type = next;
     };
 
+    this.sustaining = true;
+
     this.setFmAmount = (value: number) => {
       this.fmAmount = value;
       const fmAmount = calculateFmAmount(this.filter.frequency.value, value);
@@ -97,11 +108,53 @@ export class Filter extends BaseUnit {
     this.setResonance = (value: number) => {
       this.filter.Q.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE);
     };
+
     this.shutdown = () => {
       this.output.node.gain.value = ZERO;
       this.output.node.disconnect();
       this.fmIn.node.disconnect();
       this.input.node.disconnect();
+    };
+
+    this.timeout = null;
+
+    this.triggerEnvelope = (attack: number, decay: number, sustain: number) => {
+      if (this.timeout) clearTimeout(this.timeout);
+      this.sustaining = false;
+      this.timeout = setTimeout(() => {
+        this.sustaining = true;
+      }, 1000 * (attack + decay + FADE));
+      this.filter.frequency.cancelScheduledValues(0);
+      this.filter.frequency.cancelAndHoldAtTime(0);
+
+      const toValue =
+        (20000 - this.frequency) * (this.fmAmount / 20000) + this.frequency;
+
+      const sustainValue =
+        (20000 - this.frequency) * sustain * (this.fmAmount / 20000) +
+        this.frequency;
+
+      //MUTE
+
+      this.filter.frequency.value = this.frequency;
+
+      //ATTACK
+
+      this.filter.frequency.exponentialRampToValueAtTime(
+        toValue,
+        CONTEXT.currentTime + attack
+      );
+
+      // DECAY TO SUSTAIN
+
+      this.filter.frequency.exponentialRampToValueAtTime(
+        Math.max(sustainValue, 50),
+        CONTEXT.currentTime + attack + decay
+      );
+    };
+
+    this.triggerRelease = (release: number) => {
+      console.log("FILTER RELEASE TRIGGERED", release);
     };
   }
 }

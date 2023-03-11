@@ -13,8 +13,6 @@ export interface SavedEnvelope {
   unitKey: string;
 }
 
-const OSCILLATOR_MAX = 20000;
-
 export class Envelope extends BaseUnit {
   input: Connection;
   cvIn: Connection;
@@ -23,7 +21,7 @@ export class Envelope extends BaseUnit {
   decay: number;
   sustain: number;
   release: number;
-  trigger: (freq?: number) => void;
+  trigger: (which: "start" | "stop") => void;
   start: () => void;
   stop: () => void;
   invertedTimeout: null | NodeJS.Timeout;
@@ -39,10 +37,9 @@ export class Envelope extends BaseUnit {
     super(AudioUnitTypes.ENVELOPE, input?.unitKey);
     this.output.node.gain.value = ZERO;
     this.input = new Connection("INPUT", ConnectionTypes.INPUT);
-    this.cvIn = new Connection("CV IN", ConnectionTypes.CV_IN, 1);
+    this.cvIn = new Connection("TRIGGER", ConnectionTypes.CV_IN, 1);
     this.envOut = new Connection("ENV OUT", ConnectionTypes.OUTPUT);
     this.envOut.node.gain.value = 1;
-
     this.cvIn.node.gain.value = ZERO;
     this.input.node.gain.value = 1;
     this.input.node.connect(this.output.node);
@@ -95,7 +92,7 @@ export class Envelope extends BaseUnit {
       this.timeout = setTimeout(() => {
         this.output.node.gain.exponentialRampToValueAtTime(
           1,
-          CONTEXT.currentTime + this.attack + FADE
+          CONTEXT.currentTime + this.attack
         );
 
         // DECAY TO SUSTAIN
@@ -103,13 +100,13 @@ export class Envelope extends BaseUnit {
         this.timeout = setTimeout(() => {
           this.output.node.gain.exponentialRampToValueAtTime(
             Math.max(this.sustain, ZERO),
-            CONTEXT.currentTime + this.attack + this.decay
+            CONTEXT.currentTime + this.decay
           );
 
           this.timeout = setTimeout(() => {
             this.sustaining = true;
           }, (this.decay + FADE) * 1000);
-        }, (this.attack + FADE) * 1000);
+        }, this.attack * 1000);
       }, FADE * 1000);
     };
 
@@ -125,8 +122,8 @@ export class Envelope extends BaseUnit {
       );
     };
 
-    this.trigger = (freq?: number) => {
-      if (freq) {
+    this.trigger = (which: "start" | "stop") => {
+      if (which === "start") {
         this.start();
       } else {
         this.stop();

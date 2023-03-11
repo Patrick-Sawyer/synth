@@ -44,6 +44,8 @@ export class Oscillator extends BaseUnit {
   setPwm: (value: number) => void;
   setPulseWidth: (value: number) => void;
   currentWaveform: WaveTypes | "pulse";
+  triggerEnvelope: (attack: number, decay: number, sustain: number) => void;
+  triggerRelease: (release: number) => void;
 
   constructor(input?: SavedOscillator) {
     super(AudioUnitTypes.OSCILLATOR, input?.unitKey);
@@ -209,6 +211,14 @@ export class Oscillator extends BaseUnit {
       this.pulseGain.disconnect();
       this.allOtherOscillatorsGain.disconnect();
       this.cvIn.node.disconnect();
+    };
+
+    this.triggerEnvelope = (attack: number, decay: number, sustain: number) => {
+      console.log("OSCILLATOR ENVELOPE TRIGGERED", attack, decay, sustain);
+    };
+
+    this.triggerRelease = (release: number) => {
+      console.log("OSCILLATOR RELEASE TRIGGERED", release);
     };
   }
 }

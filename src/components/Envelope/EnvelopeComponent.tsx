@@ -1,4 +1,5 @@
 import { RefObject } from "react";
+import { FADE } from "../../audioUnits/BaseUnit";
 import { Envelope } from "../../audioUnits/Envelope";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { BaseAudioUI } from "../unitBlocks/BaseAudioUI/BaseAudioUI";
@@ -14,15 +15,15 @@ export function EnvelopeComponent(
       <UnitColumn>
         <Knob
           text={"ATTACK"}
-          min={0}
+          min={FADE}
           max={1}
           initValue={props.attack}
-          resetValue={0}
+          resetValue={FADE}
           onChange={props.setAttack}
         />
         <Knob
           text={"DECAY"}
-          min={0}
+          min={FADE}
           max={3}
           initValue={props.decay}
           resetValue={3}
@@ -38,10 +39,10 @@ export function EnvelopeComponent(
         />
         <Knob
           text={"RELEASE"}
-          min={0}
+          min={FADE}
           max={3}
           initValue={props.release}
-          resetValue={0}
+          resetValue={FADE}
           onChange={props.setRelease}
         />
       </UnitColumn>
@@ -62,7 +63,7 @@ export function EnvelopeComponent(
           wrapperRef={props.wrapperRef}
           connection={props.envOut}
           unitKey={props.unitKey}
-          connectionKey={"cvOut"}
+          connectionKey={"envOut"}
         />
         <AudioConnection
           wrapperRef={props.wrapperRef}
