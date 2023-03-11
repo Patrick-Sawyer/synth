@@ -46,6 +46,9 @@ export class Oscillator extends BaseUnit {
   currentWaveform: WaveTypes | "pulse";
   triggerEnvelope: (attack: number, decay: number, sustain: number) => void;
   triggerRelease: (release: number) => void;
+  timeout: NodeJS.Timeout | null;
+  sustaining: boolean;
+  detune: number;
 
   constructor(input?: SavedOscillator) {
     super(AudioUnitTypes.OSCILLATOR, input?.unitKey);
@@ -144,7 +147,12 @@ export class Oscillator extends BaseUnit {
       }
     };
 
+    this.detune = 0;
+
     this.setOffset = (value) => {
+      this.detune = value;
+      if (!this.sustaining) return;
+
       this.oscillator.detune.linearRampToValueAtTime(
         value,
         CONTEXT.currentTime + FADE
@@ -213,12 +221,44 @@ export class Oscillator extends BaseUnit {
       this.cvIn.node.disconnect();
     };
 
+    this.timeout = null;
+    this.sustaining = true;
+
     this.triggerEnvelope = (attack: number, decay: number, sustain: number) => {
-      console.log("OSCILLATOR ENVELOPE TRIGGERED", attack, decay, sustain);
+      if (this.timeout) clearTimeout(this.timeout);
+      this.sustaining = false;
+      this.timeout = setTimeout(() => {
+        this.sustaining = true;
+      }, 1000 * (attack + decay + FADE));
+
+      this.oscillator.detune.cancelScheduledValues(0);
+      this.oscillator.detune.cancelAndHoldAtTime(0);
+
+      const toValue = this.fmIn.node.gain.value / 8.333 + this.detune;
+
+      const sustainValue =
+        (sustain * this.fmIn.node.gain.value) / 8.33 + this.detune;
+
+      this.oscillator.detune.linearRampToValueAtTime(
+        toValue + 0.1,
+        CONTEXT.currentTime + attack
+      );
+
+      this.oscillator.detune.linearRampToValueAtTime(
+        sustainValue,
+        CONTEXT.currentTime + attack + decay
+      );
     };
 
     this.triggerRelease = (release: number) => {
-      console.log("OSCILLATOR RELEASE TRIGGERED", release);
+      this.sustaining = true;
+      if (this.timeout) clearTimeout(this.timeout);
+      this.oscillator.detune.cancelScheduledValues(0);
+      this.oscillator.detune.cancelAndHoldAtTime(0);
+      this.oscillator.detune.linearRampToValueAtTime(
+        this.detune,
+        CONTEXT.currentTime + release
+      );
     };
   }
 }

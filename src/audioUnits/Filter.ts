@@ -155,6 +155,7 @@ export class Filter extends BaseUnit {
 
     this.triggerRelease = (release: number) => {
       if (this.timeout) clearTimeout(this.timeout);
+      this.sustaining = true;
       this.filter.frequency.cancelScheduledValues(0);
       this.filter.frequency.cancelAndHoldAtTime(0);
 

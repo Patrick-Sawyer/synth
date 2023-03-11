@@ -44,7 +44,7 @@ export const formatOnSave = (units: Array<any>): Patch => {
             mainVolume: unit.mainVolume.gain.value,
             waveform: unit.currentWaveform,
             octave: unit.octave,
-            detune: unit.oscillator.detune.value,
+            detune: unit.detune,
             pan: unit.pan.pan.value,
             unitKey: unit.unitKey,
             amAmount: unit.amIn.node.gain.value,

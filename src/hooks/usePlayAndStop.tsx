@@ -152,6 +152,19 @@ export const usePlayAndStop = ({
       ZERO,
       CONTEXT.currentTime + 0.01
     );
+    setTimeout(() => {
+      audioUnits.forEach((unit) => {
+        if (unit.type === AudioUnitTypes.OSCILLATOR) {
+          const osc = unit as Oscillator;
+          osc.oscillator.detune.value = osc.detune;
+          osc.sustaining = true;
+        } else if (unit.type === AudioUnitTypes.FILTER) {
+          const filter = unit as Filter;
+          filter.filter.frequency.value = filter.frequency;
+          filter.sustaining = true;
+        }
+      });
+    }, 100);
   };
 
   return { playModular, stopModular };
