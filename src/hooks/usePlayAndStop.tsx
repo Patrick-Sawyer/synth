@@ -1,4 +1,6 @@
 import { useRef } from "react";
+import { CONTEXT, MAIN_OUT } from "../App";
+import { FADE, ZERO } from "../audioUnits/BaseUnit";
 import { Filter } from "../audioUnits/Filter";
 import { Oscillator } from "../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../audioUnits/types";
@@ -116,10 +118,10 @@ export const usePlayAndStop = ({
     const ms = bpmToMS(tempo * 4);
     scheduleNextNotes();
     calculateNextIndex();
+    playNote(gridOneUnits, nextScheduledNotes.current?.grid1);
+    playNote(gridTwoUnits, nextScheduledNotes.current?.grid2);
+    playNote(gridThreeUnits, nextScheduledNotes.current?.grid3);
     timeout.current = setTimeout(() => {
-      playNote(gridOneUnits, nextScheduledNotes.current?.grid1);
-      playNote(gridTwoUnits, nextScheduledNotes.current?.grid2);
-      playNote(gridThreeUnits, nextScheduledNotes.current?.grid3);
       if (timeout.current) {
         play();
       }
@@ -127,6 +129,10 @@ export const usePlayAndStop = ({
   };
 
   const playModular = () => {
+    MAIN_OUT.node.gain.cancelAndHoldAtTime(0);
+    MAIN_OUT.node.gain.cancelScheduledValues(0);
+    MAIN_OUT.node.gain.linearRampToValueAtTime(1, CONTEXT.currentTime + 0.01);
+
     if (!nextScheduledNotes.current) {
       play();
     }
@@ -140,6 +146,12 @@ export const usePlayAndStop = ({
     nextScheduledIndexSequencerOne.current = 0;
     nextScheduledIndexSequencerTwo.current = 0;
     nextScheduledIndexSequencerThree.current = 0;
+    MAIN_OUT.node.gain.cancelAndHoldAtTime(0);
+    MAIN_OUT.node.gain.cancelScheduledValues(0);
+    MAIN_OUT.node.gain.linearRampToValueAtTime(
+      ZERO,
+      CONTEXT.currentTime + 0.01
+    );
   };
 
   return { playModular, stopModular };

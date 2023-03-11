@@ -154,7 +154,14 @@ export class Filter extends BaseUnit {
     };
 
     this.triggerRelease = (release: number) => {
-      console.log("FILTER RELEASE TRIGGERED", release);
+      if (this.timeout) clearTimeout(this.timeout);
+      this.filter.frequency.cancelScheduledValues(0);
+      this.filter.frequency.cancelAndHoldAtTime(0);
+
+      this.filter.frequency.linearRampToValueAtTime(
+        this.frequency,
+        CONTEXT.currentTime + release
+      );
     };
   }
 }
