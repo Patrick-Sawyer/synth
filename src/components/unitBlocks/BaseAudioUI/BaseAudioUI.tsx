@@ -6,21 +6,13 @@ interface Props {
   children: React.ReactNode;
   color: string;
   title: string;
-  letterSpacing?: number;
 }
 
-export function BaseAudioUI({
-  children,
-  color,
-  title,
-  letterSpacing = 7,
-}: Props) {
+export function BaseAudioUI({ children, color, title }: Props) {
   return (
     <Wrapper color={color}>
       <NameWrapper>
-        <Name letterSpacing={letterSpacing} rotate={"270deg"}>
-          {title}
-        </Name>
+        <Name rotate={"270deg"}>{title}</Name>
       </NameWrapper>
       <Content>{children}</Content>
     </Wrapper>
@@ -30,42 +22,41 @@ export function BaseAudioUI({
 const Content = styled.div`
   display: flex;
   gap: 12px;
+  box-shadow: inset 0px 2px 11px -3px rgba(0, 0, 0, 0.2);
+  padding: 15px;
 `;
 
 const Wrapper = styled.div<{
   color: string;
 }>`
   height: ${UNIT_HEIGHT};
-  border-bottom: 1px solid transparent;
+  box-shadow: inset 0px 2px 11px -3px rgba(0, 0, 0, 0.2);
   background-color: ${({ color }) => color};
-  border-radius: 2px;
-  padding: 15px 12px 15px 3px;
-  gap: 4px;
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  box-sizing: border-box;
   display: flex;
 `;
 
 const NameWrapper = styled.div`
-  width: 20px;
+  width: 25px;
   height: 100%;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  bottom: 7px;
+  box-shadow: inset 0px 2px 11px -3px rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.15);
 `;
 
 const Name = styled.span<{
   rotate: string;
-  letterSpacing: number;
 }>`
-  transform: rotate(${({ rotate }) => rotate}) scaleY(0.9);
-  color: white;
-  opacity: 0.3;
+  transform: rotate(${({ rotate }) => rotate});
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 300;
+  border-radius: 20%;
+  padding-left: 15px;
   white-space: nowrap;
-  font-size: 14px;
-  letter-spacing: ${({ letterSpacing }) => letterSpacing}px;
+  position: relative;
+  line-height: 0;
+  font-size: 12px;
+  letter-spacing: 20px;
 `;

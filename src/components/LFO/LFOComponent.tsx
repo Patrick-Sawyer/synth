@@ -19,7 +19,7 @@ export function LFOComponent(
   props: LFO & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"Low Frequency Osc"}>
+    <BaseAudioUI color={props.color} title={"lfo"}>
       <UnitColumn>
         <Knob
           text="RATE"

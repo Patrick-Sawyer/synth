@@ -16,7 +16,6 @@ export interface SavedEnvelope {
 export class Envelope extends BaseUnit {
   input: Connection;
   cvIn: Connection;
-  invertedOutput: Connection;
   attack: number;
   decay: number;
   sustain: number;
@@ -43,7 +42,6 @@ export class Envelope extends BaseUnit {
     this.cvIn.node.gain.value = ZERO;
     this.input.node.gain.value = 1;
     this.input.node.connect(this.output.node);
-    this.invertedOutput = new Connection("INVERTED", ConnectionTypes.OUTPUT);
     this.attack = input ? input.attack : 0;
     this.decay = input ? input.decay : 3;
     this.sustain = input ? input.sustain : 1;

@@ -128,30 +128,47 @@ export function Knob({
   return (
     <Wrapper>
       {!small && (
-        <>
-          <MiniLabel bottom={11} left={0}>
-            -
-          </MiniLabel>
-          <MiniLabel bottom={12} left={35}>
-            +
-          </MiniLabel>
-        </>
+        <LabelWrapper>
+          <MiniLabel>-</MiniLabel>
+          <MiniLabel>+</MiniLabel>
+        </LabelWrapper>
       )}
-
-      <Inner
-        small={small}
-        style={{
-          transform: `rotate(${value / 120 + 0.58}turn)`,
-        }}
-        onPointerDown={onPointerDown}
-        onDoubleClick={reset}
-      >
-        <Marker />
-      </Inner>
+      <Shadow small={small}>
+        <InnerShadow small={small}>
+          <Inner
+            small={small}
+            style={{
+              transform: `rotate(${value / 120 + 0.58}turn)`,
+            }}
+            onPointerDown={onPointerDown}
+            onDoubleClick={reset}
+          >
+            <Marker />
+          </Inner>
+        </InnerShadow>
+      </Shadow>
       {!!text && <Label>{text}</Label>}
     </Wrapper>
   );
 }
+
+const Shadow = styled.div<{
+  small?: boolean;
+}>`
+  height: ${({ small }) => (small ? "18px" : "30px")};
+  width: ${({ small }) => (small ? "18px" : "30px")};
+  border-radius: 50%;
+  box-shadow: 1px 5px 11px -2px rgba(0, 0, 0, 0.5);
+`;
+
+const InnerShadow = styled.div<{
+  small?: boolean;
+}>`
+  height: ${({ small }) => (small ? "18px" : "30px")};
+  width: ${({ small }) => (small ? "18px" : "30px")};
+  border-radius: 50%;
+  box-shadow: inset 1px -5px 11px -2px rgba(0, 0, 0, 0.3);
+`;
 
 const Wrapper = styled.div`
   align-self: center;
@@ -168,8 +185,7 @@ const Inner = styled.div<{
   height: ${({ small }) => (small ? "18px" : "30px")};
   width: ${({ small }) => (small ? "18px" : "30px")};
   border-radius: 50%;
-  ${({ small }) => !small && "border: 1px solid white;"}
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.2);
   display: flex;
   justify-content: center;
   cursor: pointer;
@@ -184,17 +200,19 @@ const Marker = styled.div`
   margin-top: 5px;
 `;
 
-const MiniLabel = styled.span<{
-  bottom: number;
-  left: number;
-}>`
+const MiniLabel = styled.span`
   font-size: 15px;
   font-weight: bold;
   font-family: "Courier New", Courier, monospace;
   text-align: center;
   color: white;
   opacity: 0.3;
+`;
+
+const LabelWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
   position: absolute;
-  bottom: ${({ bottom }) => bottom}px;
-  left: ${({ left }) => left}px;
+  top: 27px;
+  width: 47px;
 `;

@@ -39,7 +39,7 @@ export function ReverbComponent(
   props: Reverb & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"Reverb unit"} letterSpacing={17}>
+    <BaseAudioUI color={props.color} title={"reverb"}>
       <UnitColumn>
         <AudioConnection
           wrapperRef={props.wrapperRef}

@@ -77,7 +77,7 @@ const Option = styled.div`
 const Light = styled.div<{
   selected: boolean;
 }>`
-  background: ${({ selected }) => (selected ? "red" : "rgba(0,0,0,0.7)")};
+  background: ${({ selected }) => (selected ? "#e31728" : "rgba(0,0,0,0.7)")};
   height: 6px;
   width: 6px;
   position: relative;

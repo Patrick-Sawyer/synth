@@ -11,7 +11,7 @@ export function EnvelopeComponent(
   props: Envelope & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"ADSR envelope"} letterSpacing={12}>
+    <BaseAudioUI color={props.color} title={"envelope"}>
       <UnitColumn>
         <Knob
           text={"ATTACK"}
@@ -64,12 +64,6 @@ export function EnvelopeComponent(
           connection={props.envOut}
           unitKey={props.unitKey}
           connectionKey={"envOut"}
-        />
-        <AudioConnection
-          wrapperRef={props.wrapperRef}
-          connection={props.invertedOutput}
-          unitKey={props.unitKey}
-          connectionKey={"invertedOutput"}
         />
         <AudioConnection
           wrapperRef={props.wrapperRef}
