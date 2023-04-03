@@ -1,3 +1,4 @@
+import { parse } from "path";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { MAIN_OUT } from "../../App";
@@ -16,6 +17,7 @@ import {
 } from "../../ConnectionContext";
 import { formatOnLoad, formatOnSave } from "../../utils/formatOnLoadAndSave";
 import { Colors } from "../../utils/theme";
+import { GridNote } from "../Sequencer/Note";
 import { SaveComponent } from "./SaveComponent";
 import { Option, UnitSelector } from "./UnitSelector";
 
@@ -24,6 +26,20 @@ const PATCH_PREFIX = "@turntablism-modular-patch-";
 interface Props {
   audioUnits: Array<AudioUnit>;
   setAudioUnits: Dispatch<SetStateAction<AudioUnit[]>>;
+  tempo: number;
+  seqOneLoop: number;
+  seqTwoLoop: number;
+  seqThreeLoop: number;
+  seqOneGridNotes: GridNote[];
+  seqTwoGridNotes: GridNote[];
+  seqThreeGridNotes: GridNote[];
+  setTempo: (value: number) => void;
+  setSeqOneLoop: (value: number) => void;
+  setSeqTwoLoop: (value: number) => void;
+  setSeqThreeLoop: (value: number) => void;
+  setSeqOneGridNotes: (value: GridNote[]) => void;
+  setSeqTwoGridNotes: (value: GridNote[]) => void;
+  setSeqThreeGridNotes: (value: GridNote[]) => void;
 }
 
 const AudioUnitListOption: Array<Option> = [
@@ -82,7 +98,24 @@ const getUnit = (type: AudioUnitTypes) => {
   }
 };
 
-export function Settings({ audioUnits, setAudioUnits }: Props) {
+export function Settings({
+  audioUnits,
+  setAudioUnits,
+  tempo,
+  seqOneLoop,
+  seqTwoLoop,
+  seqThreeLoop,
+  seqOneGridNotes,
+  seqTwoGridNotes,
+  seqThreeGridNotes,
+  setTempo,
+  setSeqOneLoop,
+  setSeqTwoLoop,
+  setSeqThreeLoop,
+  setSeqOneGridNotes,
+  setSeqTwoGridNotes,
+  setSeqThreeGridNotes,
+}: Props) {
   const [savedPatches, setSavedPatches] = useState<Array<string>>([]);
   const { connections } = useConnectionContext();
   const { setConnections } = useConnectionUpdateContext();
@@ -128,6 +161,13 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
         const patchAsString = JSON.stringify({
           patch: mapped,
           connections,
+          tempo,
+          seqOneLoop,
+          seqTwoLoop,
+          seqThreeLoop,
+          seqOneGridNotes,
+          seqTwoGridNotes,
+          seqThreeGridNotes,
         });
         window.localStorage.setItem(saveName, patchAsString);
         alert("PATCH SAVED FOOL!");
@@ -184,7 +224,40 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
             }
           } catch {}
         });
+
         setAudioUnits(units);
+
+        const {
+          tempo,
+          seqOneLoop,
+          seqTwoLoop,
+          seqThreeLoop,
+          seqOneGridNotes,
+          seqTwoGridNotes,
+          seqThreeGridNotes,
+        } = parsedJson;
+
+        if (tempo) {
+          setTempo(tempo);
+        }
+        if (seqOneLoop) {
+          setSeqOneLoop(seqOneLoop);
+        }
+        if (seqTwoLoop) {
+          setSeqTwoLoop(seqTwoLoop);
+        }
+        if (seqThreeLoop) {
+          setSeqThreeLoop(seqThreeLoop);
+        }
+        if (seqOneGridNotes) {
+          setSeqOneGridNotes(seqOneGridNotes);
+        }
+        if (seqTwoGridNotes) {
+          setSeqTwoGridNotes(seqTwoGridNotes);
+        }
+        if (seqThreeGridNotes) {
+          setSeqThreeGridNotes(seqThreeGridNotes);
+        }
 
         setText(name.replace(PATCH_PREFIX, ""));
       } catch {

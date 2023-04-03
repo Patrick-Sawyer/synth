@@ -60,7 +60,24 @@ export function Rack() {
           <Button onClick={stopModular}>STOP</Button>
         </Buttons>
       </Title>
-      <Settings audioUnits={audioUnits} setAudioUnits={setAudioUnits} />
+      <Settings
+        audioUnits={audioUnits}
+        setAudioUnits={setAudioUnits}
+        tempo={tempo}
+        seqOneLoop={seqOneLoop}
+        seqTwoLoop={seqTwoLoop}
+        seqThreeLoop={seqThreeLoop}
+        seqOneGridNotes={seqOneGridNotes}
+        seqTwoGridNotes={seqTwoGridNotes}
+        seqThreeGridNotes={seqThreeGridNotes}
+        setTempo={setTempo}
+        setSeqOneLoop={setSeqOneLoop}
+        setSeqTwoLoop={setSeqTwoLoop}
+        setSeqThreeLoop={setSeqThreeLoop}
+        setSeqOneGridNotes={setSeqOneGridNotes}
+        setSeqTwoGridNotes={setSeqTwoGridNotes}
+        setSeqThreeGridNotes={setSeqThreeGridNotes}
+      />
       <Sequencer
         seqOneGridNotes={seqOneGridNotes}
         seqTwoGridNotes={seqTwoGridNotes}
