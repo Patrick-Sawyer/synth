@@ -152,6 +152,7 @@ export const usePlayAndStop = ({
       ZERO,
       CONTEXT.currentTime + 0.01
     );
+
     setTimeout(() => {
       audioUnits.forEach((unit) => {
         if (unit.type === AudioUnitTypes.OSCILLATOR) {
@@ -223,13 +224,12 @@ const getNoteAtIndex = ({
   index,
   loop,
 }: PlayAtIndexArgs): GridNote | undefined | "stop" => {
-  // WORK OUT HOW TO CALCULATE WHICH NOTE TO PLAY
-
   const noteToPlay = grid.find((note) => note.start === index);
   if (noteToPlay) return noteToPlay;
 
   const stop = grid.find((note) => {
-    const end = (note.start + note.length) % loop;
+    const end = (note.start + note.length + 1) % (loop * 16);
+
     return end === index;
   });
 

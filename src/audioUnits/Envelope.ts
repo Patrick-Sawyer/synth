@@ -42,10 +42,10 @@ export class Envelope extends BaseUnit {
     this.cvIn.node.gain.value = ZERO;
     this.input.node.gain.value = 1;
     this.input.node.connect(this.output.node);
-    this.attack = input ? input.attack : 0;
+    this.attack = input ? input.attack : FADE;
     this.decay = input ? input.decay : 3;
     this.sustain = input ? input.sustain : 1;
-    this.release = input ? input.release : 0;
+    this.release = input ? input.release : FADE;
     this.invertedTimeout = null;
     this.sustaining = false;
 
@@ -114,7 +114,7 @@ export class Envelope extends BaseUnit {
       this.output.node.gain.cancelAndHoldAtTime(0);
 
       this.sustaining = false;
-      this.output.node.gain.linearRampToValueAtTime(
+      this.output.node.gain.exponentialRampToValueAtTime(
         ZERO,
         CONTEXT.currentTime + this.release + FADE
       );
