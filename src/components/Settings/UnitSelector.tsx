@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { CloseIcon } from "../../assets/svg";
 import { Colors } from "../../utils/theme";
 import Chevron from "../Chevron";
 
@@ -15,6 +16,7 @@ interface Props {
   options: Array<Option>;
   onSelect: (option: any) => void;
   closeOnClick?: boolean;
+  onCloseIconClick?: (value: string) => void;
 }
 
 export const OPTION_HEIGHT = "26px";
@@ -24,6 +26,7 @@ export function UnitSelector({
   options,
   onSelect,
   closeOnClick = false,
+  onCloseIconClick,
 }: Props) {
   const [active, setActive] = useState<boolean>(false);
 
@@ -58,6 +61,16 @@ export function UnitSelector({
               }}
             >
               <Text>{text}</Text>
+              {onCloseIconClick && (
+                <IconWrapper
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    onCloseIconClick(value);
+                  }}
+                >
+                  <CloseIcon color={Colors.hoverColor} size="14px" />
+                </IconWrapper>
+              )}
             </OptionComponent>
           ))}
           {!options.length && (
@@ -73,6 +86,27 @@ export function UnitSelector({
     </Wrapper>
   );
 }
+
+const IconWrapper = styled.div`
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-right: 4px;
+  border-radius: 2px;
+  transition: 0.2s;
+
+  &:hover {
+    background: white;
+
+    svg {
+      fill: ${Colors.hoverColor} !important;
+    }
+  }
+`;
 
 const Inner = styled.div`
   background-color: white;
@@ -116,12 +150,10 @@ const OptionComponent = styled.div<{
   color: black;
   position: relative;
   font-size: 16px;
-
   display: flex;
   align-items: center;
   line-height: ${OPTION_HEIGHT};
   justify-content: space-between;
-  display: block;
 
   transition: 0.2s;
   cursor: pointer;
@@ -135,9 +167,10 @@ const OptionComponent = styled.div<{
     background-color: ${Colors.hoverColor};
     color: white;
 
-    > div {
-        border: 1.5px solid rgba(255, 255, 255, 0.4);
+    svg {
+      fill: white;
     }
+
   }`}
 `;
 

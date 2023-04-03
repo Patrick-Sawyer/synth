@@ -230,6 +230,10 @@ export function Settings({ audioUnits, setAudioUnits }: Props) {
         onSelect={(value) => {
           load(PATCH_PREFIX + value);
         }}
+        onCloseIconClick={(value: string) => {
+          localStorage.removeItem(PATCH_PREFIX + value);
+          setSavedPatches(savedPatches.filter((patch) => patch !== value));
+        }}
         label={`Load patch: `}
       />
       <SaveComponent text={text} setText={setText} onClick={saveAs} />
