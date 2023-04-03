@@ -93,6 +93,7 @@ export const formatOnSave = (units: Array<any>): Patch => {
             time: unit.delay.delayTime.value,
             feedback: unit.feedback.gain.value,
             wet: unit.wet.gain.value,
+            dry: unit.dry.gain.value,
           } as SavedDelay;
         default:
           return null as unknown as SavedUnit;
