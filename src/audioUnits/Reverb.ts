@@ -74,7 +74,7 @@ export class Reverb extends BaseUnit {
     this.reverbVolume.gain.value = input?.wet === undefined ? 1 : input.wet;
     this.reverb.connect(this.reverbVolume);
     this.reverbVolume.connect(this.output.node);
-    this.dryWetValue = input?.wet === undefined ? 1 : 0;
+    this.dryWetValue = input?.wet === undefined ? 1 : input.wet;
 
     this.setReverbVolume = (value: number) => {
       this.dryWetValue = value;

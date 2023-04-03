@@ -17,7 +17,7 @@ export function Slider({ onChange }: Props) {
 
   return (
     <Wrapper>
-      <Text>{"BPM"}</Text>
+      <Text>{"SPEED"}</Text>
       <Input
         type="range"
         name="Tempo"
@@ -45,7 +45,7 @@ const Wrapper = styled.div`
 
 const Text = styled.div`
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   padding: 0;
   margin: 0;
