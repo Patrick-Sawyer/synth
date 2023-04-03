@@ -5,6 +5,7 @@ import { Filter } from "../audioUnits/Filter";
 import { Oscillator } from "../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../audioUnits/types";
 import { GridNote } from "../components/Sequencer/Note";
+import { NOTES } from "../components/Sequencer/notes";
 import { FullConnection } from "../ConnectionContext";
 
 interface Args {
@@ -182,7 +183,7 @@ const playNote = (
     switch (unit.type) {
       case AudioUnitTypes.OSCILLATOR:
         if (note && note !== "stop") {
-          unit.play(note.note * 8);
+          unit.play(NOTES[note.note].freq);
         }
         break;
       case AudioUnitTypes.ENVELOPE:

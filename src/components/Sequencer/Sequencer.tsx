@@ -110,7 +110,7 @@ export function Sequencer({
               height={ROW_HEIGHT * 43 + "px"}
               style={{
                 position: "relative",
-                top: "10px",
+                top: "26px",
               }}
             />
             <NoteNames>
@@ -221,7 +221,7 @@ const SequencerWrapper = styled.div`
 `;
 
 const GridOuterWrapper = styled.div`
-  height: 485px;
+  height: 515px;
   position: relative;
   width: 100%;
   overflow: hidden;
@@ -270,7 +270,7 @@ const NoteNames = styled.div`
   width: 25px;
   padding-left: 5px;
   position: relative;
-  top: 10px;
+  top: 26px;
 `;
 
 const Bottom = styled.div`
@@ -285,7 +285,7 @@ const Bottom = styled.div`
 const GridWrapper = styled.div`
   display: flex;
   overflow: hidden;
-  height: 440px;
+  height: 480px;
   position: relative;
   flex: 1;
   border-radius: 2px;

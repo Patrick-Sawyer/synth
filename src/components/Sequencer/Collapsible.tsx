@@ -94,7 +94,7 @@ const ChevronContainer = styled.div<{
 const Wrapper = styled.div<{
   collapsed: boolean;
 }>`
-  height: ${({ collapsed }) => (collapsed ? "60px" : "717px")};
+  height: ${({ collapsed }) => (collapsed ? "60px" : "760px")};
   background-color: ${Colors.background};
   border-radius: 3px;
   display: flex;
@@ -108,7 +108,7 @@ const Wrapper = styled.div<{
   box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 0.75);
 
   @media screen and (min-width: 500px) {
-    height: ${({ collapsed }) => (collapsed ? "60px" : "638px")};
+    height: ${({ collapsed }) => (collapsed ? "60px" : "675px")};
   }
 `;
 
