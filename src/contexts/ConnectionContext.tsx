@@ -58,6 +58,7 @@ interface ConnectionUpdates {
   setConnections: Dispatch<SetStateAction<Array<FullConnection>>> | null;
   setHiddenUnits: Dispatch<SetStateAction<Array<string>>> | null;
   clearConnections: () => void;
+  disconnectThisConnection: (unitKey: string, connectionKey: string) => void;
 }
 
 const UpdateConnectionContext = createContext<ConnectionUpdates>({
@@ -65,6 +66,7 @@ const UpdateConnectionContext = createContext<ConnectionUpdates>({
   setConnections: () => null,
   setHiddenUnits: () => null,
   clearConnections: () => null,
+  disconnectThisConnection: () => null,
 });
 
 export const ConnectionContextProvider = ({
@@ -98,6 +100,28 @@ export const ConnectionContextProvider = ({
     setHiddenUnits([]);
     setFromValue(null);
     setConnections([]);
+  };
+
+  const disconnectThisConnection = (unitKey: string, connectionKey: string) => {
+    const newConnections: Array<FullConnection> = [];
+
+    connections.forEach((conn) => {
+      if (
+        conn.from.unitKey === unitKey &&
+        conn.from.connectionKey === connectionKey
+      ) {
+        conn.from.node?.disconnect && conn.from.node.disconnect(conn.to.node);
+      } else if (
+        conn.to.unitKey === unitKey &&
+        conn.to.connectionKey === connectionKey
+      ) {
+        conn.to.node?.disconnect && conn.to.node.disconnect(conn.from.node);
+      } else {
+        newConnections.push(conn);
+      }
+    });
+
+    setConnections(newConnections);
   };
 
   useEffect(() => {
@@ -151,6 +175,7 @@ export const ConnectionContextProvider = ({
           setConnections,
           setHiddenUnits,
           clearConnections,
+          disconnectThisConnection,
         }}
       >
         {children}

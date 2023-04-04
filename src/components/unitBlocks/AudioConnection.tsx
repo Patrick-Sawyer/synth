@@ -1,4 +1,10 @@
-import { PointerEventHandler, RefObject, useEffect, useRef } from "react";
+import {
+  MouseEventHandler,
+  PointerEventHandler,
+  RefObject,
+  useEffect,
+  useRef,
+} from "react";
 import styled from "styled-components";
 import { Connection } from "../../audioUnits/Connection";
 import {
@@ -7,6 +13,7 @@ import {
   useConnectionContext,
   useConnectionUpdateContext,
 } from "../../contexts/ConnectionContext";
+import { useMrTContext } from "../../contexts/MrTContext";
 import { Label } from "./Label";
 
 export enum ConnectionTypes {
@@ -79,12 +86,15 @@ export function AudioConnection({
   horizontal,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const { fireMrT } = useMrTContext();
   const { fromConnection, connections, connectionPositions } =
     useConnectionContext();
-  const { setFromValue, setConnections } = useConnectionUpdateContext();
+  const { setFromValue, setConnections, disconnectThisConnection } =
+    useConnectionUpdateContext();
 
   const onPointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
+    if (e.button === 2) return;
     setFromValue &&
       setFromValue({
         unitKey,
@@ -102,6 +112,7 @@ export function AudioConnection({
 
   const onPointerUp: PointerEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
+    if (e.button === 2) return;
     const thisConnection: MakeConnection = {
       unitKey,
       connectionKey,
@@ -190,8 +201,18 @@ export function AudioConnection({
     wrapperRef,
   ]);
 
+  const handleRightClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    fireMrT({
+      text: "WANNA DELETE THESE CONNECTIONS FOOL?",
+      callback: () => {
+        disconnectThisConnection(unitKey, connectionKey);
+      },
+    });
+  };
+
   return (
-    <Wrapper horizontal={!!horizontal}>
+    <Wrapper onContextMenu={handleRightClick} horizontal={!!horizontal}>
       <Blah>
         {children}
         <Plug
