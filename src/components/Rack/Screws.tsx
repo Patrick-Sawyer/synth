@@ -8,7 +8,7 @@ export function Screws() {
 
   useEffect(() => {
     const resize = () => {
-      const width = window.innerWidth;
+      const width = Math.max(window.innerWidth, 500);
       const numberOfScrews = Math.ceil(width / 13);
       if (screws.length !== numberOfScrews) {
         const newScrews = new Array(numberOfScrews)

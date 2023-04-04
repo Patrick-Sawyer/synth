@@ -131,7 +131,7 @@ export const usePlayAndStop = () => {
     }
   };
 
-  const stopModular = () => {
+  const stopModular = (onComplete?: () => void) => {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
@@ -158,6 +158,7 @@ export const usePlayAndStop = () => {
           filter.sustaining = true;
         }
       });
+      onComplete && onComplete();
     }, 100);
   };
 

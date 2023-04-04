@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function SaveComponent({ onClick, text, setText }: Props) {
-  const onMrTAlert = useMrTContext();
+  const { fireMrT } = useMrTContext();
 
   return (
     <Wrapper>
@@ -27,7 +27,7 @@ export function SaveComponent({ onClick, text, setText }: Props) {
           if (text.length) {
             onClick(text);
           } else {
-            onMrTAlert({ text: "ENTER SOME TEXT FOOL!" });
+            fireMrT({ text: "ENTER SOME TEXT FOOL!" });
           }
         }}
       >

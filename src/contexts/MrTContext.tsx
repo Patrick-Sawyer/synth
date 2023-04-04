@@ -7,11 +7,18 @@ import { Colors } from "../utils/theme";
 interface MrTMessageState {
   text: string;
   callback?: () => void;
+  onCancel?: () => void;
 }
 
-type MrTContextType = (args: MrTMessageState) => void;
+interface MrTContextType {
+  fireMrT: (args: MrTMessageState) => void;
+  mrTActive: boolean;
+}
 
-const MrTContext = createContext<MrTContextType>(() => null);
+const MrTContext = createContext<MrTContextType>({
+  fireMrT: () => null,
+  mrTActive: false,
+});
 
 export const MrTContextProvider = ({
   children,
@@ -21,7 +28,7 @@ export const MrTContextProvider = ({
   const [mrTMessageState, setMrTMessageState] =
     useState<MrTMessageState | null>(null);
 
-  const onMessage = (message: MrTMessageState) => {
+  const fireMrT = (message: MrTMessageState) => {
     if (!mrTMessageState) {
       setMrTMessageState(message);
     }
@@ -36,11 +43,12 @@ export const MrTContextProvider = ({
   };
 
   const handleCancel = () => {
+    mrTMessageState?.onCancel && mrTMessageState.onCancel();
     setMrTMessageState(null);
   };
 
   return (
-    <MrTContext.Provider value={onMessage}>
+    <MrTContext.Provider value={{ fireMrT, mrTActive: !!mrTMessageState }}>
       {children}
       {mrTMessageState && (
         <Overlay>

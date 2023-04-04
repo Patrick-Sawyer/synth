@@ -57,12 +57,14 @@ interface ConnectionUpdates {
   setFromValue: Dispatch<SetStateAction<MakeConnection | null>> | null;
   setConnections: Dispatch<SetStateAction<Array<FullConnection>>> | null;
   setHiddenUnits: Dispatch<SetStateAction<Array<string>>> | null;
+  clearConnections: () => void;
 }
 
 const UpdateConnectionContext = createContext<ConnectionUpdates>({
-  setFromValue: null,
-  setConnections: null,
-  setHiddenUnits: null,
+  setFromValue: () => null,
+  setConnections: () => null,
+  setHiddenUnits: () => null,
+  clearConnections: () => null,
 });
 
 export const ConnectionContextProvider = ({
@@ -91,6 +93,12 @@ export const ConnectionContextProvider = ({
       !hiddenUnits.includes(conn.to.unitKey)
     );
   });
+
+  const clearConnections = () => {
+    setHiddenUnits([]);
+    setFromValue(null);
+    setConnections([]);
+  };
 
   useEffect(() => {
     const onResize = debounce(() => {
@@ -138,7 +146,12 @@ export const ConnectionContextProvider = ({
       }}
     >
       <UpdateConnectionContext.Provider
-        value={{ setFromValue, setConnections, setHiddenUnits }}
+        value={{
+          setFromValue,
+          setConnections,
+          setHiddenUnits,
+          clearConnections,
+        }}
       >
         {children}
       </UpdateConnectionContext.Provider>

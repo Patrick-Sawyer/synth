@@ -22,7 +22,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
   const { setHiddenUnits, setConnections } = useConnectionUpdateContext();
   const setAudioUnits = useUpdateAudioUnitContext();
   const collapsed = thisUnitKey && hiddenUnits.includes(thisUnitKey);
-  const onMrTAlert = useMrTContext();
+  const { fireMrT } = useMrTContext();
 
   const handleCollapseClick = () => {
     let units = [...hiddenUnits];
@@ -52,7 +52,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
   };
 
   const handleCloseClick = () => {
-    onMrTAlert({
+    fireMrT({
       text: "YOU REALLY WANNA DELETE THIS FOOL?",
       callback: removeUnit,
     });
@@ -79,7 +79,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
 
 const IconWrapper = styled.div<{ bottom?: boolean }>`
   position: absolute;
-  ${({ bottom }) => (bottom ? "bottom: 0;" : "top: 0;")}
+  ${({ bottom }) => (bottom ? "bottom: 1px;" : "top: 0;")}
   opacity: 0.3;
   cursor: pointer;
   height: 27px;

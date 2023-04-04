@@ -26,6 +26,7 @@ interface UpdateSequencerContextType {
   setSeqOneGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
   setSeqTwoGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
   setSeqThreeGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
+  clearSequencer: () => void;
 }
 
 const SequencerContext = createContext<SequencerContextType>({
@@ -46,6 +47,7 @@ const UpdateSequencerContext = createContext<UpdateSequencerContextType>({
   setSeqOneGridNotes: () => null,
   setSeqTwoGridNotes: () => null,
   setSeqThreeGridNotes: () => null,
+  clearSequencer: () => null,
 });
 
 export const SequencerContextProvider = ({
@@ -62,6 +64,15 @@ export const SequencerContextProvider = ({
   const [seqThreeGridNotes, setSeqThreeGridNotes] = useState<Array<GridNote>>(
     []
   );
+
+  const clearSequencer = () => {
+    setSeqOneLoop(2);
+    setSeqTwoLoop(2);
+    setSeqThreeLoop(2);
+    setSeqOneGridNotes([]);
+    setSeqTwoGridNotes([]);
+    setSeqThreeGridNotes([]);
+  };
 
   return (
     <SequencerContext.Provider
@@ -84,6 +95,7 @@ export const SequencerContextProvider = ({
           setSeqOneGridNotes,
           setSeqTwoGridNotes,
           setSeqThreeGridNotes,
+          clearSequencer,
         }}
       >
         {children}

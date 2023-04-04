@@ -54,10 +54,10 @@ const Text = styled.div`
 
 const Input = styled.input`
   width: 100%;
-  height: 7px;
+  height: 3px;
   -webkit-appearance: none;
   outline: none;
-  background: black;
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 3px;
   -webkit-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 11px -3px rgba(0, 0, 0, 0.75);

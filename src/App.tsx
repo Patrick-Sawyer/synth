@@ -100,7 +100,7 @@ function App() {
 const Wrapper = styled.div`
   height: 100vh;
   width: 100%;
-  min-width: 360px;
+  min-width: 520px;
   user-select: none;
 `;
 

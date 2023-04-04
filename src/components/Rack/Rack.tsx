@@ -7,8 +7,20 @@ import {
   SEQ_TWO_CV_OUT,
 } from "../../App";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
-import { useAudioUnitContext } from "../../contexts/AudioUnitContext";
-import { useUpdateSequencerContext } from "../../contexts/SequencerContext";
+import {
+  useAudioUnitContext,
+  useUpdateAudioUnitContext,
+} from "../../contexts/AudioUnitContext";
+import {
+  FullConnection,
+  useConnectionContext,
+  useConnectionUpdateContext,
+} from "../../contexts/ConnectionContext";
+import { useMrTContext } from "../../contexts/MrTContext";
+import {
+  useSequencerContext,
+  useUpdateSequencerContext,
+} from "../../contexts/SequencerContext";
 import { usePlayAndStop } from "../../hooks/usePlayAndStop";
 import { Colors } from "../../utils/theme";
 import { DelayComponent } from "../Delay/DelayComponent";
@@ -27,8 +39,66 @@ import { RackRow } from "./RackRow";
 export function Rack() {
   const ref = useRef<HTMLDivElement>(null);
   const audioUnits = useAudioUnitContext();
-  const { setTempo } = useUpdateSequencerContext();
+  const setAudioUnits = useUpdateAudioUnitContext();
+  const { clearConnections } = useConnectionUpdateContext();
+  const { setTempo, clearSequencer } = useUpdateSequencerContext();
   const { playModular, stopModular } = usePlayAndStop();
+  const { fireMrT } = useMrTContext();
+  const { connections } = useConnectionContext();
+
+  const { seqOneGridNotes, seqTwoGridNotes, seqThreeGridNotes } =
+    useSequencerContext();
+
+  const clearEverything = () => {
+    fireMrT({
+      text: "YOU REALLY WANNA DELETE EVERYTHING FOOL?",
+      callback: async () => {
+        stopModular(() => {
+          audioUnits.forEach((unit) => {
+            unit.shutdown();
+          });
+          clearSequencer();
+          setAudioUnits([]);
+          clearConnections();
+        });
+      },
+    });
+  };
+
+  const handleStop = () => {
+    stopModular();
+  };
+
+  const handlePlay = () => {
+    const mainNotConnected = !connections.filter(
+      (conn) => conn.to.unitKey === "MAIN_OUT"
+    ).length;
+
+    const sequencersNotConnected = !connections.filter((conn) => {
+      return (
+        conn.from.unitKey === "SEQ_ONE" ||
+        conn.from.unitKey === "SEQ_TWO" ||
+        conn.from.unitKey === "SEQ_THREE"
+      );
+    }).length;
+
+    const noNotesScheduled =
+      !seqOneGridNotes.length &&
+      !seqTwoGridNotes.length &&
+      !seqThreeGridNotes.length;
+
+    if (!audioUnits.length) {
+      fireMrT({ text: "ADD SOME MODULES FOOL!" });
+    } else if (mainNotConnected) {
+      fireMrT({ text: "CONNECT SOME MODULES TO MAIN OUT FOOL!" });
+    } else if (sequencersNotConnected) {
+      fireMrT({ text: "CONNECT A SEQUENCER FOOL!" });
+    } else if (noNotesScheduled) {
+      fireMrT({ text: "ADD SOME NOTES FOOL!" });
+    } else {
+      playModular();
+    }
+  };
 
   return (
     <Wrapper ref={ref}>
@@ -36,8 +106,9 @@ export function Rack() {
         <TitleText>{"TURNTABLISM MODULAR"}</TitleText>
         <Slider onChange={setTempo} />
         <Buttons>
-          <Button onClick={playModular}>PLAY</Button>
-          <Button onClick={stopModular}>STOP</Button>
+          <Button onClick={handlePlay}>PLAY</Button>
+          <Button onClick={handleStop}>STOP</Button>
+          <Button onClick={clearEverything}>CLEAR</Button>
         </Buttons>
       </Title>
       <Settings />
@@ -112,7 +183,7 @@ const TitleText = styled.div`
   padding-left: 10px;
   text-shadow: 2px 2px 4px #656565;
 
-  @media screen and (max-width: 870px) {
+  @media screen and (max-width: 1000px) {
     display: none;
   }
 `;
@@ -162,7 +233,7 @@ const Title = styled.div`
   height: 50px;
   align-items: center;
 
-  @media screen and (max-width: 540px) {
+  @media screen and (max-width: 700px) {
     flex-direction: column;
     height: 75px;
     gap: 10px;

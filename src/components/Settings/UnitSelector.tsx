@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { CloseIcon } from "../../assets/svg";
+import { useMrTContext } from "../../contexts/MrTContext";
 import { Colors } from "../../utils/theme";
 import Chevron from "../Chevron";
 
@@ -29,11 +30,14 @@ export function UnitSelector({
   onCloseIconClick,
 }: Props) {
   const [active, setActive] = useState<boolean>(false);
+  const { fireMrT, mrTActive } = useMrTContext();
 
   return (
     <Wrapper
       onMouseLeave={() => {
-        setActive(false);
+        if (!mrTActive) {
+          setActive(false);
+        }
       }}
     >
       <Inner>
@@ -65,7 +69,16 @@ export function UnitSelector({
                 <IconWrapper
                   onPointerDown={(e) => {
                     e.stopPropagation();
-                    onCloseIconClick(value);
+                    fireMrT({
+                      text: "YOU REALLY WANNA DELETE THIS FOOL?",
+                      callback: () => {
+                        onCloseIconClick(value);
+                        setActive(false);
+                      },
+                      onCancel: () => {
+                        setActive(false);
+                      },
+                    });
                   }}
                 >
                   <CloseIcon color={Colors.hoverColor} size="14px" />

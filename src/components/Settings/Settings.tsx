@@ -92,7 +92,7 @@ export function Settings() {
   const [savedPatches, setSavedPatches] = useState<Array<string>>([]);
   const { connections, hiddenUnits } = useConnectionContext();
   const { setConnections, setHiddenUnits } = useConnectionUpdateContext();
-  const onMrTAlert = useMrTContext();
+  const { fireMrT } = useMrTContext();
   const [text, setText] = useState("");
 
   const {
@@ -128,9 +128,9 @@ export function Settings() {
     const patch = window.localStorage.getItem(saveName);
 
     if (audioUnits.length === 0) {
-      onMrTAlert({ text: "NOTHING TO SAVE FOOL!" });
+      fireMrT({ text: "NOTHING TO SAVE FOOL!" });
     } else if (patch) {
-      onMrTAlert({ text: "ALREADY EXISTS FOOL!" });
+      fireMrT({ text: "ALREADY EXISTS FOOL!" });
     } else {
       try {
         const mapped = formatOnSave(audioUnits);
@@ -147,9 +147,9 @@ export function Settings() {
           hiddenUnits,
         });
         window.localStorage.setItem(saveName, patchAsString);
-        onMrTAlert({ text: "PATCH SAVED FOOL!" });
+        fireMrT({ text: "PATCH SAVED FOOL!" });
       } catch {
-        onMrTAlert({ text: "SOMETHING WENT WRONG FOOL!" });
+        fireMrT({ text: "SOMETHING WENT WRONG FOOL!" });
       }
     }
   };
@@ -249,10 +249,10 @@ export function Settings() {
 
         setText(name.replace(PATCH_PREFIX, ""));
       } catch {
-        onMrTAlert({ text: "SOMETHING WENT WRONG FOOL!" });
+        fireMrT({ text: "SOMETHING WENT WRONG FOOL!" });
       }
     } else {
-      onMrTAlert({ text: "SOMETHING WENT WRONG FOOL!" });
+      fireMrT({ text: "SOMETHING WENT WRONG FOOL!" });
     }
   };
 
@@ -269,7 +269,7 @@ export function Settings() {
       <UnitSelector
         options={AudioUnitListOption}
         onSelect={addUnit}
-        label={`Add unit: `}
+        label={`Add module: `}
       />
 
       <UnitSelector
