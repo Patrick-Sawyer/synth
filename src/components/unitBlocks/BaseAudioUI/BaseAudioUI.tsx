@@ -81,6 +81,8 @@ const IconWrapper = styled.div<{ bottom?: boolean }>`
   transition: 0.3s;
 
   &:hover {
+    opacity: 0.5;
+
     svg {
       fill: white;
     }
