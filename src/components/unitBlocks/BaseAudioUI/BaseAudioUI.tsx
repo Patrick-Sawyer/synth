@@ -5,7 +5,7 @@ import {
   useConnectionContext,
   useConnectionUpdateContext,
 } from "../../../contexts/ConnectionContext";
-import { useMessageContext } from "../../../contexts/MessageContext";
+import { useMrTContext } from "../../../contexts/MrTContext";
 import { Colors } from "../../../utils/theme";
 
 export const UNIT_HEIGHT = "300px";
@@ -22,7 +22,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
   const { setHiddenUnits, setConnections } = useConnectionUpdateContext();
   const setAudioUnits = useUpdateAudioUnitContext();
   const collapsed = thisUnitKey && hiddenUnits.includes(thisUnitKey);
-  const onMessage = useMessageContext();
+  const onMrTAlert = useMrTContext();
 
   const handleCollapseClick = () => {
     let units = [...hiddenUnits];
@@ -52,7 +52,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
   };
 
   const handleCloseClick = () => {
-    onMessage({
+    onMrTAlert({
       text: "Are you sure you wish you delete this unit?",
       callback: removeUnit,
     });

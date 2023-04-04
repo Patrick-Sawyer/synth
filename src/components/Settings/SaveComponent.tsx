@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
+import { useMrTContext } from "../../contexts/MrTContext";
 import { Colors } from "../../utils/theme";
 import { OPTION_HEIGHT } from "./UnitSelector";
 
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export function SaveComponent({ onClick, text, setText }: Props) {
+  const onMrTAlert = useMrTContext();
+
   return (
     <Wrapper>
       <Input
@@ -24,7 +27,7 @@ export function SaveComponent({ onClick, text, setText }: Props) {
           if (text.length) {
             onClick(text);
           } else {
-            alert("ENTER SOME TEXT FOOL!");
+            onMrTAlert({ text: "ENTER SOME TEXT FOOL!" });
           }
         }}
       >

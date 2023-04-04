@@ -18,6 +18,7 @@ import {
   useConnectionContext,
   useConnectionUpdateContext,
 } from "../../contexts/ConnectionContext";
+import { useMrTContext } from "../../contexts/MrTContext";
 import {
   useSequencerContext,
   useUpdateSequencerContext,
@@ -91,6 +92,9 @@ export function Settings() {
   const [savedPatches, setSavedPatches] = useState<Array<string>>([]);
   const { connections, hiddenUnits } = useConnectionContext();
   const { setConnections, setHiddenUnits } = useConnectionUpdateContext();
+  const onMrTAlert = useMrTContext();
+  const [text, setText] = useState("");
+
   const {
     seqOneLoop,
     seqTwoLoop,
@@ -100,6 +104,7 @@ export function Settings() {
     seqThreeGridNotes,
     tempo,
   } = useSequencerContext();
+
   const {
     setTempo,
     setSeqOneLoop,
@@ -110,8 +115,6 @@ export function Settings() {
     setSeqThreeGridNotes,
   } = useUpdateSequencerContext();
 
-  const [text, setText] = useState("");
-
   const addUnit = (type: AudioUnitTypes) => {
     const newUnit = getUnit(type);
 
@@ -120,31 +123,14 @@ export function Settings() {
     });
   };
 
-  // const removeUnit = (keyToDelete: string) => {
-  //   setAudioUnits((array) => {
-  //     const index = array.findIndex(({ unitKey }) => unitKey === keyToDelete);
-  //     array[index]?.shutdown();
-  //     return [...array.slice(0, index), ...array.slice(index + 1)];
-  //   });
-
-  //   const newConnections = [...connections];
-  //   const filtered = newConnections.filter((conn) => {
-  //     return (
-  //       conn.from.unitKey !== keyToDelete && conn.to.unitKey !== keyToDelete
-  //     );
-  //   });
-
-  //   setConnections && setConnections(filtered);
-  // };
-
   const saveAs = (name: string) => {
     const saveName = PATCH_PREFIX + name;
     const patch = window.localStorage.getItem(saveName);
 
     if (audioUnits.length === 0) {
-      alert("NOTHING TO SAVE FOOL");
+      onMrTAlert({ text: "NOTHING TO SAVE FOOL!" });
     } else if (patch) {
-      alert("ALREADY EXISTS FOOL");
+      onMrTAlert({ text: "ALREADY EXISTS FOOL!" });
     } else {
       try {
         const mapped = formatOnSave(audioUnits);
@@ -161,9 +147,9 @@ export function Settings() {
           hiddenUnits,
         });
         window.localStorage.setItem(saveName, patchAsString);
-        alert("PATCH SAVED FOOL!");
+        onMrTAlert({ text: "PATCH SAVED FOOL!" });
       } catch {
-        alert("SOMETHING WENT WRONG FOOL");
+        onMrTAlert({ text: "SOMETHING WENT WRONG FOOL!" });
       }
     }
   };
@@ -263,10 +249,10 @@ export function Settings() {
 
         setText(name.replace(PATCH_PREFIX, ""));
       } catch {
-        alert("SOMETHING WENT WRONG FOOL");
+        onMrTAlert({ text: "SOMETHING WENT WRONG FOOL!" });
       }
     } else {
-      alert("SOMETHING WENT WRONG FOOL");
+      onMrTAlert({ text: "SOMETHING WENT WRONG FOOL!" });
     }
   };
 

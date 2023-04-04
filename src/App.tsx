@@ -7,7 +7,7 @@ import {
   ConnectionContextProvider,
   ConnectionTypes,
 } from "./contexts/ConnectionContext";
-import { MessageContextProvider } from "./contexts/MessageContext";
+import { MrTContextProvider } from "./contexts/MrTContext";
 import { SequencerContextProvider } from "./contexts/SequencerContext";
 
 export const CONTEXT = new AudioContext();
@@ -84,7 +84,7 @@ CONTEXT.createPulseOscillator = function (): PulseNode {
 function App() {
   return (
     <Wrapper>
-      <MessageContextProvider>
+      <MrTContextProvider>
         <AudioUnitContextProvider>
           <SequencerContextProvider>
             <ConnectionContextProvider>
@@ -92,7 +92,7 @@ function App() {
             </ConnectionContextProvider>
           </SequencerContextProvider>
         </AudioUnitContextProvider>
-      </MessageContextProvider>
+      </MrTContextProvider>
     </Wrapper>
   );
 }

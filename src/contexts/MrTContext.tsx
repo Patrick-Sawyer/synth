@@ -4,59 +4,70 @@ import { Button } from "../components/Rack/Rack";
 
 import { Colors } from "../utils/theme";
 
-interface MessageState {
+interface MrTMessageState {
   text: string;
   callback?: () => void;
 }
 
-type MessageContextType = (args: MessageState) => void;
+type MrTContextType = (args: MrTMessageState) => void;
 
-const MessageContext = createContext<MessageContextType>(() => null);
+const MrTContext = createContext<MrTContextType>(() => null);
 
-export const MessageContextProvider = ({
+export const MrTContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [messageState, setMessageState] = useState<MessageState | null>(null);
+  const [mrTMessageState, setMrTMessageState] =
+    useState<MrTMessageState | null>(null);
 
-  const onMessage = (message: MessageState) => {
-    if (!messageState) {
-      setMessageState(message);
+  const onMessage = (message: MrTMessageState) => {
+    if (!mrTMessageState) {
+      setMrTMessageState(message);
     }
   };
 
   const handleOK = () => {
-    if (messageState?.callback) {
-      messageState?.callback();
+    if (mrTMessageState?.callback) {
+      mrTMessageState?.callback();
     }
 
-    setMessageState(null);
+    setMrTMessageState(null);
   };
 
   const handleCancel = () => {
-    setMessageState(null);
+    setMrTMessageState(null);
   };
 
   return (
-    <MessageContext.Provider value={onMessage}>
+    <MrTContext.Provider value={onMessage}>
       {children}
-      {messageState && (
+      {mrTMessageState && (
         <Overlay>
           <Card>
-            <Text>{messageState.text}</Text>
+            <Image src={"images/mrt.png"} alt="mr-t" />
+            <Text>{mrTMessageState.text}</Text>
             <ButtonWrapper>
               <Button onClick={handleOK}>{"OK"}</Button>
-              {messageState.callback && (
+              {mrTMessageState.callback && (
                 <Button onClick={handleCancel}>{"CANCEL"}</Button>
               )}
             </ButtonWrapper>
           </Card>
         </Overlay>
       )}
-    </MessageContext.Provider>
+    </MrTContext.Provider>
   );
 };
+
+const Image = styled.img`
+  height: 220px;
+  width: 300px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);
+  -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);
+  box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);
+`;
 
 const Overlay = styled.div`
   height: 100%;
@@ -74,8 +85,7 @@ const Overlay = styled.div`
 `;
 
 const Card = styled.div`
-  width: 350px;
-  padding: 32px 45px;
+  padding: 40px 50px;
   background: ${Colors.screwBackground};
   border-radius: 3px;
   -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);
@@ -84,19 +94,25 @@ const Card = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 25px;
+  gap: 30px;
   flex-direction: column;
 `;
 
 const Text = styled.span`
-  font-size: 17px;
-  opacity: 0.7;
+  font-size: 20px;
   color: black;
+  font-family: "Courier New", Courier, monospace;
+  padding: 7px 15px;
+  width: 270px;
+  text-align: center;
+  font-weight: bold;
+
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  gap: 25px;
+  gap: 50px;
 `;
 
-export const useMessageContext = () => useContext(MessageContext);
+export const useMrTContext = () => useContext(MrTContext);
