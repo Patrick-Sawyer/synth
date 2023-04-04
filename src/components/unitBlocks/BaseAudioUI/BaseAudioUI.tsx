@@ -53,7 +53,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
 
   const handleCloseClick = () => {
     onMrTAlert({
-      text: "Are you sure you wish you delete this unit?",
+      text: "YOU REALLY WANNA DELETE THIS FOOL?",
       callback: removeUnit,
     });
   };
