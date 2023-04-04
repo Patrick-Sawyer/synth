@@ -5,6 +5,7 @@ import {
   useConnectionContext,
   useConnectionUpdateContext,
 } from "../../../contexts/ConnectionContext";
+import { useMessageContext } from "../../../contexts/MessageContext";
 import { Colors } from "../../../utils/theme";
 
 export const UNIT_HEIGHT = "300px";
@@ -21,6 +22,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
   const { setHiddenUnits, setConnections } = useConnectionUpdateContext();
   const setAudioUnits = useUpdateAudioUnitContext();
   const collapsed = thisUnitKey && hiddenUnits.includes(thisUnitKey);
+  const onMessage = useMessageContext();
 
   const handleCollapseClick = () => {
     let units = [...hiddenUnits];
@@ -49,6 +51,13 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
     setConnections && setConnections(filtered);
   };
 
+  const handleCloseClick = () => {
+    onMessage({
+      text: "Are you sure you wish you delete this unit?",
+      callback: removeUnit,
+    });
+  };
+
   return (
     <Wrapper color={color}>
       <NameWrapper>
@@ -59,7 +68,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
         >
           <ChevronIcon color={Colors.darkBorder} size="14px" />
         </IconWrapper>
-        <IconWrapper bottom onPointerDown={removeUnit}>
+        <IconWrapper bottom onPointerDown={handleCloseClick}>
           <CloseIcon color={Colors.darkBorder} size="14px" />
         </IconWrapper>
       </NameWrapper>

@@ -20,9 +20,9 @@ export const MessageContextProvider = ({
 }) => {
   const [messageState, setMessageState] = useState<MessageState | null>(null);
 
-  const onMessage = () => {
+  const onMessage = (message: MessageState) => {
     if (!messageState) {
-      setMessageState(messageState);
+      setMessageState(message);
     }
   };
 
@@ -48,7 +48,7 @@ export const MessageContextProvider = ({
             <ButtonWrapper>
               <Button onClick={handleOK}>{"OK"}</Button>
               {messageState.callback && (
-                <Button onClick={handleCancel}>{"Cancel"}</Button>
+                <Button onClick={handleCancel}>{"CANCEL"}</Button>
               )}
             </ButtonWrapper>
           </Card>
@@ -89,7 +89,8 @@ const Card = styled.div`
 `;
 
 const Text = styled.span`
-  font-size: 18px;
+  font-size: 17px;
+  opacity: 0.7;
   color: black;
 `;
 
