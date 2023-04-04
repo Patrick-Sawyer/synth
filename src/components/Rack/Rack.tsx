@@ -51,7 +51,7 @@ export function Rack() {
 
   const clearEverything = () => {
     fireMrT({
-      text: "YOU REALLY WANNA DELETE EVERYTHING FOOL?",
+      text: "YOU WANNA DELETE EVERYTHING FOOL?",
       callback: async () => {
         stopModular(() => {
           audioUnits.forEach((unit) => {
