@@ -1,4 +1,4 @@
-import { ComponentProps, RefObject, useRef, useState } from "react";
+import { ComponentProps, RefObject, useRef } from "react";
 import styled from "styled-components";
 import {
   MAIN_OUT,
@@ -7,7 +7,8 @@ import {
   SEQ_TWO_CV_OUT,
 } from "../../App";
 import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
-import { useConnectionContext } from "../../ConnectionContext";
+import { useAudioUnitContext } from "../../contexts/AudioUnitContext";
+import { useUpdateSequencerContext } from "../../contexts/SequencerContext";
 import { usePlayAndStop } from "../../hooks/usePlayAndStop";
 import { Colors } from "../../utils/theme";
 import { DelayComponent } from "../Delay/DelayComponent";
@@ -16,7 +17,6 @@ import { FilterComponent } from "../Filter/FilterComponent";
 import { LFOComponent } from "../LFO/LFOComponent";
 import { OscillatorComponent } from "../Oscillator/OscillatorComponent";
 import { ReverbComponent } from "../Reverb/ReverbComponent";
-import { GridNote } from "../Sequencer/Note";
 import { Sequencer } from "../Sequencer/Sequencer";
 import { Settings } from "../Settings/Settings";
 import { Slider } from "../Slider";
@@ -26,29 +26,9 @@ import { RackRow } from "./RackRow";
 
 export function Rack() {
   const ref = useRef<HTMLDivElement>(null);
-  const [audioUnits, setAudioUnits] = useState<Array<AudioUnit>>([]);
-  const { connections } = useConnectionContext();
-  const [tempo, setTempo] = useState(128);
-  const [seqOneLoop, setSeqOneLoop] = useState<number>(2);
-  const [seqTwoLoop, setSeqTwoLoop] = useState<number>(2);
-  const [seqThreeLoop, setSeqThreeLoop] = useState<number>(2);
-  const [seqOneGridNotes, setSeqOneGridNotes] = useState<Array<GridNote>>([]);
-  const [seqTwoGridNotes, setSeqTwoGridNotes] = useState<Array<GridNote>>([]);
-  const [seqThreeGridNotes, setSeqThreeGridNotes] = useState<Array<GridNote>>(
-    []
-  );
-
-  const { playModular, stopModular } = usePlayAndStop({
-    audioUnits,
-    gridOne: seqOneGridNotes,
-    gridTwo: seqTwoGridNotes,
-    gridThree: seqThreeGridNotes,
-    connections,
-    tempo,
-    seqOneLoop,
-    seqTwoLoop,
-    seqThreeLoop,
-  });
+  const audioUnits = useAudioUnitContext();
+  const { setTempo } = useUpdateSequencerContext();
+  const { playModular, stopModular } = usePlayAndStop();
 
   return (
     <Wrapper ref={ref}>
@@ -60,38 +40,8 @@ export function Rack() {
           <Button onClick={stopModular}>STOP</Button>
         </Buttons>
       </Title>
-      <Settings
-        audioUnits={audioUnits}
-        setAudioUnits={setAudioUnits}
-        tempo={tempo}
-        seqOneLoop={seqOneLoop}
-        seqTwoLoop={seqTwoLoop}
-        seqThreeLoop={seqThreeLoop}
-        seqOneGridNotes={seqOneGridNotes}
-        seqTwoGridNotes={seqTwoGridNotes}
-        seqThreeGridNotes={seqThreeGridNotes}
-        setTempo={setTempo}
-        setSeqOneLoop={setSeqOneLoop}
-        setSeqTwoLoop={setSeqTwoLoop}
-        setSeqThreeLoop={setSeqThreeLoop}
-        setSeqOneGridNotes={setSeqOneGridNotes}
-        setSeqTwoGridNotes={setSeqTwoGridNotes}
-        setSeqThreeGridNotes={setSeqThreeGridNotes}
-      />
-      <Sequencer
-        seqOneGridNotes={seqOneGridNotes}
-        seqTwoGridNotes={seqTwoGridNotes}
-        seqThreeGridNotes={seqThreeGridNotes}
-        setSeqOneGridNotes={setSeqOneGridNotes}
-        setSeqTwoGridNotes={setSeqTwoGridNotes}
-        setSeqThreeGridNotes={setSeqThreeGridNotes}
-        seqOneLoop={seqOneLoop}
-        seqTwoLoop={seqTwoLoop}
-        seqThreeLoop={seqThreeLoop}
-        setSeqOneLoop={setSeqOneLoop}
-        setSeqTwoLoop={setSeqTwoLoop}
-        setSeqThreeLoop={setSeqThreeLoop}
-      />
+      <Settings />
+      <Sequencer />
       <MainOut>
         <AudioConnection
           darkText

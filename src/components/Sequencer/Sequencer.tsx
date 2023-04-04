@@ -1,25 +1,13 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
+import {
+  useSequencerContext,
+  useUpdateSequencerContext,
+} from "../../contexts/SequencerContext";
 import { Colors } from "../../utils/theme";
 import { Collapsible } from "./Collapsible";
 import { Grid, ROW_HEIGHT } from "./Grid";
-import { GridNote } from "./Note";
 import { NOTES } from "./notes";
-
-interface Props {
-  seqOneGridNotes: Array<GridNote>;
-  seqTwoGridNotes: Array<GridNote>;
-  seqThreeGridNotes: Array<GridNote>;
-  setSeqOneGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
-  setSeqTwoGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
-  setSeqThreeGridNotes: Dispatch<SetStateAction<Array<GridNote>>>;
-  seqOneLoop: number;
-  seqTwoLoop: number;
-  seqThreeLoop: number;
-  setSeqOneLoop: Dispatch<SetStateAction<number>>;
-  setSeqTwoLoop: Dispatch<SetStateAction<number>>;
-  setSeqThreeLoop: Dispatch<SetStateAction<number>>;
-}
 
 const COLORS = [
   Colors.sequencerOneColor,
@@ -27,20 +15,23 @@ const COLORS = [
   Colors.sequencerThreeColor,
 ];
 
-export function Sequencer({
-  seqOneGridNotes,
-  seqTwoGridNotes,
-  seqThreeGridNotes,
-  setSeqOneGridNotes,
-  setSeqTwoGridNotes,
-  setSeqThreeGridNotes,
-  seqOneLoop,
-  seqTwoLoop,
-  seqThreeLoop,
-  setSeqOneLoop,
-  setSeqTwoLoop,
-  setSeqThreeLoop,
-}: Props) {
+export function Sequencer() {
+  const {
+    seqOneLoop,
+    seqTwoLoop,
+    seqThreeLoop,
+    seqOneGridNotes,
+    seqTwoGridNotes,
+    seqThreeGridNotes,
+  } = useSequencerContext();
+  const {
+    setSeqOneLoop,
+    setSeqTwoLoop,
+    setSeqThreeLoop,
+    setSeqOneGridNotes,
+    setSeqTwoGridNotes,
+    setSeqThreeGridNotes,
+  } = useUpdateSequencerContext();
   const [activeSeq, setActiveSeq] = useState(0);
   const color = COLORS[activeSeq];
   const loops = [seqOneLoop, seqTwoLoop, seqThreeLoop];

@@ -1,5 +1,5 @@
 import { CONTEXT, PulseNode } from "../App";
-import { ConnectionTypes } from "../ConnectionContext";
+import { ConnectionTypes } from "../contexts/ConnectionContext";
 import { BaseUnit, FADE, ZERO } from "./BaseUnit";
 import { Connection } from "./Connection";
 import { AudioUnitTypes } from "./types";

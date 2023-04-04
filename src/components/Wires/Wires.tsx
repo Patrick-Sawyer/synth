@@ -1,7 +1,7 @@
 import { memo, RefObject, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Coordinate } from "../../audioUnits/Connection";
-import { useConnectionContext } from "../../ConnectionContext";
+import { useConnectionContext } from "../../contexts/ConnectionContext";
 import { debounce } from "../../utils/debounce";
 
 interface WireProps {
@@ -40,7 +40,11 @@ const WireComponent = ({ x1, x2, y1, y2, colorOverride }: WireProps) => {
     <svg
       width="100%"
       height="100%"
-      style={{ zIndex: 1000, opacity: 0.7, position: "absolute" }}
+      style={{
+        zIndex: 1000,
+        opacity: 0.7,
+        position: "absolute",
+      }}
     >
       <path
         d={curve}

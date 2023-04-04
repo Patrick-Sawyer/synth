@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { debounce } from "./utils/debounce";
+import { debounce } from "../utils/debounce";
 
 export enum ConnectionTypes {
   INPUT = "input",

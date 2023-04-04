@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import { ChevronIcon } from "../../../assets/svg";
+import { ChevronIcon, CloseIcon } from "../../../assets/svg";
+import { useUpdateAudioUnitContext } from "../../../contexts/AudioUnitContext";
 import {
   useConnectionContext,
   useConnectionUpdateContext,
-} from "../../../ConnectionContext";
+} from "../../../contexts/ConnectionContext";
 import { Colors } from "../../../utils/theme";
 
 export const UNIT_HEIGHT = "300px";
@@ -12,24 +13,40 @@ interface Props {
   children: React.ReactNode;
   color: string;
   title: string;
-  unitKey: string;
+  thisUnitKey: string;
 }
 
-export function BaseAudioUI({ children, color, title, unitKey }: Props) {
-  const { hiddenUnits } = useConnectionContext();
-  const { setHiddenUnits } = useConnectionUpdateContext();
-  const collapsed = unitKey && hiddenUnits.includes(unitKey);
+export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
+  const { hiddenUnits, connections } = useConnectionContext();
+  const { setHiddenUnits, setConnections } = useConnectionUpdateContext();
+  const setAudioUnits = useUpdateAudioUnitContext();
+  const collapsed = thisUnitKey && hiddenUnits.includes(thisUnitKey);
 
-  const handleClick = () => {
+  const handleCollapseClick = () => {
     let units = [...hiddenUnits];
 
     if (collapsed) {
-      units = units.filter((key) => key !== unitKey);
+      units = units.filter((key) => key !== thisUnitKey);
     } else {
-      units.push(unitKey);
+      units.push(thisUnitKey);
     }
 
     setHiddenUnits && setHiddenUnits(units);
+  };
+
+  const removeUnit = () => {
+    setAudioUnits((array) => {
+      const index = array.findIndex(({ unitKey }) => unitKey === thisUnitKey);
+      array[index]?.shutdown();
+      return [...array.slice(0, index), ...array.slice(index + 1)];
+    });
+    const newConnections = [...connections];
+    const filtered = newConnections.filter((conn) => {
+      return (
+        conn.from.unitKey !== thisUnitKey && conn.to.unitKey !== thisUnitKey
+      );
+    });
+    setConnections && setConnections(filtered);
   };
 
   return (
@@ -37,10 +54,13 @@ export function BaseAudioUI({ children, color, title, unitKey }: Props) {
       <NameWrapper>
         <Name rotate={"270deg"}>{title}</Name>
         <IconWrapper
-          onPointerDown={handleClick}
+          onPointerDown={handleCollapseClick}
           style={{ transform: `rotate(${collapsed ? "90deg" : "0"})` }}
         >
           <ChevronIcon color={Colors.darkBorder} size="14px" />
+        </IconWrapper>
+        <IconWrapper bottom onPointerDown={removeUnit}>
+          <CloseIcon color={Colors.darkBorder} size="14px" />
         </IconWrapper>
       </NameWrapper>
       {!collapsed && <Content>{children}</Content>}
@@ -48,10 +68,10 @@ export function BaseAudioUI({ children, color, title, unitKey }: Props) {
   );
 }
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.div<{ bottom?: boolean }>`
   position: absolute;
-  top: 0;
-  opacity: 0.2;
+  ${({ bottom }) => (bottom ? "bottom: 0;" : "top: 0;")}
+  opacity: 0.3;
   cursor: pointer;
   height: 27px;
   width: 27px;
@@ -61,8 +81,6 @@ const IconWrapper = styled.div`
   transition: 0.3s;
 
   &:hover {
-    opacity: 0.4;
-
     svg {
       fill: white;
     }

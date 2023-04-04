@@ -25,7 +25,11 @@ export function FilterComponent(
   props: Filter & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"filter"} unitKey={props.unitKey}>
+    <BaseAudioUI
+      color={props.color}
+      title={"filter"}
+      thisUnitKey={props.unitKey}
+    >
       <UnitColumn>
         <Knob
           text="FREQ"

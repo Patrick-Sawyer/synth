@@ -1,4 +1,4 @@
-import { ConnectionTypes } from "../ConnectionContext";
+import { ConnectionTypes } from "../contexts/ConnectionContext";
 import { create_UUID } from "../utils/guid";
 import { Colors } from "../utils/theme";
 import { Connection } from "./Connection";

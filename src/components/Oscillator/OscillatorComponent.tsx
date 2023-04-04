@@ -41,7 +41,7 @@ export function OscillatorComponent(
     <BaseAudioUI
       color={props.color}
       title={"oscillator"}
-      unitKey={props.unitKey}
+      thisUnitKey={props.unitKey}
     >
       <UnitColumn>
         <AudioConnection

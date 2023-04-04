@@ -6,7 +6,7 @@ import {
   MakeConnection,
   useConnectionContext,
   useConnectionUpdateContext,
-} from "../../ConnectionContext";
+} from "../../contexts/ConnectionContext";
 import { Label } from "./Label";
 
 export enum ConnectionTypes {

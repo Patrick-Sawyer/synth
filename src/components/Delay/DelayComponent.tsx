@@ -16,7 +16,11 @@ export function DelayComponent(
   props: Delay & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"delay"} unitKey={props.unitKey}>
+    <BaseAudioUI
+      color={props.color}
+      title={"delay"}
+      thisUnitKey={props.unitKey}
+    >
       <UnitColumn>
         <Knob
           text="TIME"

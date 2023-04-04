@@ -1,50 +1,42 @@
 import { useRef } from "react";
 import { CONTEXT, MAIN_OUT } from "../App";
-import { FADE, ZERO } from "../audioUnits/BaseUnit";
+import { ZERO } from "../audioUnits/BaseUnit";
 import { Filter } from "../audioUnits/Filter";
 import { Oscillator } from "../audioUnits/Oscillator";
 import { AudioUnit, AudioUnitTypes } from "../audioUnits/types";
 import { GridNote } from "../components/Sequencer/Note";
 import { NOTES } from "../components/Sequencer/notes";
-import { FullConnection } from "../ConnectionContext";
-
-interface Args {
-  audioUnits: Array<AudioUnit>;
-  gridOne: Array<GridNote>;
-  gridTwo: Array<GridNote>;
-  gridThree: Array<GridNote>;
-  tempo: number;
-  connections: Array<FullConnection>;
-  seqOneLoop: number;
-  seqTwoLoop: number;
-  seqThreeLoop: number;
-}
+import { useAudioUnitContext } from "../contexts/AudioUnitContext";
+import {
+  FullConnection,
+  useConnectionContext,
+} from "../contexts/ConnectionContext";
+import { useSequencerContext } from "../contexts/SequencerContext";
 
 interface ScheduledNotes {
   grid1?: GridNote | "stop";
   grid2?: GridNote | "stop";
   grid3?: GridNote | "stop";
 }
-// GET IT TO WORK WITH UPDATING ARGUMENTS
-// TODO: Schedule the end of notes
-// Work out priority e.g. higher notes, newer notes overwrite old notes
-// Get multiple sequencer working
+// TODO: GET IT TO WORK WITH UPDATING ARGUMENTS
 
 type AudioUnitWithEnvConnections = AudioUnit & {
   connectedUnits?: Array<AudioUnit>;
 };
 
-export const usePlayAndStop = ({
-  audioUnits,
-  gridOne,
-  gridTwo,
-  gridThree,
-  tempo,
-  connections,
-  seqOneLoop,
-  seqTwoLoop,
-  seqThreeLoop,
-}: Args) => {
+export const usePlayAndStop = () => {
+  const audioUnits = useAudioUnitContext();
+  const { connections } = useConnectionContext();
+  const {
+    seqOneLoop,
+    seqTwoLoop,
+    seqThreeLoop,
+    seqOneGridNotes,
+    seqTwoGridNotes,
+    seqThreeGridNotes,
+    tempo,
+  } = useSequencerContext();
+
   const unitsWithEnvelopeConnections = audioUnits.map((unit) => {
     const unitToReturn: AudioUnitWithEnvConnections = {
       ...unit,
@@ -82,17 +74,17 @@ export const usePlayAndStop = ({
   const scheduleNextNotes = () => {
     const nextNotes = {
       grid1: getNoteAtIndex({
-        grid: gridOne,
+        grid: seqOneGridNotes,
         index: nextScheduledIndexSequencerOne.current,
         loop: seqOneLoop,
       }),
       grid2: getNoteAtIndex({
-        grid: gridTwo,
+        grid: seqTwoGridNotes,
         index: nextScheduledIndexSequencerTwo.current,
         loop: seqTwoLoop,
       }),
       grid3: getNoteAtIndex({
-        grid: gridThree,
+        grid: seqThreeGridNotes,
         index: nextScheduledIndexSequencerThree.current,
         loop: seqThreeLoop,
       }),

@@ -11,7 +11,11 @@ export function EnvelopeComponent(
   props: Envelope & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"envelope"} unitKey={props.unitKey}>
+    <BaseAudioUI
+      color={props.color}
+      title={"envelope"}
+      thisUnitKey={props.unitKey}
+    >
       <UnitColumn>
         <Knob
           text={"ATTACK"}

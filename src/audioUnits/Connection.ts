@@ -1,5 +1,5 @@
 import { CONTEXT } from "../App";
-import { ConnectionTypes } from "../ConnectionContext";
+import { ConnectionTypes } from "../contexts/ConnectionContext";
 import { ZERO } from "./BaseUnit";
 
 export interface Coordinate {

@@ -1,5 +1,4 @@
-import { parse } from "path";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { MAIN_OUT } from "../../App";
 import { Connection } from "../../audioUnits/Connection";
@@ -9,38 +8,26 @@ import { Filter } from "../../audioUnits/Filter";
 import { LFO } from "../../audioUnits/LFO";
 import { Oscillator } from "../../audioUnits/Oscillator";
 import { Reverb } from "../../audioUnits/Reverb";
-import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
+import { AudioUnitTypes } from "../../audioUnits/types";
+import {
+  useAudioUnitContext,
+  useUpdateAudioUnitContext,
+} from "../../contexts/AudioUnitContext";
 import {
   FullConnection,
   useConnectionContext,
   useConnectionUpdateContext,
-} from "../../ConnectionContext";
+} from "../../contexts/ConnectionContext";
+import {
+  useSequencerContext,
+  useUpdateSequencerContext,
+} from "../../contexts/SequencerContext";
 import { formatOnLoad, formatOnSave } from "../../utils/formatOnLoadAndSave";
 import { Colors } from "../../utils/theme";
-import { GridNote } from "../Sequencer/Note";
 import { SaveComponent } from "./SaveComponent";
 import { Option, UnitSelector } from "./UnitSelector";
 
 const PATCH_PREFIX = "@turntablism-modular-patch-";
-
-interface Props {
-  audioUnits: Array<AudioUnit>;
-  setAudioUnits: Dispatch<SetStateAction<AudioUnit[]>>;
-  tempo: number;
-  seqOneLoop: number;
-  seqTwoLoop: number;
-  seqThreeLoop: number;
-  seqOneGridNotes: GridNote[];
-  seqTwoGridNotes: GridNote[];
-  seqThreeGridNotes: GridNote[];
-  setTempo: (value: number) => void;
-  setSeqOneLoop: (value: number) => void;
-  setSeqTwoLoop: (value: number) => void;
-  setSeqThreeLoop: (value: number) => void;
-  setSeqOneGridNotes: (value: GridNote[]) => void;
-  setSeqTwoGridNotes: (value: GridNote[]) => void;
-  setSeqThreeGridNotes: (value: GridNote[]) => void;
-}
 
 const AudioUnitListOption: Array<Option> = [
   {
@@ -98,27 +85,30 @@ const getUnit = (type: AudioUnitTypes) => {
   }
 };
 
-export function Settings({
-  audioUnits,
-  setAudioUnits,
-  tempo,
-  seqOneLoop,
-  seqTwoLoop,
-  seqThreeLoop,
-  seqOneGridNotes,
-  seqTwoGridNotes,
-  seqThreeGridNotes,
-  setTempo,
-  setSeqOneLoop,
-  setSeqTwoLoop,
-  setSeqThreeLoop,
-  setSeqOneGridNotes,
-  setSeqTwoGridNotes,
-  setSeqThreeGridNotes,
-}: Props) {
+export function Settings() {
+  const audioUnits = useAudioUnitContext();
+  const setAudioUnits = useUpdateAudioUnitContext();
   const [savedPatches, setSavedPatches] = useState<Array<string>>([]);
   const { connections, hiddenUnits } = useConnectionContext();
   const { setConnections, setHiddenUnits } = useConnectionUpdateContext();
+  const {
+    seqOneLoop,
+    seqTwoLoop,
+    seqThreeLoop,
+    seqOneGridNotes,
+    seqTwoGridNotes,
+    seqThreeGridNotes,
+    tempo,
+  } = useSequencerContext();
+  const {
+    setTempo,
+    setSeqOneLoop,
+    setSeqTwoLoop,
+    setSeqThreeLoop,
+    setSeqOneGridNotes,
+    setSeqTwoGridNotes,
+    setSeqThreeGridNotes,
+  } = useUpdateSequencerContext();
 
   const [text, setText] = useState("");
 
@@ -130,22 +120,22 @@ export function Settings({
     });
   };
 
-  const removeUnit = (keyToDelete: string) => {
-    setAudioUnits((array) => {
-      const index = array.findIndex(({ unitKey }) => unitKey === keyToDelete);
-      array[index]?.shutdown();
-      return [...array.slice(0, index), ...array.slice(index + 1)];
-    });
+  // const removeUnit = (keyToDelete: string) => {
+  //   setAudioUnits((array) => {
+  //     const index = array.findIndex(({ unitKey }) => unitKey === keyToDelete);
+  //     array[index]?.shutdown();
+  //     return [...array.slice(0, index), ...array.slice(index + 1)];
+  //   });
 
-    const newConnections = [...connections];
-    const filtered = newConnections.filter((conn) => {
-      return (
-        conn.from.unitKey !== keyToDelete && conn.to.unitKey !== keyToDelete
-      );
-    });
+  //   const newConnections = [...connections];
+  //   const filtered = newConnections.filter((conn) => {
+  //     return (
+  //       conn.from.unitKey !== keyToDelete && conn.to.unitKey !== keyToDelete
+  //     );
+  //   });
 
-    setConnections && setConnections(filtered);
-  };
+  //   setConnections && setConnections(filtered);
+  // };
 
   const saveAs = (name: string) => {
     const saveName = PATCH_PREFIX + name;
@@ -295,16 +285,7 @@ export function Settings({
         onSelect={addUnit}
         label={`Add unit: `}
       />
-      <UnitSelector
-        options={audioUnits.map(({ label, unitKey, color }) => ({
-          text: label,
-          value: unitKey,
-          color,
-          key: unitKey,
-        }))}
-        onSelect={removeUnit}
-        label={`Remove unit: `}
-      />
+
       <UnitSelector
         options={savedPatches.map((patch) => ({
           key: patch,
@@ -335,7 +316,6 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: space-around;
   padding: 5px 10px;
-  flex-wrap: wrap;
   position: relative;
   margin-bottom: 7px;
 `;
