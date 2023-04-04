@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import styled from "styled-components";
 import { Button } from "../components/Rack/Rack";
 
@@ -97,3 +97,5 @@ const ButtonWrapper = styled.div`
   display: flex;
   gap: 25px;
 `;
+
+export const useMessageContext = () => useContext(MessageContext);
