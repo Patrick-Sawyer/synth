@@ -117,13 +117,15 @@ const TitleText = styled.div`
   }
 `;
 
-const Button = styled.div`
+export const Button = styled.div`
   padding: 5px 10px;
   flex: 1;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: bold;
   height: 25px;
+  max-height: 25px;
+  min-height: 25px;
   background-color: black;
   line-height: 0;
   color: white;
