@@ -102,10 +102,11 @@ const Text = styled.span`
   font-size: 20px;
   color: black;
   font-family: "Courier New", Courier, monospace;
-  width: 270px;
   text-align: center;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  position: relative;
+  top: 3px;
 `;
 
 const ButtonWrapper = styled.div`
