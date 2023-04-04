@@ -119,7 +119,7 @@ const Name = styled.span<{
   rotate: string;
 }>`
   transform: rotate(${({ rotate }) => rotate});
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 300;
   border-radius: 20%;
   padding-left: 15px;
@@ -127,5 +127,5 @@ const Name = styled.span<{
   position: relative;
   line-height: 0;
   font-size: 12px;
-  letter-spacing: 20px;
+  letter-spacing: 17px;
 `;
