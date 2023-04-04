@@ -117,8 +117,8 @@ export function Settings({
   setSeqThreeGridNotes,
 }: Props) {
   const [savedPatches, setSavedPatches] = useState<Array<string>>([]);
-  const { connections } = useConnectionContext();
-  const { setConnections } = useConnectionUpdateContext();
+  const { connections, hiddenUnits } = useConnectionContext();
+  const { setConnections, setHiddenUnits } = useConnectionUpdateContext();
 
   const [text, setText] = useState("");
 
@@ -168,6 +168,7 @@ export function Settings({
           seqOneGridNotes,
           seqTwoGridNotes,
           seqThreeGridNotes,
+          hiddenUnits,
         });
         window.localStorage.setItem(saveName, patchAsString);
         alert("PATCH SAVED FOOL!");
@@ -235,28 +236,39 @@ export function Settings({
           seqOneGridNotes,
           seqTwoGridNotes,
           seqThreeGridNotes,
+          hiddenUnits,
         } = parsedJson;
 
         if (tempo) {
           setTempo(tempo);
         }
+
         if (seqOneLoop) {
           setSeqOneLoop(seqOneLoop);
         }
+
         if (seqTwoLoop) {
           setSeqTwoLoop(seqTwoLoop);
         }
+
         if (seqThreeLoop) {
           setSeqThreeLoop(seqThreeLoop);
         }
+
         if (seqOneGridNotes) {
           setSeqOneGridNotes(seqOneGridNotes);
         }
+
         if (seqTwoGridNotes) {
           setSeqTwoGridNotes(seqTwoGridNotes);
         }
+
         if (seqThreeGridNotes) {
           setSeqThreeGridNotes(seqThreeGridNotes);
+        }
+
+        if (hiddenUnits && setHiddenUnits) {
+          setHiddenUnits(hiddenUnits);
         }
 
         setText(name.replace(PATCH_PREFIX, ""));

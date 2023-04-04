@@ -36,6 +36,7 @@ export interface FullConnection {
 const ConnectionContext = createContext<{
   fromConnection: MakeConnection | null;
   connections: Array<FullConnection>;
+  filteredConnections: Array<FullConnection>;
   connectionPositions: Record<
     string,
     {
@@ -43,16 +44,25 @@ const ConnectionContext = createContext<{
       y: number;
     }
   >;
-}>({ fromConnection: null, connections: [], connectionPositions: {} });
+  hiddenUnits: Array<string>;
+}>({
+  fromConnection: null,
+  connections: [],
+  connectionPositions: {},
+  hiddenUnits: [],
+  filteredConnections: [],
+});
 
 interface ConnectionUpdates {
   setFromValue: Dispatch<SetStateAction<MakeConnection | null>> | null;
   setConnections: Dispatch<SetStateAction<Array<FullConnection>>> | null;
+  setHiddenUnits: Dispatch<SetStateAction<Array<string>>> | null;
 }
 
 const UpdateConnectionContext = createContext<ConnectionUpdates>({
   setFromValue: null,
   setConnections: null,
+  setHiddenUnits: null,
 });
 
 export const ConnectionContextProvider = ({
@@ -60,6 +70,8 @@ export const ConnectionContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [hiddenUnits, setHiddenUnits] = useState<Array<string>>([]);
+
   const [fromConnection, setFromValue] = useState<MakeConnection | null>(null);
   const connectionPositions = useRef<
     Record<
@@ -72,6 +84,13 @@ export const ConnectionContextProvider = ({
   >({});
 
   const [connections, setConnections] = useState<Array<FullConnection>>([]);
+
+  const filteredConnections = connections.filter((conn) => {
+    return (
+      !hiddenUnits.includes(conn.from.unitKey) &&
+      !hiddenUnits.includes(conn.to.unitKey)
+    );
+  });
 
   useEffect(() => {
     const onResize = debounce(() => {
@@ -106,18 +125,20 @@ export const ConnectionContextProvider = ({
 
   useEffect(() => {
     window.dispatchEvent(new Event("resize"));
-  }, [connections.length]);
+  }, [connections.length, hiddenUnits]);
 
   return (
     <ConnectionContext.Provider
       value={{
         fromConnection,
         connections,
+        filteredConnections,
         connectionPositions: connectionPositions.current,
+        hiddenUnits,
       }}
     >
       <UpdateConnectionContext.Provider
-        value={{ setFromValue, setConnections }}
+        value={{ setFromValue, setConnections, setHiddenUnits }}
       >
         {children}
       </UpdateConnectionContext.Provider>

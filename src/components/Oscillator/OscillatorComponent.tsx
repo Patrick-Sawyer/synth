@@ -38,7 +38,11 @@ export function OscillatorComponent(
   props: Oscillator & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"oscillator"}>
+    <BaseAudioUI
+      color={props.color}
+      title={"oscillator"}
+      unitKey={props.unitKey}
+    >
       <UnitColumn>
         <AudioConnection
           wrapperRef={props.wrapperRef}

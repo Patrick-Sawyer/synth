@@ -1,8 +1,8 @@
-export const debounce = (callback: (value: any) => void, time = 40) => {
+export const debounce = (callback: (value?: any) => void, time = 40) => {
   let lastCalled = 0;
   let timeout: NodeJS.Timeout;
 
-  return (value: any) => {
+  return (value?: any) => {
     const now = Date.now();
     clearTimeout(timeout);
 

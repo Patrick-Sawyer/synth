@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { RefObject, useState } from "react";
 import { INIT_RATE, INIT_VOL, LFO } from "../../audioUnits/LFO";
 import { WaveTypes } from "../../audioUnits/Oscillator";
 import { calcInitTypeIndex } from "../Oscillator/OscillatorComponent";
@@ -19,7 +19,7 @@ export function LFOComponent(
   props: LFO & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
   return (
-    <BaseAudioUI color={props.color} title={"lfo"}>
+    <BaseAudioUI color={props.color} title={"lfo"} unitKey={props.unitKey}>
       <UnitColumn>
         <Knob
           text="RATE"
