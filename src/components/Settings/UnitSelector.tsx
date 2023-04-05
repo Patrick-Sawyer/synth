@@ -70,7 +70,7 @@ export function UnitSelector({
                   onPointerDown={(e) => {
                     e.stopPropagation();
                     fireMrT({
-                      text: "YOU WANNA DELETE THIS FOOL?",
+                      text: "DELETE THIS FOOL?",
                       callback: () => {
                         onCloseIconClick(value);
                         setActive(false);

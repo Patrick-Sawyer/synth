@@ -63,7 +63,7 @@ export function Rack() {
       });
     } else {
       fireMrT({
-        text: "WANNA DELETE EVERYTHING FOOL?",
+        text: "DELETE EVERYTHING FOOL?",
         callback: async () => {
           stopModular(() => {
             audioUnits.forEach((unit) => {
@@ -101,11 +101,11 @@ export function Rack() {
       !seqThreeGridNotes.length;
 
     if (!audioUnits.length) {
-      fireMrT({ text: "ADD SOME MODULES FOOL!" });
+      fireMrT({ text: "ADD SOME DAMN MODULES FOOL!" });
     } else if (mainNotConnected) {
       fireMrT({ text: "CONNECT SOME MODULES FOOL!" });
     } else if (sequencersNotConnected) {
-      fireMrT({ text: "CONNECT A DAMN SEQUENCER FOOL!" });
+      fireMrT({ text: "CONNECT A SEQUENCER FOOL!" });
     } else if (noNotesScheduled) {
       fireMrT({ text: "ADD SOME DAMN NOTES FOOL!" });
     } else {

@@ -53,7 +53,7 @@ export function BaseAudioUI({ children, color, title, thisUnitKey }: Props) {
 
   const handleCloseClick = () => {
     fireMrT({
-      text: "YOU WANNA DELETE THIS FOOL?",
+      text: "DELETE THIS FOOL?",
       callback: removeUnit,
     });
   };
