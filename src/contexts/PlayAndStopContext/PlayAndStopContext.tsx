@@ -42,11 +42,13 @@ const INIT_CURRENT_NOTES = {
 interface PlayAndStopContextType {
   startModular: () => void;
   stopModular: (onComplete?: () => void) => void;
+  timerIndex: number;
 }
 
 const PlayAndStopContext = createContext<PlayAndStopContextType>({
   startModular: () => null,
   stopModular: () => null,
+  timerIndex: 0,
 });
 
 export const PlayAndStopContextProvider = ({ children }: Props) => {
@@ -147,7 +149,9 @@ export const PlayAndStopContextProvider = ({ children }: Props) => {
   }, [playScheduledNotes, timerIndex]);
 
   return (
-    <PlayAndStopContext.Provider value={{ startModular, stopModular }}>
+    <PlayAndStopContext.Provider
+      value={{ startModular, stopModular, timerIndex }}
+    >
       {children}
     </PlayAndStopContext.Provider>
   );

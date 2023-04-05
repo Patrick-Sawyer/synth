@@ -207,9 +207,7 @@ export function AudioConnection({
     fireMrT({
       text: "WANNA DELETE THESE CONNECTIONS FOOL?",
       callback: () => {
-        console.log("HELLOOOOOOO");
         disconnectThisConnection(unitKey, connectionKey);
-        console.log("LALALA");
       },
     });
   };

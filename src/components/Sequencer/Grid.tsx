@@ -1,5 +1,8 @@
 import { Dispatch, memo, SetStateAction } from "react";
 import styled from "styled-components";
+import { usePlayAndStopContext } from "../../contexts/PlayAndStopContext/PlayAndStopContext";
+import { bpmToMS } from "../../contexts/PlayAndStopContext/utils";
+import { useSequencerContext } from "../../contexts/SequencerContext";
 import { Colors } from "../../utils/theme";
 import { CELL_WIDTH, GridNote } from "./Note";
 import { NOTES } from "./notes";
@@ -25,8 +28,20 @@ interface Props {
 }
 
 export function Grid({ loop, gridNotes, setGridNotes, color }: Props) {
+  const { timerIndex } = usePlayAndStopContext();
+
+  const position = timerIndex % (loop * 16);
+
   return (
     <Scroll>
+      <PositionIndicator
+        background={color}
+        style={{
+          left: 0,
+          transform: `translateX(${position * CELL_WIDTH}px)`,
+          transition: position === 0 ? "0s" : "0.2s",
+        }}
+      />
       <BarsComponent />
       <Main>
         {NOTES.map((note, index) => (
@@ -43,6 +58,16 @@ export function Grid({ loop, gridNotes, setGridNotes, color }: Props) {
     </Scroll>
   );
 }
+
+const PositionIndicator = styled.div<{ background: string }>`
+  width: 1px;
+  background: ${({ background }) => background};
+  height: 100%;
+  position: absolute;
+  z-index: 400;
+  opacity: 0.5;
+  margin-top: 17px;
+`;
 
 const LoopMarker = styled.div<{
   loop: number;
@@ -62,11 +87,19 @@ const Scroll = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   flex: 1;
+  position: relative;
+
+  ::-webkit-scrollbar-track {
+    background: red;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: blue;
+  }
 `;
 
 const Main = styled.div`
   height: ${ROW_HEIGHT * 43 + "px"};
-  margin-left: 10px;
   flex: 1;
   position: relative;
   margin-right: 30px;
