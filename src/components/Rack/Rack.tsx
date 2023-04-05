@@ -21,6 +21,7 @@ import {
   useSequencerContext,
   useUpdateSequencerContext,
 } from "../../contexts/SequencerContext";
+import { debounce } from "../../utils/debounce";
 import { Colors } from "../../utils/theme";
 import { DelayComponent } from "../Delay/DelayComponent";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
@@ -40,8 +41,9 @@ export function Rack() {
   const audioUnits = useAudioUnitContext();
   const setAudioUnits = useUpdateAudioUnitContext();
   const { clearConnections } = useConnectionUpdateContext();
+  const { tempo } = useSequencerContext();
   const { setTempo, clearSequencer } = useUpdateSequencerContext();
-  const { playModular, stopModular } = usePlayAndStopContext();
+  const { startModular, stopModular } = usePlayAndStopContext();
   const { fireMrT } = useMrTContext();
   const { connections } = useConnectionContext();
 
@@ -49,19 +51,31 @@ export function Rack() {
     useSequencerContext();
 
   const clearEverything = () => {
-    fireMrT({
-      text: "YOU WANNA DELETE EVERYTHING FOOL?",
-      callback: async () => {
-        stopModular(() => {
-          audioUnits.forEach((unit) => {
-            unit.shutdown();
+    if (
+      !audioUnits.length &&
+      !connections.length &&
+      !seqOneGridNotes.length &&
+      !seqTwoGridNotes.length &&
+      !seqThreeGridNotes.length
+    ) {
+      fireMrT({
+        text: "THERE'S NOTHING THERE FOOL!",
+      });
+    } else {
+      fireMrT({
+        text: "WANNA DELETE EVERYTHING FOOL?",
+        callback: async () => {
+          stopModular(() => {
+            audioUnits.forEach((unit) => {
+              unit.shutdown();
+            });
+            clearSequencer();
+            setAudioUnits([]);
+            clearConnections();
           });
-          clearSequencer();
-          setAudioUnits([]);
-          clearConnections();
-        });
-      },
-    });
+        },
+      });
+    }
   };
 
   const handleStop = () => {
@@ -89,13 +103,13 @@ export function Rack() {
     if (!audioUnits.length) {
       fireMrT({ text: "ADD SOME MODULES FOOL!" });
     } else if (mainNotConnected) {
-      fireMrT({ text: "CONNECT SOME MODULES TO MAIN OUT FOOL!" });
+      fireMrT({ text: "CONNECT SOME MODULES FOOL!" });
     } else if (sequencersNotConnected) {
-      fireMrT({ text: "CONNECT A SEQUENCER FOOL!" });
+      fireMrT({ text: "CONNECT A DAMN SEQUENCER FOOL!" });
     } else if (noNotesScheduled) {
-      fireMrT({ text: "ADD SOME NOTES FOOL!" });
+      fireMrT({ text: "ADD SOME DAMN NOTES FOOL!" });
     } else {
-      playModular();
+      startModular();
     }
   };
 
@@ -103,7 +117,7 @@ export function Rack() {
     <Wrapper ref={ref}>
       <Title>
         <TitleText>{"TURNTABLISM MODULAR"}</TitleText>
-        <Slider onChange={setTempo} />
+        <Slider inputValue={tempo} onChange={setTempo} />
         <Buttons>
           <Button onClick={handlePlay}>PLAY</Button>
           <Button onClick={handleStop}>STOP</Button>
@@ -180,7 +194,7 @@ const TitleText = styled.div`
   max-width: 300px;
   min-width: 300px;
   padding-left: 10px;
-  text-shadow: 2px 2px 4px #656565;
+  text-shadow: 2px 2px 2px #656565;
 
   @media screen and (max-width: 1000px) {
     display: none;
@@ -211,6 +225,9 @@ export const Button = styled.div`
 
   &:hover {
     background-color: ${Colors.hoverColor};
+    -webkit-box-shadow: inset 0px 0px 33px -7px rgba(0, 115, 105, 0.75);
+    -moz-box-shadow: inset 0px 0px 33px -7px rgba(0, 115, 105, 0.75);
+    box-shadow: inset 0px 0px 33px -7px rgba(0, 115, 105, 0.75);
   }
 
   &:active {

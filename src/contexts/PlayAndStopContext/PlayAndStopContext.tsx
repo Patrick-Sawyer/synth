@@ -1,173 +1,128 @@
-import { createContext, useCallback, useContext, useRef } from "react";
-import { CONTEXT, MAIN_OUT } from "../../App";
-import { ZERO } from "../../audioUnits/BaseUnit";
-import { Filter } from "../../audioUnits/Filter";
-import { Oscillator } from "../../audioUnits/Oscillator";
-import { AudioUnitTypes } from "../../audioUnits/types";
-import { useAudioUnitContext } from "../AudioUnitContext";
-import { useConnectionContext } from "../ConnectionContext";
-import { useSequencerContext } from "../SequencerContext";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import {
   bpmToMS,
   findUnits,
   getEnvelopes,
-  getIndex,
-  getNoteAtIndex,
+  getNotesAtIndex,
   playNote,
-  ScheduledNotes,
 } from "./utils";
+import { useAudioUnitContext } from "../AudioUnitContext";
+import { useConnectionContext } from "../ConnectionContext";
+import { useSequencerContext } from "../SequencerContext";
+import { CONTEXT, MAIN_OUT } from "../../App";
+import { ZERO } from "../../audioUnits/BaseUnit";
+import { AudioUnitTypes } from "../../audioUnits/types";
+import { Oscillator } from "../../audioUnits/Oscillator";
+import { Filter } from "../../audioUnits/Filter";
+
+interface Props {
+  children: React.ReactNode;
+}
 
 interface PlayAndStopContextType {
-  playModular: () => void;
+  startModular: () => void;
   stopModular: (onComplete?: () => void) => void;
 }
 
 const PlayAndStopContext = createContext<PlayAndStopContextType>({
-  playModular: () => null,
+  startModular: () => null,
   stopModular: () => null,
 });
 
-export const PlayAndStopContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const timeout = useRef<NodeJS.Timeout>();
-  const nextScheduledNotes = useRef<ScheduledNotes>();
-  const nextScheduledIndexSequencerOne = useRef(0);
-  const nextScheduledIndexSequencerTwo = useRef(0);
-  const nextScheduledIndexSequencerThree = useRef(0);
+export const PlayAndStopContextProvider = ({ children }: Props) => {
   const audioUnits = useAudioUnitContext();
   const { connections } = useConnectionContext();
   const unitsWithEnvelopeConnections = getEnvelopes(audioUnits, connections);
+  const sequencer = useSequencerContext();
+  const [timerIndex, setTimerIndex] = useState(0);
+  const timeout = useRef<NodeJS.Timeout>();
+  const lastPlayedIndex = useRef<number>();
 
   const { gridOneUnits, gridTwoUnits, gridThreeUnits } = findUnits({
     audioUnits: unitsWithEnvelopeConnections,
     connections,
   });
 
-  const {
-    seqOneLoop,
-    seqTwoLoop,
-    seqThreeLoop,
-    seqOneGridNotes,
-    seqTwoGridNotes,
-    seqThreeGridNotes,
-    tempo,
-  } = useSequencerContext();
+  const nextNotes = useRef(getNotesAtIndex(0, sequencer));
 
-  const ms = bpmToMS(tempo * 4);
+  const playScheduledNotes = useCallback(
+    (index: number) => {
+      const { grid1, grid2, grid3 } =
+        index === 0 ? getNotesAtIndex(0, sequencer) : nextNotes.current;
 
-  const scheduleNextNotes = useCallback(() => {
-    const nextNotes = {
-      grid1: getNoteAtIndex({
-        grid: seqOneGridNotes,
-        index: nextScheduledIndexSequencerOne.current,
-        loop: seqOneLoop,
-      }),
-      grid2: getNoteAtIndex({
-        grid: seqTwoGridNotes,
-        index: nextScheduledIndexSequencerTwo.current,
-        loop: seqTwoLoop,
-      }),
-      grid3: getNoteAtIndex({
-        grid: seqThreeGridNotes,
-        index: nextScheduledIndexSequencerThree.current,
-        loop: seqThreeLoop,
-      }),
-    };
+      playNote(gridOneUnits, grid1);
+      playNote(gridTwoUnits, grid2);
+      playNote(gridThreeUnits, grid3);
 
-    nextScheduledNotes.current = nextNotes;
-  }, [
-    seqOneGridNotes,
-    seqOneLoop,
-    seqThreeGridNotes,
-    seqThreeLoop,
-    seqTwoGridNotes,
-    seqTwoLoop,
-  ]);
+      const ms = bpmToMS(sequencer.tempo);
 
-  const calculateNextIndex = useCallback(() => {
-    nextScheduledIndexSequencerOne.current = getIndex(
-      nextScheduledIndexSequencerOne.current,
-      seqOneLoop
-    );
-    nextScheduledIndexSequencerTwo.current = getIndex(
-      nextScheduledIndexSequencerTwo.current,
-      seqTwoLoop
-    );
-    nextScheduledIndexSequencerThree.current = getIndex(
-      nextScheduledIndexSequencerThree.current,
-      seqThreeLoop
-    );
-  }, [seqOneLoop, seqThreeLoop, seqTwoLoop]);
+      timeout.current = setTimeout(() => {
+        setTimerIndex(timerIndex + 1);
+      }, ms);
 
-  const play = useCallback(() => {
-    scheduleNextNotes();
-    calculateNextIndex();
-    playNote(gridOneUnits, nextScheduledNotes.current?.grid1);
-    playNote(gridTwoUnits, nextScheduledNotes.current?.grid2);
-    playNote(gridThreeUnits, nextScheduledNotes.current?.grid3);
-    timeout.current = setTimeout(() => {
-      if (timeout.current) {
-        play();
-      }
-    }, ms);
-  }, [
-    calculateNextIndex,
-    gridOneUnits,
-    gridThreeUnits,
-    gridTwoUnits,
-    ms,
-    scheduleNextNotes,
-  ]);
+      nextNotes.current = getNotesAtIndex(index + 1, sequencer);
+    },
+    [gridOneUnits, gridThreeUnits, gridTwoUnits, sequencer, timerIndex]
+  );
 
-  const playModular = useCallback(() => {
+  const startModular = () => {
+    if (timeout.current) return;
     MAIN_OUT.node.gain.cancelAndHoldAtTime(0);
     MAIN_OUT.node.gain.cancelScheduledValues(0);
     MAIN_OUT.node.gain.linearRampToValueAtTime(1, CONTEXT.currentTime + 0.01);
+    playScheduledNotes(0);
+  };
 
-    if (!nextScheduledNotes.current) {
-      play();
+  const stopModular = (onComplete?: () => void) => {
+    clearTimeout(timeout.current);
+    timeout.current = undefined;
+    setTimerIndex(0);
+    lastPlayedIndex.current = undefined;
+    MAIN_OUT.node.gain.cancelAndHoldAtTime(0);
+    MAIN_OUT.node.gain.cancelScheduledValues(0);
+    MAIN_OUT.node.gain.linearRampToValueAtTime(
+      ZERO,
+      CONTEXT.currentTime + 0.01
+    );
+
+    setTimeout(() => {
+      audioUnits.forEach((unit) => {
+        if (unit.type === AudioUnitTypes.OSCILLATOR) {
+          const osc = unit as Oscillator;
+          osc.oscillator.detune.value = osc.detune;
+          osc.sustaining = true;
+        } else if (unit.type === AudioUnitTypes.FILTER) {
+          const filter = unit as Filter;
+          filter.filter.frequency.value = filter.frequency;
+          filter.sustaining = true;
+        }
+      });
+
+      onComplete && onComplete();
+    }, 100);
+  };
+
+  useEffect(() => {
+    if (
+      timerIndex > 0 &&
+      timerIndex !== lastPlayedIndex.current &&
+      timeout.current
+    ) {
+      lastPlayedIndex.current = timerIndex;
+      playScheduledNotes(timerIndex);
     }
-  }, [play]);
-
-  const stopModular = useCallback(
-    (onComplete?: () => void) => {
-      if (timeout.current) {
-        clearTimeout(timeout.current);
-      }
-      nextScheduledNotes.current = undefined;
-      nextScheduledIndexSequencerOne.current = 0;
-      nextScheduledIndexSequencerTwo.current = 0;
-      nextScheduledIndexSequencerThree.current = 0;
-      MAIN_OUT.node.gain.cancelAndHoldAtTime(0);
-      MAIN_OUT.node.gain.cancelScheduledValues(0);
-      MAIN_OUT.node.gain.linearRampToValueAtTime(
-        ZERO,
-        CONTEXT.currentTime + 0.01
-      );
-
-      setTimeout(() => {
-        audioUnits.forEach((unit) => {
-          if (unit.type === AudioUnitTypes.OSCILLATOR) {
-            const osc = unit as Oscillator;
-            osc.oscillator.detune.value = osc.detune;
-            osc.sustaining = true;
-          } else if (unit.type === AudioUnitTypes.FILTER) {
-            const filter = unit as Filter;
-            filter.filter.frequency.value = filter.frequency;
-            filter.sustaining = true;
-          }
-        });
-        onComplete && onComplete();
-      }, 100);
-    },
-    [audioUnits]
-  );
+  }, [playScheduledNotes, timerIndex]);
 
   return (
-    <PlayAndStopContext.Provider value={{ playModular, stopModular }}>
+    <PlayAndStopContext.Provider value={{ startModular, stopModular }}>
       {children}
     </PlayAndStopContext.Provider>
   );

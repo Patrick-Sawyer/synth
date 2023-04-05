@@ -27,7 +27,7 @@ export function SaveComponent({ onClick, text, setText }: Props) {
           if (text.length) {
             onClick(text);
           } else {
-            fireMrT({ text: "ENTER SOME TEXT FOOL!" });
+            fireMrT({ text: "ENTER SOME DAMN TEXT FOOL!" });
           }
         }}
       >

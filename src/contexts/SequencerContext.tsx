@@ -8,7 +8,7 @@ import {
 
 import { GridNote } from "../components/Sequencer/Note";
 
-interface SequencerContextType {
+export interface SequencerContextType {
   tempo: number;
   seqOneLoop: number;
   seqTwoLoop: number;

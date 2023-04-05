@@ -4,15 +4,20 @@ import { debounce } from "../utils/debounce";
 
 interface Props {
   onChange: (value: number) => void;
+  inputValue: number;
 }
 
-export function Slider({ onChange }: Props) {
+export function Slider({ onChange, inputValue }: Props) {
   const [value, setValue] = useState(128);
-  const handleChange = useRef(debounce(onChange, 500));
+  const handleChange = useRef(debounce(onChange, 100));
 
   useEffect(() => {
     handleChange.current(value);
   }, [handleChange, value]);
+
+  useEffect(() => {
+    setValue(inputValue);
+  }, [inputValue]);
 
   return (
     <Wrapper>
@@ -22,7 +27,7 @@ export function Slider({ onChange }: Props) {
         name="Tempo"
         value={value}
         min="30"
-        max="180"
+        max="300"
         onChange={(e) => setValue(Number(e.currentTarget.value))}
       />
     </Wrapper>

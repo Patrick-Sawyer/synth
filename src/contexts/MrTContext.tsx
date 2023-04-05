@@ -24,7 +24,7 @@ export const MrTContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [mrTMessageState, setMrTMessageState] =
-    useState<MrTMessageState | null>({ text: "WELCOME FOOL!" });
+    useState<MrTMessageState | null>(null);
 
   const fireMrT = (message: MrTMessageState) => {
     if (!mrTMessageState) {
@@ -51,6 +51,7 @@ export const MrTContextProvider = ({
       {mrTMessageState && (
         <Overlay>
           <Card>
+            <Title>{"TURNTABLISM MODULAR"}</Title>
             <Image src={"images/mrt.png"} alt="mr-t" />
             <Text>{mrTMessageState.text}</Text>
             <ButtonWrapper>
@@ -65,6 +66,14 @@ export const MrTContextProvider = ({
     </MrTContext.Provider>
   );
 };
+
+const Title = styled.span`
+  font-family: Graf;
+  font-size: 34px;
+  font-weight: bold;
+  color: black;
+  text-shadow: 2px 2px 2px #656565;
+`;
 
 const Image = styled.img`
   height: 220px;

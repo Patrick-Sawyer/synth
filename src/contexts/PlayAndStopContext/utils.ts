@@ -4,6 +4,7 @@ import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
 import { GridNote } from "../../components/Sequencer/Note";
 import { NOTES } from "../../components/Sequencer/notes";
 import { FullConnection } from "../ConnectionContext";
+import { SequencerContextType } from "../SequencerContext";
 
 export type AudioUnitWithEnvConnections = AudioUnit & {
   connectedUnits?: Array<AudioUnit>;
@@ -65,7 +66,7 @@ export const playNote = (
 };
 
 export const bpmToMS = (bpm: number): number => {
-  return 60000 / bpm;
+  return 15000 / bpm;
 };
 
 export const getNoteAtIndex = ({
@@ -73,17 +74,45 @@ export const getNoteAtIndex = ({
   index,
   loop,
 }: PlayAtIndexArgs): GridNote | undefined | "stop" => {
-  const noteToPlay = grid.find((note) => note.start === index);
-  if (noteToPlay) return noteToPlay;
+  const trueLoop = loop * 16;
+  const loopPosition = index % trueLoop;
+  const sortedByFreq = grid.sort(byFreq);
+  const notesStartingNow = sortedByFreq?.filter(
+    (note) => note.start === loopPosition
+  );
 
-  const stop = grid.find((note) => {
-    const end = (note.start + note.length + 1) % (loop * 16);
+  if (notesStartingNow.length) {
+    return notesStartingNow[0];
+  }
 
-    return end === index;
+  const hasNoteStopped = !!sortedByFreq.find((note) => {
+    const end = (note.start + note.length) % trueLoop;
+
+    return end === loopPosition;
   });
 
-  if (stop) return "stop";
+  const currentNotes = sortedByFreq
+    ?.filter((note) => {
+      return (
+        note.start < loopPosition && note.start + note.length > loopPosition
+      );
+    })
+    .sort(byStart);
+
+  if (hasNoteStopped) {
+    return currentNotes?.[0] || "stop";
+  }
+
+  const noteToPlay = currentNotes?.find((note) => note.start === loopPosition);
+
+  if (noteToPlay) return noteToPlay;
 };
+
+const byStart = (a: GridNote, b: GridNote) =>
+  a.start < b.start ? 1 : a.start > b.start ? -1 : 0;
+
+const byFreq = (a: GridNote, b: GridNote) =>
+  a.note < b.note ? 1 : a.note > b.note ? -1 : 0;
 
 export const findUnits = ({ audioUnits, connections }: FindUnitsArgs) => {
   const gridOneConnections = getConnections(connections, "SEQ_ONE");
@@ -139,4 +168,36 @@ export const getEnvelopes = (
 
 export const getIndex = (index: number, loop: number) => {
   return index + 1 >= loop * 16 ? 0 : index + 1;
+};
+
+export const getNotesAtIndex = (
+  index: number,
+  sequencer: SequencerContextType
+) => {
+  const {
+    seqOneLoop,
+    seqTwoLoop,
+    seqThreeLoop,
+    seqOneGridNotes,
+    seqTwoGridNotes,
+    seqThreeGridNotes,
+  } = sequencer;
+
+  return {
+    grid1: getNoteAtIndex({
+      grid: seqOneGridNotes,
+      index,
+      loop: seqOneLoop,
+    }),
+    grid2: getNoteAtIndex({
+      grid: seqTwoGridNotes,
+      index,
+      loop: seqTwoLoop,
+    }),
+    grid3: getNoteAtIndex({
+      grid: seqThreeGridNotes,
+      index,
+      loop: seqThreeLoop,
+    }),
+  };
 };

@@ -130,7 +130,7 @@ export function Settings() {
     if (audioUnits.length === 0) {
       fireMrT({ text: "NOTHING TO SAVE FOOL!" });
     } else if (patch) {
-      fireMrT({ text: "ALREADY EXISTS FOOL!" });
+      fireMrT({ text: "THAT ALREADY EXISTS FOOL!" });
     } else {
       try {
         const mapped = formatOnSave(audioUnits);
