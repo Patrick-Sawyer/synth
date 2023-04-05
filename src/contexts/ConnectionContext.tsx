@@ -109,8 +109,6 @@ export const ConnectionContextProvider = ({
   const disconnectThisConnection = (unitKey: string, connectionKey: string) => {
     const newConnections: Array<FullConnection> = [];
 
-    console.log("CONNECTIONS", connections);
-
     connections.forEach((conn) => {
       if (
         (conn.from?.unitKey === unitKey &&
@@ -165,10 +163,6 @@ export const ConnectionContextProvider = ({
   useEffect(() => {
     window.dispatchEvent(new Event("resize"));
   }, [connections.length, hiddenUnits]);
-
-  useEffect(() => {
-    console.log("NEW connections", connections);
-  }, [connections]);
 
   return (
     <ConnectionContext.Provider
