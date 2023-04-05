@@ -101,7 +101,7 @@ const Overlay = styled.div`
 
 const Card = styled.div`
   padding: 40px 50px;
-  background: white;
+  background: #ebebeb;
   border-radius: 3px;
   -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);
   -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);
