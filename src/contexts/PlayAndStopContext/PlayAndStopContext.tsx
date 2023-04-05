@@ -27,6 +27,18 @@ interface Props {
   children: React.ReactNode;
 }
 
+interface CurrentNotes {
+  gridOne?: string;
+  gridTwo?: string;
+  gridThree?: string;
+}
+
+const INIT_CURRENT_NOTES = {
+  gridOne: undefined,
+  gridTwo: undefined,
+  gridThree: undefined,
+};
+
 interface PlayAndStopContextType {
   startModular: () => void;
   stopModular: (onComplete?: () => void) => void;
@@ -45,6 +57,7 @@ export const PlayAndStopContextProvider = ({ children }: Props) => {
   const [timerIndex, setTimerIndex] = useState(0);
   const timeout = useRef<NodeJS.Timeout>();
   const lastPlayedIndex = useRef<number>();
+  const currentNotes = useRef<CurrentNotes>(INIT_CURRENT_NOTES);
 
   const { gridOneUnits, gridTwoUnits, gridThreeUnits } = findUnits({
     audioUnits: unitsWithEnvelopeConnections,
@@ -55,12 +68,23 @@ export const PlayAndStopContextProvider = ({ children }: Props) => {
 
   const playScheduledNotes = useCallback(
     (index: number) => {
-      const { grid1, grid2, grid3 } =
+      const { gridOneNote, gridTwoNote, gridThreeNote } =
         index === 0 ? getNotesAtIndex(0, sequencer) : nextNotes.current;
 
-      playNote(gridOneUnits, grid1);
-      playNote(gridTwoUnits, grid2);
-      playNote(gridThreeUnits, grid3);
+      if (currentNotes.current.gridOne !== gridOneNote?.noteKey) {
+        playNote(gridOneUnits, gridOneNote || "stop");
+        currentNotes.current.gridOne = gridOneNote?.noteKey;
+      }
+
+      if (currentNotes.current.gridTwo !== gridTwoNote?.noteKey) {
+        playNote(gridTwoUnits, gridTwoNote || "stop");
+        currentNotes.current.gridTwo = gridTwoNote?.noteKey;
+      }
+
+      if (currentNotes.current.gridThree !== gridThreeNote?.noteKey) {
+        playNote(gridThreeUnits, gridThreeNote || "stop");
+        currentNotes.current.gridThree = gridThreeNote?.noteKey;
+      }
 
       const ms = bpmToMS(sequencer.tempo);
 
@@ -86,6 +110,7 @@ export const PlayAndStopContextProvider = ({ children }: Props) => {
     timeout.current = undefined;
     setTimerIndex(0);
     lastPlayedIndex.current = undefined;
+    currentNotes.current = INIT_CURRENT_NOTES;
     MAIN_OUT.node.gain.cancelAndHoldAtTime(0);
     MAIN_OUT.node.gain.cancelScheduledValues(0);
     MAIN_OUT.node.gain.linearRampToValueAtTime(

@@ -147,6 +147,7 @@ export function Settings() {
           hiddenUnits,
         });
         window.localStorage.setItem(saveName, patchAsString);
+        loadAllPatches();
         fireMrT({ text: "PATCH SAVED FOOL!" });
       } catch {
         fireMrT({ text: "SOMETHING WENT WRONG FOOL!" });
@@ -256,12 +257,16 @@ export function Settings() {
     }
   };
 
-  useEffect(() => {
+  const loadAllPatches = () => {
     const patches = Object.keys(localStorage)
       .filter((key) => key.startsWith(PATCH_PREFIX))
       .map((key) => key.replace(PATCH_PREFIX, ""));
 
     setSavedPatches(patches);
+  };
+
+  useEffect(() => {
+    loadAllPatches();
   }, []);
 
   return (

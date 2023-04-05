@@ -69,43 +69,26 @@ export const bpmToMS = (bpm: number): number => {
   return 15000 / bpm;
 };
 
-export const getNoteAtIndex = ({
+export const getPriorityNoteAtIndex = ({
   grid,
   index,
   loop,
-}: PlayAtIndexArgs): GridNote | undefined | "stop" => {
-  const trueLoop = loop * 16;
-  const loopPosition = index % trueLoop;
-  const sortedByFreq = grid.sort(byFreq);
-  const notesStartingNow = sortedByFreq?.filter(
-    (note) => note.start === loopPosition
-  );
+}: PlayAtIndexArgs): GridNote | undefined => {
+  const loopLength = 16 * loop;
+  const positionInLoop = index % loopLength;
+  const sorted = grid.sort(byFreq).sort(byStart);
+  const noteNow = sorted.filter((note) => note.start === positionInLoop)?.[0];
 
-  if (notesStartingNow.length) {
-    return notesStartingNow[0];
-  }
+  if (noteNow) return noteNow;
 
-  const hasNoteStopped = !!sortedByFreq.find((note) => {
-    const end = (note.start + note.length) % trueLoop;
-
-    return end === loopPosition;
-  });
-
-  const currentNotes = sortedByFreq
-    ?.filter((note) => {
-      return (
-        note.start < loopPosition && note.start + note.length > loopPosition
-      );
-    })
-    .sort(byStart);
-
-  if (hasNoteStopped) {
-    return currentNotes?.[0] || "stop";
-  }
-
-  const noteToPlay = currentNotes?.find((note) => note.start === loopPosition);
-
-  if (noteToPlay) return noteToPlay;
+  return sorted
+    .filter(
+      (note) =>
+        note.start <= positionInLoop &&
+        (note.start + note.length) % loopLength > positionInLoop
+    )
+    .sort(byFreq)
+    .sort(byStart)?.[0];
 };
 
 const byStart = (a: GridNote, b: GridNote) =>
@@ -184,17 +167,17 @@ export const getNotesAtIndex = (
   } = sequencer;
 
   return {
-    grid1: getNoteAtIndex({
+    gridOneNote: getPriorityNoteAtIndex({
       grid: seqOneGridNotes,
       index,
       loop: seqOneLoop,
     }),
-    grid2: getNoteAtIndex({
+    gridTwoNote: getPriorityNoteAtIndex({
       grid: seqTwoGridNotes,
       index,
       loop: seqTwoLoop,
     }),
-    grid3: getNoteAtIndex({
+    gridThreeNote: getPriorityNoteAtIndex({
       grid: seqThreeGridNotes,
       index,
       loop: seqThreeLoop,

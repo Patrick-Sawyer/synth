@@ -75,7 +75,6 @@ export const ConnectionContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [hiddenUnits, setHiddenUnits] = useState<Array<string>>([]);
-  const timeout = useRef<NodeJS.Timeout>();
 
   const [fromConnection, setFromValue] = useState<MakeConnection | null>(null);
   const connectionPositions = useRef<
@@ -110,17 +109,21 @@ export const ConnectionContextProvider = ({
   const disconnectThisConnection = (unitKey: string, connectionKey: string) => {
     const newConnections: Array<FullConnection> = [];
 
+    console.log("CONNECTIONS", connections);
+
     connections.forEach((conn) => {
       if (
-        conn.from.unitKey === unitKey &&
-        conn.from.connectionKey === connectionKey
+        (conn.from?.unitKey === unitKey &&
+          conn.from?.connectionKey === connectionKey) ||
+        (conn.to?.unitKey === unitKey &&
+          conn.to?.connectionKey === connectionKey)
       ) {
-        conn.from.node?.disconnect && conn.from.node.disconnect(conn.to.node);
-      } else if (
-        conn.to.unitKey === unitKey &&
-        conn.to.connectionKey === connectionKey
-      ) {
-        conn.to.node?.disconnect && conn.to.node.disconnect(conn.from.node);
+        try {
+          conn.from?.node?.disconnect &&
+            conn.from?.node?.disconnect(conn.to.node);
+        } catch (e) {
+          console.log(e);
+        }
       } else {
         newConnections.push(conn);
       }
@@ -162,6 +165,10 @@ export const ConnectionContextProvider = ({
   useEffect(() => {
     window.dispatchEvent(new Event("resize"));
   }, [connections.length, hiddenUnits]);
+
+  useEffect(() => {
+    console.log("NEW connections", connections);
+  }, [connections]);
 
   return (
     <ConnectionContext.Provider

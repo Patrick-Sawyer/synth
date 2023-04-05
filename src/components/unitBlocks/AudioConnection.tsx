@@ -113,6 +113,7 @@ export function AudioConnection({
   const onPointerUp: PointerEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     if (e.button === 2) return;
+
     const thisConnection: MakeConnection = {
       unitKey,
       connectionKey,
@@ -206,7 +207,9 @@ export function AudioConnection({
     fireMrT({
       text: "WANNA DELETE THESE CONNECTIONS FOOL?",
       callback: () => {
+        console.log("HELLOOOOOOO");
         disconnectThisConnection(unitKey, connectionKey);
+        console.log("LALALA");
       },
     });
   };

@@ -12,8 +12,6 @@ export const useTimer = (tempo: number) => {
   const startTimer = useCallback(() => {
     const ms = bpmToMS(tempo);
 
-    console.log("MS", ms);
-
     interval.current = setInterval(() => {
       setTimerIndex(timerIndex + 1);
     }, ms);
