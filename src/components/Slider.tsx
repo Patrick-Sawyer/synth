@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { debounce } from "../utils/debounce";
 
@@ -8,11 +8,10 @@ interface Props {
 
 export function Slider({ onChange }: Props) {
   const [value, setValue] = useState(128);
-
-  const handleChange = debounce(onChange, 500);
+  const handleChange = useRef(debounce(onChange, 500));
 
   useEffect(() => {
-    handleChange(value);
+    handleChange.current(value);
   }, [handleChange, value]);
 
   return (

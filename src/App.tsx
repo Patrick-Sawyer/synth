@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import "./App.css";
+import { ZERO } from "./audioUnits/BaseUnit";
 import { Connection } from "./audioUnits/Connection";
 import { Rack } from "./components/Rack/Rack";
 import { AudioUnitContextProvider } from "./contexts/AudioUnitContext";
@@ -8,12 +9,13 @@ import {
   ConnectionTypes,
 } from "./contexts/ConnectionContext";
 import { MrTContextProvider } from "./contexts/MrTContext";
+import { PlayAndStopContextProvider } from "./contexts/PlayAndStopContext/PlayAndStopContext";
 import { SequencerContextProvider } from "./contexts/SequencerContext";
 
 export const CONTEXT = new AudioContext();
 
 export const MAIN_OUT = new Connection("MAIN OUT", ConnectionTypes.INPUT);
-MAIN_OUT.node.gain.value = 1;
+MAIN_OUT.node.gain.value = ZERO;
 const COMPRESSOR = CONTEXT.createDynamicsCompressor();
 MAIN_OUT.node.connect(COMPRESSOR);
 COMPRESSOR.connect(CONTEXT.destination);
@@ -88,7 +90,9 @@ function App() {
         <AudioUnitContextProvider>
           <SequencerContextProvider>
             <ConnectionContextProvider>
-              <Rack />
+              <PlayAndStopContextProvider>
+                <Rack />
+              </PlayAndStopContextProvider>
             </ConnectionContextProvider>
           </SequencerContextProvider>
         </AudioUnitContextProvider>

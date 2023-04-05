@@ -2,12 +2,12 @@ import {
   createContext,
   Dispatch,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { debounce } from "../utils/debounce";
 
 export enum ConnectionTypes {
   INPUT = "input",
@@ -75,6 +75,7 @@ export const ConnectionContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [hiddenUnits, setHiddenUnits] = useState<Array<string>>([]);
+  const timeout = useRef<NodeJS.Timeout>();
 
   const [fromConnection, setFromValue] = useState<MakeConnection | null>(null);
   const connectionPositions = useRef<
@@ -89,7 +90,11 @@ export const ConnectionContextProvider = ({
 
   const [connections, setConnections] = useState<Array<FullConnection>>([]);
 
-  const filteredConnections = connections.filter((conn) => {
+  const [mappedConnections, setMappedConnections] = useState<
+    Array<FullConnection>
+  >([]);
+
+  const filteredConnections = mappedConnections.filter((conn) => {
     return (
       !hiddenUnits.includes(conn.from.unitKey) &&
       !hiddenUnits.includes(conn.to.unitKey)
@@ -124,36 +129,35 @@ export const ConnectionContextProvider = ({
     setConnections(newConnections);
   };
 
+  const calculateWirePositions = useCallback(() => {
+    const mapped = connections.map((conn) => {
+      const newConn = { ...conn };
+      const from = conn.from.unitKey + conn.from.connectionKey;
+      const to = conn.to.unitKey + conn.to.connectionKey;
+      const newFrom = connectionPositions.current[from];
+      const newTo = connectionPositions.current[to];
+
+      if (newFrom) {
+        newConn.from.position = newFrom;
+      }
+
+      if (newTo) {
+        newConn.to.position = newTo;
+      }
+
+      return newConn;
+    });
+
+    setMappedConnections(mapped);
+  }, [connections]);
+
   useEffect(() => {
-    const onResize = debounce(() => {
-      const newConnections = [...connections];
-      const mapped = newConnections.map((conn) => {
-        const newConn = { ...conn };
-        const from = conn.from.unitKey + conn.from.connectionKey;
-        const to = conn.to.unitKey + conn.to.connectionKey;
-        const newFrom = connectionPositions.current[from];
-        const newTo = connectionPositions.current[to];
-
-        if (newFrom) {
-          newConn.from.position = newFrom;
-        }
-
-        if (newTo) {
-          newConn.to.position = newTo;
-        }
-
-        return newConn;
-      });
-
-      setConnections(mapped);
-    }, 500);
-
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", calculateWirePositions);
 
     return () => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", calculateWirePositions);
     };
-  }, [connections]);
+  }, [calculateWirePositions, connections, connections.length]);
 
   useEffect(() => {
     window.dispatchEvent(new Event("resize"));
@@ -163,7 +167,7 @@ export const ConnectionContextProvider = ({
     <ConnectionContext.Provider
       value={{
         fromConnection,
-        connections,
+        connections: mappedConnections,
         filteredConnections,
         connectionPositions: connectionPositions.current,
         hiddenUnits,

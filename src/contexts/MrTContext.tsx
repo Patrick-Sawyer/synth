@@ -2,8 +2,6 @@ import { createContext, useContext, useState } from "react";
 import styled from "styled-components";
 import { Button } from "../components/Rack/Rack";
 
-import { Colors } from "../utils/theme";
-
 interface MrTMessageState {
   text: string;
   callback?: () => void;
@@ -26,7 +24,7 @@ export const MrTContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [mrTMessageState, setMrTMessageState] =
-    useState<MrTMessageState | null>(null);
+    useState<MrTMessageState | null>({ text: "WELCOME FOOL!" });
 
   const fireMrT = (message: MrTMessageState) => {
     if (!mrTMessageState) {
@@ -94,7 +92,7 @@ const Overlay = styled.div`
 
 const Card = styled.div`
   padding: 40px 50px;
-  background: ${Colors.screwBackground};
+  background: white;
   border-radius: 3px;
   -webkit-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);
   -moz-box-shadow: 0px 2px 11px -5px rgba(0, 0, 0, 1);

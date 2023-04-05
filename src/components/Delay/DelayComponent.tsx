@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { RefObject, useRef } from "react";
 import {
   Delay,
   INIT_DELAY_FEEDBACK,
@@ -15,6 +15,8 @@ import { UnitColumn } from "../unitBlocks/UnitColumn";
 export function DelayComponent(
   props: Delay & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
+  const onChange = useRef(debounce(props.setDelayTime, 300));
+
   return (
     <BaseAudioUI
       color={props.color}
@@ -30,7 +32,7 @@ export function DelayComponent(
               : props.delay.delayTime.value
           }
           resetValue={INIT_DELAY_TIME}
-          onChange={debounce(props.setDelayTime, 300)}
+          onChange={onChange.current}
           min={0}
           max={1}
         />

@@ -12,16 +12,15 @@ import {
   useUpdateAudioUnitContext,
 } from "../../contexts/AudioUnitContext";
 import {
-  FullConnection,
   useConnectionContext,
   useConnectionUpdateContext,
 } from "../../contexts/ConnectionContext";
 import { useMrTContext } from "../../contexts/MrTContext";
+import { usePlayAndStopContext } from "../../contexts/PlayAndStopContext/PlayAndStopContext";
 import {
   useSequencerContext,
   useUpdateSequencerContext,
 } from "../../contexts/SequencerContext";
-import { usePlayAndStop } from "../../hooks/usePlayAndStop";
 import { Colors } from "../../utils/theme";
 import { DelayComponent } from "../Delay/DelayComponent";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
@@ -42,7 +41,7 @@ export function Rack() {
   const setAudioUnits = useUpdateAudioUnitContext();
   const { clearConnections } = useConnectionUpdateContext();
   const { setTempo, clearSequencer } = useUpdateSequencerContext();
-  const { playModular, stopModular } = usePlayAndStop();
+  const { playModular, stopModular } = usePlayAndStopContext();
   const { fireMrT } = useMrTContext();
   const { connections } = useConnectionContext();
 
