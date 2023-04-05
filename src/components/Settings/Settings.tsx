@@ -199,6 +199,8 @@ export function Settings() {
 
             if (fromConnection && toConnection) {
               fromConnection.node.connect(toConnection.node);
+              conn.from.node = fromConnection.node;
+              conn.to.node = toConnection.node;
             }
           } catch {}
         });

@@ -204,16 +204,27 @@ export function AudioConnection({
 
   const handleRightClick: MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
-    fireMrT({
-      text: "WANNA DELETE THESE CONNECTIONS FOOL?",
-      callback: () => {
-        disconnectThisConnection(unitKey, connectionKey);
-      },
+
+    const isConnected = !!connections.find((conn) => {
+      return (
+        (conn.from.unitKey === unitKey &&
+          conn.from.connectionKey === connectionKey) ||
+        (conn.to.unitKey === unitKey && conn.to.connectionKey === connectionKey)
+      );
     });
+
+    if (isConnected) {
+      fireMrT({
+        text: "DELETE THESE WIRES FOOL?",
+        callback: () => {
+          disconnectThisConnection(unitKey, connectionKey);
+        },
+      });
+    }
   };
 
   return (
-    <Wrapper onContextMenu={handleRightClick} horizontal={!!horizontal}>
+    <Wrapper horizontal={!!horizontal}>
       <Blah>
         {children}
         <Plug
@@ -227,6 +238,7 @@ export function AudioConnection({
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onClick={onClick}
+          onContextMenu={handleRightClick}
         />
       </Blah>
       <Label darkText={darkText}>{connection.name}</Label>
