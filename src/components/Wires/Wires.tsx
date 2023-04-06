@@ -65,7 +65,7 @@ interface Props {
 }
 
 export function Wires({ wrapperRef }: Props) {
-  const { filteredConnections, fromConnection } = useConnectionContext();
+  const { wireConnections, fromConnection } = useConnectionContext();
   const [mousePosition, setMousePosition] = useState<Coordinate>();
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export function Wires({ wrapperRef }: Props) {
 
   return (
     <Wrapper>
-      {filteredConnections.map((connection) => {
+      {wireConnections.map((connection) => {
         const key =
           connection.from.unitKey +
           connection.from.connectionKey +

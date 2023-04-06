@@ -36,7 +36,7 @@ export interface FullConnection {
 const ConnectionContext = createContext<{
   fromConnection: MakeConnection | null;
   connections: Array<FullConnection>;
-  filteredConnections: Array<FullConnection>;
+  wireConnections: Array<FullConnection>;
   connectionPositions: Record<
     string,
     {
@@ -50,7 +50,7 @@ const ConnectionContext = createContext<{
   connections: [],
   connectionPositions: {},
   hiddenUnits: [],
-  filteredConnections: [],
+  wireConnections: [],
 });
 
 interface ConnectionUpdates {
@@ -89,17 +89,6 @@ export const ConnectionContextProvider = ({
 
   const [connections, setConnections] = useState<Array<FullConnection>>([]);
 
-  const [mappedConnections, setMappedConnections] = useState<
-    Array<FullConnection>
-  >([]);
-
-  const filteredConnections = mappedConnections.filter((conn) => {
-    return (
-      !hiddenUnits.includes(conn.from.unitKey) &&
-      !hiddenUnits.includes(conn.to.unitKey)
-    );
-  });
-
   const clearConnections = () => {
     setHiddenUnits([]);
     setFromValue(null);
@@ -130,46 +119,71 @@ export const ConnectionContextProvider = ({
     setConnections(newConnections);
   };
 
-  const calculateWirePositions = useCallback(() => {
-    const mapped = connections.map((conn) => {
-      const newConn = { ...conn };
-      const from = conn.from.unitKey + conn.from.connectionKey;
-      const to = conn.to.unitKey + conn.to.connectionKey;
-      const newFrom = connectionPositions.current[from];
-      const newTo = connectionPositions.current[to];
+  const wireTimeout = useRef<NodeJS.Timeout>();
 
-      if (newFrom) {
-        newConn.from.position = newFrom;
-      }
+  const [wireConnections, setWireConnections] = useState<Array<FullConnection>>(
+    []
+  );
 
-      if (newTo) {
-        newConn.to.position = newTo;
-      }
+  const calculateWirePositions = useCallback(async () => {
+    const newWires = connections
+      .filter((conn) => {
+        return (
+          !hiddenUnits.includes(conn.from.unitKey) &&
+          !hiddenUnits.includes(conn.to.unitKey)
+        );
+      })
+      .map((conn) => {
+        const newConn = { ...conn };
+        const from = conn.from.unitKey + conn.from.connectionKey;
+        const to = conn.to.unitKey + conn.to.connectionKey;
+        const newFrom = connectionPositions.current[from];
+        const newTo = connectionPositions.current[to];
 
-      return newConn;
-    });
+        if (newFrom) {
+          newConn.from.position = newFrom;
+        }
 
-    setMappedConnections(mapped);
-  }, [connections]);
+        if (newTo) {
+          newConn.to.position = newTo;
+        }
+
+        return newConn;
+      });
+    setWireConnections(newWires);
+  }, [connections, hiddenUnits]);
 
   useEffect(() => {
-    window.addEventListener("resize", calculateWirePositions);
+    const onResize = async () => {
+      if (wireTimeout.current) {
+        clearTimeout(wireTimeout.current);
+      }
+
+      if (wireConnections.length) {
+        setWireConnections([]);
+        await Promise.resolve((r: () => void) => setTimeout(r, 0));
+      }
+
+      wireTimeout.current = setTimeout(calculateWirePositions, 200);
+    };
+
+    window.addEventListener("resize", onResize);
 
     return () => {
-      window.removeEventListener("resize", calculateWirePositions);
+      window.removeEventListener("resize", onResize);
     };
-  }, [calculateWirePositions, connections, connections.length]);
+  }, [calculateWirePositions, wireConnections.length]);
 
   useEffect(() => {
-    window.dispatchEvent(new Event("resize"));
-  }, [connections.length, hiddenUnits]);
+    calculateWirePositions();
+  }, [calculateWirePositions, connections.length, hiddenUnits]);
 
   return (
     <ConnectionContext.Provider
       value={{
         fromConnection,
-        connections: mappedConnections,
-        filteredConnections,
+        connections, // MIGHT NEED TO BE MAPPED CONNECTIONS
+        wireConnections,
         connectionPositions: connectionPositions.current,
         hiddenUnits,
       }}
