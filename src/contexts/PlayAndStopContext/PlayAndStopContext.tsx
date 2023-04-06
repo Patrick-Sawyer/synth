@@ -43,12 +43,14 @@ interface PlayAndStopContextType {
   startModular: () => void;
   stopModular: (onComplete?: () => void) => void;
   timerIndex: number;
+  isPlaying: boolean;
 }
 
 const PlayAndStopContext = createContext<PlayAndStopContextType>({
   startModular: () => null,
   stopModular: () => null,
   timerIndex: 0,
+  isPlaying: false,
 });
 
 export const PlayAndStopContextProvider = ({ children }: Props) => {
@@ -60,6 +62,7 @@ export const PlayAndStopContextProvider = ({ children }: Props) => {
   const timeout = useRef<NodeJS.Timeout>();
   const lastPlayedIndex = useRef<number>();
   const currentNotes = useRef<CurrentNotes>(INIT_CURRENT_NOTES);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const { gridOneUnits, gridTwoUnits, gridThreeUnits } = findUnits({
     audioUnits: unitsWithEnvelopeConnections,
@@ -105,12 +108,14 @@ export const PlayAndStopContextProvider = ({ children }: Props) => {
     MAIN_OUT.node.gain.cancelScheduledValues(0);
     MAIN_OUT.node.gain.linearRampToValueAtTime(1, CONTEXT.currentTime + 0.01);
     playScheduledNotes(0);
+    setIsPlaying(true);
   };
 
   const stopModular = (onComplete?: () => void) => {
     clearTimeout(timeout.current);
     timeout.current = undefined;
     setTimerIndex(0);
+    setIsPlaying(false);
     lastPlayedIndex.current = undefined;
     currentNotes.current = INIT_CURRENT_NOTES;
     MAIN_OUT.node.gain.cancelAndHoldAtTime(0);
@@ -150,7 +155,7 @@ export const PlayAndStopContextProvider = ({ children }: Props) => {
 
   return (
     <PlayAndStopContext.Provider
-      value={{ startModular, stopModular, timerIndex }}
+      value={{ startModular, stopModular, timerIndex, isPlaying }}
     >
       {children}
     </PlayAndStopContext.Provider>
