@@ -1,8 +1,6 @@
 import { Dispatch, memo, SetStateAction } from "react";
 import styled from "styled-components";
 import { usePlayAndStopContext } from "../../contexts/PlayAndStopContext/PlayAndStopContext";
-import { bpmToMS } from "../../contexts/PlayAndStopContext/utils";
-import { useSequencerContext } from "../../contexts/SequencerContext";
 import { Colors } from "../../utils/theme";
 import { CELL_WIDTH, GridNote } from "./Note";
 import { NOTES } from "./notes";

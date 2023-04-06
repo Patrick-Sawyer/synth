@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Colors } from "../../utils/theme";
 import { Screw } from "./Screw";
 
+// TODO = CHANGE THIS TO STOP DOING ANYTHING ON RESIZE
+
 export function Screws() {
   const [screws, setScrews] = useState<Array<React.ReactElement>>([]);
 

@@ -21,7 +21,6 @@ import {
   useSequencerContext,
   useUpdateSequencerContext,
 } from "../../contexts/SequencerContext";
-import { debounce } from "../../utils/debounce";
 import { Colors } from "../../utils/theme";
 import { DelayComponent } from "../Delay/DelayComponent";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Colors } from "../../utils/theme";
 import { UNIT_HEIGHT } from "../unitBlocks/BaseAudioUI/BaseAudioUI";
 import { Screws } from "./Screws";
 
