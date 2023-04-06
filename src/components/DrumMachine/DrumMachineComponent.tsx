@@ -53,8 +53,7 @@ export function DrumMachineComponent(
           initIndex={0} // TODO: get from class
           chars={10}
         />
-        <RollButton onPointerDown={() => setRolling(true)} />
-        <Label>{"ROLL"}</Label>
+
         <AudioConnection
           connection={props.output}
           unitKey={props.unitKey}
@@ -72,14 +71,10 @@ export function DrumMachineComponent(
           text="PITCH"
           exponentialAmount={2.4}
         />
-        <Knob
-          min={FADE}
-          max={1}
-          resetValue={1}
-          onChange={handleLengthChange}
-          initValue={1}
-          text="LENGTH"
-        />
+        <Blah>
+          <RollButton onPointerDown={() => setRolling(true)} />
+          <Label>{"ROLL"}</Label>
+        </Blah>
         <Knob
           min={ZERO}
           max={1}
@@ -105,6 +100,13 @@ export function DrumMachineComponent(
     </BaseAudioUI>
   );
 }
+
+const Blah = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+`;
 
 const SAMPLE_OPTIONS = [
   "KICK 1",
@@ -134,8 +136,6 @@ const RollButton = styled.div`
   border-radius: 3px;
   background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  position: relative;
-  top: 3px;
 
   &:hover {
     border: 1px solid white;
