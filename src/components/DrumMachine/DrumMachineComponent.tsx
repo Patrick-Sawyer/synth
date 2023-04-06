@@ -71,10 +71,10 @@ export function DrumMachineComponent(
           text="PITCH"
           exponentialAmount={2.4}
         />
-        <Blah>
+        <RollWrapper>
           <RollButton onPointerDown={() => setRolling(true)} />
           <Label>{"ROLL"}</Label>
-        </Blah>
+        </RollWrapper>
         <Knob
           min={ZERO}
           max={1}
@@ -101,7 +101,7 @@ export function DrumMachineComponent(
   );
 }
 
-const Blah = styled.div`
+const RollWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
