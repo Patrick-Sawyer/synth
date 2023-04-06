@@ -23,6 +23,7 @@ import {
 } from "../../contexts/SequencerContext";
 import { Colors } from "../../utils/theme";
 import { DelayComponent } from "../Delay/DelayComponent";
+import { DrumMachineComponent } from "../DrumMachine/DrumMachineComponent";
 import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
 import { FilterComponent } from "../Filter/FilterComponent";
 import { LFOComponent } from "../LFO/LFOComponent";
@@ -332,6 +333,13 @@ const getUnit = (
       return (
         <DelayComponent
           {...(unit as unknown as ComponentProps<typeof DelayComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.DRUM_MACHINE:
+      return (
+        <DrumMachineComponent
+          {...(unit as unknown as ComponentProps<typeof DrumMachineComponent>)}
         />
       );
 

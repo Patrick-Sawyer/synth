@@ -1,4 +1,5 @@
 import { Delay, SavedDelay } from "../audioUnits/Delay";
+import { DrumMachine, SavedDrumMachine } from "../audioUnits/DrumMachine";
 import { Envelope, SavedEnvelope } from "../audioUnits/Envelope";
 import { Filter, SavedFilter } from "../audioUnits/Filter";
 import { LFO, SavedLFO } from "../audioUnits/LFO";
@@ -27,6 +28,8 @@ export const formatOnLoad = (units: Patch): Array<AudioUnit> => {
           return new Filter(unit as SavedFilter);
         case AudioUnitTypes.DELAY:
           return new Delay(unit as SavedDelay);
+        case AudioUnitTypes.DRUM_MACHINE:
+          return new DrumMachine(unit as SavedDrumMachine);
         default:
           return null;
       }
@@ -95,6 +98,11 @@ export const formatOnSave = (units: Array<any>): Patch => {
             wet: unit.wet.gain.value,
             dry: unit.dry.gain.value,
           } as SavedDelay;
+        case AudioUnitTypes.DRUM_MACHINE:
+          return {
+            type: AudioUnitTypes.DRUM_MACHINE,
+            unitKey: unit.unitKey,
+          } as SavedDrumMachine;
         default:
           return null as unknown as SavedUnit;
       }

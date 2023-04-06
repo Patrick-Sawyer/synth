@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { MAIN_OUT } from "../../App";
 import { Connection } from "../../audioUnits/Connection";
 import { Delay } from "../../audioUnits/Delay";
+import { DrumMachine } from "../../audioUnits/DrumMachine";
 import { Envelope } from "../../audioUnits/Envelope";
 import { Filter } from "../../audioUnits/Filter";
 import { LFO } from "../../audioUnits/LFO";
@@ -67,6 +68,12 @@ const AudioUnitListOption: Array<Option> = [
     key: AudioUnitTypes.DELAY,
     color: Colors.delay,
   },
+  {
+    text: "Drums",
+    value: AudioUnitTypes.DRUM_MACHINE,
+    key: AudioUnitTypes.DRUM_MACHINE,
+    color: Colors.drumMachine,
+  },
 ];
 
 const getUnit = (type: AudioUnitTypes) => {
@@ -83,6 +90,8 @@ const getUnit = (type: AudioUnitTypes) => {
       return new LFO();
     case AudioUnitTypes.DELAY:
       return new Delay();
+    case AudioUnitTypes.DRUM_MACHINE:
+      return new DrumMachine();
   }
 };
 

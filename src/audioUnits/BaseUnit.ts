@@ -37,6 +37,10 @@ const CONFIG: Record<AudioUnitTypes, LabelAndColor> = {
     label: "Filter",
     color: Colors.delay,
   },
+  [AudioUnitTypes.DRUM_MACHINE]: {
+    label: "Drums",
+    color: Colors.drumMachine,
+  },
 };
 
 export class BaseUnit {

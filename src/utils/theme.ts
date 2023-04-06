@@ -12,4 +12,5 @@ export const Colors = {
   sequencerTwoColor: "#ff40fc",
   sequencerThreeColor: "#ff5500",
   hoverColor: "#1f636e",
+  drumMachine: "#2e4a78",
 };
