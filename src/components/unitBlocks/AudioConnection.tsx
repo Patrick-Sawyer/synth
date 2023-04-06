@@ -2,6 +2,7 @@ import {
   MouseEventHandler,
   PointerEventHandler,
   RefObject,
+  useCallback,
   useEffect,
   useRef,
 } from "react";
@@ -87,7 +88,7 @@ export function AudioConnection({
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { fireMrT } = useMrTContext();
-  const { fromConnection, connections, connectionPositions } =
+  const { fromConnection, connections, connectionPositions, hiddenUnits } =
     useConnectionContext();
   const { setFromValue, setConnections, disconnectThisConnection } =
     useConnectionUpdateContext();
@@ -164,22 +165,22 @@ export function AudioConnection({
     setFromValue && setFromValue(null);
   };
 
+  const calculateCentre = useCallback(() => {
+    if (ref.current && wrapperRef.current) {
+      const rect = ref.current.getBoundingClientRect();
+
+      const position = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2 + wrapperRef.current.scrollTop,
+      };
+
+      connection.position = position;
+      const thisConnectionKey = unitKey + connectionKey;
+      connectionPositions[thisConnectionKey] = position;
+    }
+  }, [connection, connectionKey, connectionPositions, unitKey, wrapperRef]);
+
   useEffect(() => {
-    const calculateCentre = () => {
-      if (ref.current && wrapperRef.current) {
-        const rect = ref.current.getBoundingClientRect();
-
-        const position = {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2 + wrapperRef.current.scrollTop,
-        };
-
-        connection.position = position;
-        const thisConnectionKey = unitKey + connectionKey;
-        connectionPositions[thisConnectionKey] = position;
-      }
-    };
-
     const handlePointerUp = () => {
       setFromValue && setFromValue(null);
     };
@@ -194,6 +195,7 @@ export function AudioConnection({
       window.removeEventListener("pointerup", handlePointerUp);
     };
   }, [
+    calculateCentre,
     connection,
     connectionKey,
     connectionPositions,
@@ -222,6 +224,10 @@ export function AudioConnection({
       });
     }
   };
+
+  useEffect(() => {
+    calculateCentre();
+  }, [calculateCentre, hiddenUnits]);
 
   return (
     <Wrapper horizontal={!!horizontal}>

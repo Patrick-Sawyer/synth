@@ -125,7 +125,7 @@ export const ConnectionContextProvider = ({
     []
   );
 
-  const calculateWirePositions = useCallback(async () => {
+  const calculateWirePositions = useCallback(() => {
     const newWires = connections
       .filter((conn) => {
         return (
@@ -176,7 +176,7 @@ export const ConnectionContextProvider = ({
 
   useEffect(() => {
     calculateWirePositions();
-  }, [calculateWirePositions, connections.length, hiddenUnits]);
+  }, [calculateWirePositions, connections.length, hiddenUnits.length]);
 
   return (
     <ConnectionContext.Provider
