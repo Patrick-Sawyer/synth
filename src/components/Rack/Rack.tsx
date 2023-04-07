@@ -1,4 +1,4 @@
-import { ComponentProps, RefObject, useRef } from "react";
+import { useRef } from "react";
 import styled from "styled-components";
 import {
   MAIN_OUT,
@@ -6,7 +6,7 @@ import {
   SEQ_THREE_CV_OUT,
   SEQ_TWO_CV_OUT,
 } from "../../App";
-import { AudioUnit, AudioUnitTypes } from "../../audioUnits/types";
+import { AudioUnitTypes } from "../../audioUnits/types";
 import {
   useAudioUnitContext,
   useUpdateAudioUnitContext,
@@ -22,19 +22,13 @@ import {
   useUpdateSequencerContext,
 } from "../../contexts/SequencerContext";
 import { Colors } from "../../utils/theme";
-import { DelayComponent } from "../Delay/DelayComponent";
-import { DrumMachineComponent } from "../DrumMachine/DrumMachineComponent";
-import { EnvelopeComponent } from "../Envelope/EnvelopeComponent";
-import { FilterComponent } from "../Filter/FilterComponent";
-import { LFOComponent } from "../LFO/LFOComponent";
-import { OscillatorComponent } from "../Oscillator/OscillatorComponent";
-import { ReverbComponent } from "../Reverb/ReverbComponent";
 import { Sequencer } from "../Sequencer/Sequencer";
 import { Settings } from "../Settings/Settings";
 import { Slider } from "../Slider";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { Wires } from "../Wires/Wires";
 import { RackRow } from "./RackRow";
+import { getUnit } from "../../utils/loadAndSave";
 
 export function Rack() {
   const ref = useRef<HTMLDivElement>(null);
@@ -100,13 +94,17 @@ export function Rack() {
       !seqTwoGridNotes.length &&
       !seqThreeGridNotes.length;
 
+    const noDrumMachines = !audioUnits.filter(
+      (unit) => unit.type === AudioUnitTypes.DRUM_MACHINE
+    ).length;
+
     if (!audioUnits.length) {
       fireMrT({ text: "ADD SOME DAMN MODULES FOOL!" });
     } else if (mainNotConnected) {
       fireMrT({ text: "CONNECT SOME MODULES FOOL!" });
-    } else if (sequencersNotConnected) {
+    } else if (sequencersNotConnected && noDrumMachines) {
       fireMrT({ text: "CONNECT A SEQUENCER FOOL!" });
-    } else if (noNotesScheduled) {
+    } else if (noNotesScheduled && noDrumMachines) {
       fireMrT({ text: "ADD SOME DAMN NOTES FOOL!" });
     } else {
       startModular();
@@ -289,61 +287,3 @@ const AudioUnits = styled.div`
   overflow: hidden;
   top: 0;
 `;
-
-const getUnit = (
-  unit: AudioUnit & { wrapperRef: RefObject<HTMLDivElement> }
-): React.ReactElement | null => {
-  switch (unit.type) {
-    case AudioUnitTypes.OSCILLATOR:
-      return (
-        <OscillatorComponent
-          {...(unit as unknown as ComponentProps<typeof OscillatorComponent>)}
-        />
-      );
-
-    case AudioUnitTypes.ENVELOPE:
-      return (
-        <EnvelopeComponent
-          {...(unit as unknown as ComponentProps<typeof EnvelopeComponent>)}
-        />
-      );
-
-    case AudioUnitTypes.REVERB:
-      return (
-        <ReverbComponent
-          {...(unit as unknown as ComponentProps<typeof ReverbComponent>)}
-        />
-      );
-
-    case AudioUnitTypes.LFO:
-      return (
-        <LFOComponent
-          {...(unit as unknown as ComponentProps<typeof LFOComponent>)}
-        />
-      );
-
-    case AudioUnitTypes.FILTER:
-      return (
-        <FilterComponent
-          {...(unit as unknown as ComponentProps<typeof FilterComponent>)}
-        />
-      );
-
-    case AudioUnitTypes.DELAY:
-      return (
-        <DelayComponent
-          {...(unit as unknown as ComponentProps<typeof DelayComponent>)}
-        />
-      );
-
-    case AudioUnitTypes.DRUM_MACHINE:
-      return (
-        <DrumMachineComponent
-          {...(unit as unknown as ComponentProps<typeof DrumMachineComponent>)}
-        />
-      );
-
-    default:
-      return null;
-  }
-};

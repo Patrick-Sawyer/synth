@@ -8,6 +8,8 @@ interface Props {
   onPress: (option: string) => void;
   initIndex?: number;
   chars?: number;
+  align?: string;
+  active?: boolean;
 }
 
 export function MultiSelect({
@@ -16,6 +18,8 @@ export function MultiSelect({
   onPress,
   initIndex = 0,
   chars = 3,
+  align = "center",
+  active = true,
 }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(initIndex);
 
@@ -30,7 +34,7 @@ export function MultiSelect({
   }, [onPress, options, selectedIndex]);
 
   return (
-    <Wrapper>
+    <Wrapper align={align}>
       <div>
         {options?.map((option, index) => (
           <Option
@@ -39,7 +43,7 @@ export function MultiSelect({
               setSelectedIndex(index);
             }}
           >
-            <Light selected={index === selectedIndex} />
+            <Light selected={active && index === selectedIndex} />
             {option.substring(0, chars)}
           </Option>
         ))}
@@ -53,12 +57,17 @@ export function MultiSelect({
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{
+  align: string;
+}>`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: ${({ align }) => align};
   gap: 10px;
+  position: relative;
+
+  ${({ align }) => align === "left" && "left: 8px;"}
 `;
 
 const Option = styled.div`

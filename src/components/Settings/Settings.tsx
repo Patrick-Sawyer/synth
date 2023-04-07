@@ -24,7 +24,7 @@ import {
   useSequencerContext,
   useUpdateSequencerContext,
 } from "../../contexts/SequencerContext";
-import { formatOnLoad, formatOnSave } from "../../utils/formatOnLoadAndSave";
+import { formatOnLoad, formatOnSave } from "../../utils/loadAndSave";
 import { Colors } from "../../utils/theme";
 import { SaveComponent } from "./SaveComponent";
 import { Option, UnitSelector } from "./UnitSelector";
@@ -179,6 +179,8 @@ export function Settings() {
         const connectionsToSetup = parsedJson.connections;
         setConnections && setConnections(connectionsToSetup);
 
+        console.log(connectionsToSetup);
+
         connectionsToSetup.forEach((conn: FullConnection) => {
           try {
             let fromConnection: Connection | undefined;
@@ -204,14 +206,19 @@ export function Settings() {
               );
               const toKey = conn.to.connectionKey as keyof typeof unit;
               toConnection = unit?.[toKey];
+              console.log("UNIT", unit, "tokey", toKey);
             }
+
+            console.log("FROM CON", fromConnection, "to con", toConnection);
 
             if (fromConnection && toConnection) {
               fromConnection.node.connect(toConnection.node);
               conn.from.node = fromConnection.node;
               conn.to.node = toConnection.node;
             }
-          } catch {}
+          } catch (e) {
+            console.log(e);
+          }
         });
 
         setAudioUnits(units);

@@ -1,3 +1,4 @@
+import { ComponentProps, RefObject } from "react";
 import { Delay, SavedDelay } from "../audioUnits/Delay";
 import { DrumMachine, SavedDrumMachine } from "../audioUnits/DrumMachine";
 import { Envelope, SavedEnvelope } from "../audioUnits/Envelope";
@@ -11,6 +12,13 @@ import {
   Patch,
   SavedUnit,
 } from "../audioUnits/types";
+import { DelayComponent } from "../components/Delay/DelayComponent";
+import { DrumMachineComponent } from "../components/DrumMachine/DrumMachineComponent";
+import { EnvelopeComponent } from "../components/Envelope/EnvelopeComponent";
+import { FilterComponent } from "../components/Filter/FilterComponent";
+import { LFOComponent } from "../components/LFO/LFOComponent";
+import { OscillatorComponent } from "../components/Oscillator/OscillatorComponent";
+import { ReverbComponent } from "../components/Reverb/ReverbComponent";
 
 export const formatOnLoad = (units: Patch): Array<AudioUnit> => {
   return units
@@ -102,10 +110,73 @@ export const formatOnSave = (units: Array<any>): Patch => {
           return {
             type: AudioUnitTypes.DRUM_MACHINE,
             unitKey: unit.unitKey,
+            pitch: unit.pitch,
+            volume: unit.volume,
+            selectedIndex: unit.selectedIndex,
+            selectedCategoryIndex: unit.selectedCategoryIndex,
+            grid: unit.grid,
           } as SavedDrumMachine;
         default:
           return null as unknown as SavedUnit;
       }
     })
     .filter((unit) => !!unit);
+};
+
+export const getUnit = (
+  unit: AudioUnit & { wrapperRef: RefObject<HTMLDivElement> }
+): React.ReactElement | null => {
+  switch (unit.type) {
+    case AudioUnitTypes.OSCILLATOR:
+      return (
+        <OscillatorComponent
+          {...(unit as unknown as ComponentProps<typeof OscillatorComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.ENVELOPE:
+      return (
+        <EnvelopeComponent
+          {...(unit as unknown as ComponentProps<typeof EnvelopeComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.REVERB:
+      return (
+        <ReverbComponent
+          {...(unit as unknown as ComponentProps<typeof ReverbComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.LFO:
+      return (
+        <LFOComponent
+          {...(unit as unknown as ComponentProps<typeof LFOComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.FILTER:
+      return (
+        <FilterComponent
+          {...(unit as unknown as ComponentProps<typeof FilterComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.DELAY:
+      return (
+        <DelayComponent
+          {...(unit as unknown as ComponentProps<typeof DelayComponent>)}
+        />
+      );
+
+    case AudioUnitTypes.DRUM_MACHINE:
+      return (
+        <DrumMachineComponent
+          {...(unit as unknown as ComponentProps<typeof DrumMachineComponent>)}
+        />
+      );
+
+    default:
+      return null;
+  }
 };

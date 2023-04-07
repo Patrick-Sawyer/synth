@@ -1,7 +1,7 @@
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { FADE, ZERO } from "../../audioUnits/BaseUnit";
-import { DrumMachine } from "../../audioUnits/DrumMachine";
+import { ZERO } from "../../audioUnits/BaseUnit";
+import { DrumMachine, SAMPLES } from "../../audioUnits/DrumMachine";
 import { usePlayAndStopContext } from "../../contexts/PlayAndStopContext/PlayAndStopContext";
 import { AudioConnection } from "../unitBlocks/AudioConnection";
 import { BaseAudioUI } from "../unitBlocks/BaseAudioUI/BaseAudioUI";
@@ -16,25 +16,35 @@ const INIT_GRID = new Array(16).fill(false);
 export function DrumMachineComponent(
   props: DrumMachine & { wrapperRef: RefObject<HTMLDivElement> }
 ) {
-  const [grid, setGrid] = useState(INIT_GRID);
+  const [grid, setGrid] = useState(props.grid || INIT_GRID);
   const { timerIndex, isPlaying } = usePlayAndStopContext();
   const [rolling, setRolling] = useState(false);
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
+  const [currentSoundCategoryIndex, setCurrentSoundCategoryIndex] = useState(0);
+  const lastPlayedIndex = useRef(0);
 
-  const handleButtonClick = (index: number) => {
-    const newGrid = [...grid];
-    newGrid[index] = !newGrid[index];
-    setGrid(newGrid);
-  };
-
-  const handleSampleSelect = (option: string) => {};
-
-  const handleVolumeChange = (value: number) => {};
-
-  const handleLengthChange = (value: number) => {};
+  const handleButtonClick = useCallback(
+    (index: number) => {
+      const newGrid = [...grid];
+      newGrid[index] = !newGrid[index];
+      setGrid(newGrid);
+    },
+    [grid]
+  );
 
   const handlePointerUp = () => {
     setRolling(false);
   };
+
+  const categories = SAMPLES.map(({ name }) => name);
+
+  const handleSampleSelect = useCallback(
+    (value: string, index: number) => {
+      props.sampleSelect(value, index);
+      setCurrentSoundCategoryIndex(index);
+    },
+    [props]
+  );
 
   useEffect(() => {
     window.addEventListener("pointerup", handlePointerUp);
@@ -44,32 +54,77 @@ export function DrumMachineComponent(
     };
   }, []);
 
+  useEffect(() => {
+    props.updateGrid(grid);
+  }, [grid, props]);
+
+  const handlePlay = useCallback(
+    (index: number) => {
+      if (lastPlayedIndex.current !== 0 && lastPlayedIndex.current === index)
+        return;
+
+      if (grid[index % 16] || rolling) {
+        props.play();
+      }
+
+      lastPlayedIndex.current = index;
+    },
+    [grid, props, rolling]
+  );
+
+  useEffect(() => {
+    handlePlay(timerIndex);
+  }, [handlePlay, timerIndex]);
+
   return (
     <BaseAudioUI color={props.color} title="drums" thisUnitKey={props.unitKey}>
       <MinWidthUnitColumn>
-        <MultiSelect
-          options={SAMPLE_OPTIONS}
-          onPress={handleSampleSelect}
-          initIndex={0} // TODO: get from class
-          chars={10}
-        />
+        <Selectors>
+          <MultiSelect
+            options={categories}
+            align="left"
+            onPress={(value) => {
+              const index = categories.indexOf(value);
+              setSelectedCategoryIndex(index);
+            }}
+            initIndex={props.selectedCategoryIndex || 0}
+            chars={10}
+          />
+          <SamplesSelector>
+            {SAMPLES.map(({ samples }, index) => {
+              if (selectedCategoryIndex !== index) return null;
+              const options = samples.map(({ text }) => text);
 
+              return (
+                <MultiSelect
+                  options={options}
+                  align="left"
+                  onPress={(value: string) => {
+                    handleSampleSelect(value, index);
+                  }}
+                  initIndex={props.selectedIndex || 0}
+                  chars={10}
+                  active={currentSoundCategoryIndex === index}
+                />
+              );
+            })}
+          </SamplesSelector>
+        </Selectors>
         <AudioConnection
           connection={props.output}
           unitKey={props.unitKey}
-          connectionKey={"main-vol"}
+          connectionKey={"output"}
           wrapperRef={props.wrapperRef}
         />
       </MinWidthUnitColumn>
       <UnitColumn>
         <Knob
-          min={-0.5}
+          min={0}
           max={2}
-          resetValue={0}
-          onChange={handleVolumeChange}
-          initValue={0}
+          resetValue={1}
+          onChange={props.setPitch}
+          initValue={props.pitch || 1}
           text="PITCH"
-          exponentialAmount={2.4}
         />
         <RollWrapper>
           <RollButton onPointerDown={() => setRolling(true)} />
@@ -79,8 +134,8 @@ export function DrumMachineComponent(
           min={ZERO}
           max={1}
           resetValue={1}
-          onChange={handleVolumeChange}
-          initValue={1}
+          onChange={props.setVolume}
+          initValue={props.volume || ZERO}
           text="VOL"
         />
       </UnitColumn>
@@ -108,22 +163,6 @@ const RollWrapper = styled.div`
   gap: 10px;
 `;
 
-const SAMPLE_OPTIONS = [
-  "KICK 1",
-  "KICK 2",
-  "KICK 3",
-  "SNARE 1",
-  "SNARE 2",
-  "CLAP 1",
-  "CLAP 2",
-  "HI HAT 1",
-  "HI HAT 2",
-  "OPEN HH1",
-  "OPEN HH2",
-  "RIDE 1",
-  "RIDE 2",
-];
-
 const MinWidthUnitColumn = styled(UnitColumn)`
   min-width: 70px;
   display: flex;
@@ -145,4 +184,20 @@ const RollButton = styled.div`
     border: 1px solid white;
     background-color: rgba(255, 255, 255, 0.2);
   }
+`;
+
+const SamplesSelector = styled.div`
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  width: 70px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  display: flex;
+`;
+
+const Selectors = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 12px;
 `;
